@@ -37,6 +37,14 @@
       box.querySelector('.go').addEventListener('click', function(){
         ga('a2hs_click', {mode: deferred ? 'prompt' : (inApp ? 'inapp' : (isIOS ? 'ios' : 'manual'))});
         if(deferred){ deferred.prompt(); deferred.userChoice.then(function(c){ ga('a2hs_choice', {outcome: c && c.outcome}); deferred = null; }).catch(function(){}); return; }
+        if(isIOS && !inApp && !iosNotSafari && navigator.share){
+          /* 아이폰 Safari는 '홈 화면에 추가' 창을 코드로 직접 못 열어요 → 공유창을 바로 띄우고 한 줄만 안내 */
+          sp.innerHTML = '공유창에서 <b>홈 화면에 추가</b>를 눌러 주세요 (목록을 조금 내려요)';
+          sp.style.display = 'block';
+          setTimeout(function(){ sp.style.display = 'none'; }, 9000);
+          try{ navigator.share({title: document.title, url: location.href}).catch(function(){}); }catch(e){}
+          return;
+        }
         sp.style.display = (sp.style.display === 'block') ? 'none' : 'block';
       });
       if(asBar){ box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); sp.remove(); try{ localStorage.setItem('a2hs_hide', String(Date.now())); }catch(e){} ga('a2hs_close'); }); }
@@ -50,7 +58,7 @@
       if(isApp){
         var hidden = 0; try{ hidden = +(localStorage.getItem('a2hs_hide') || 0); }catch(e){}
         if(hidden && Date.now() - hidden < 14*864e5) return;
-        var tryShow = function(){ var mo = document.getElementById('modalOverlay'); if(mo && mo.classList.contains('open')){ setTimeout(tryShow, 5000); return; } var p = build(true); document.body.appendChild(p[1]); document.body.appendChild(p[0]); ga('a2hs_show', {where:'app'}); }; setTimeout(tryShow, 20000);
+        var tryShow = function(){ var mo = document.getElementById('modalOverlay'); if(mo && mo.classList.contains('open')){ setTimeout(tryShow, 2000); return; } var p = build(true); document.body.appendChild(p[1]); document.body.appendChild(p[0]); ga('a2hs_show', {where:'app'}); }; setTimeout(tryShow, 3000);
         return;
       }
       var anchor = document.querySelector('a.cta[href="https://meokboapa.com/"]') || document.querySelector('nav.sitelinks') || document.querySelector('footer');
