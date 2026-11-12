@@ -60,7 +60,7 @@
       var hid = 0; try{ hid = +(localStorage.getItem('tester_hide') || 0); }catch(e){}
       if(hid && Date.now() - hid < 7*864e5) return false;
       var box = document.createElement('div'); box.className = 'a2hs a2hs-bar';
-      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>안드로이드 앱 테스터를 모아요</b><small>14일 동안 계속 참여할 수 있는 분이면 돼요. 카톡으로 \'테스터\'와 구글 이메일을 보내 주세요</small></div><button type="button" class="go">카톡 보내기</button><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
+      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>안드로이드 앱 테스터를 모아요</b><small>14일 동안 계속 참여할 수 있는 분이면 돼요. 카톡으로 \'테스터\'와 플레이스토어 구글 이메일을 보내 주세요</small></div><button type="button" class="go">카톡 보내기</button><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
       box.querySelector('.go').addEventListener('click', function(){ ga('tester_click'); window.open('https://pf.kakao.com/_LxoWxiX/chat', '_blank', 'noopener'); });
       box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); try{ localStorage.setItem('tester_hide', String(Date.now())); }catch(e){} ga('tester_close'); });
       var tryShow = function(){ var mo = document.getElementById('modalOverlay'); if(mo && mo.classList.contains('open')){ setTimeout(tryShow, 2000); return; } document.body.appendChild(box); ga('tester_show'); };
