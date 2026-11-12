@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.meokboapa.app",
+      "sha256_cert_fingerprints": [
+        "05:19:66:98:F8:D0:4A:40:58:13:5C:50:44:21:9F:F9:C6:66:2C:41:E3:8A:26:F1:1F:26:2B:99:35:8E:00:C0"
+      ]
+    }
+  }
+]
