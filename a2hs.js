@@ -31,7 +31,7 @@
 
     function build(asBar){
       var box = document.createElement('div'); box.className = 'a2hs' + (asBar ? ' a2hs-bar' : '');
-      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>홈 화면에 추가하면 앱처럼 열려요</b><small>' + (isIOS ? '아이폰 앱은 앱스토어 출시를 준비하고 있어요. 그 전에는 홈 화면에 추가해서 앱처럼 써 보세요' : '식단표·레시피를 다시 검색할 필요 없이 한 번에') + '</small></div><button type="button" class="go">추가하기</button>' + (asBar ? '<button type="button" class="a2hs-x" aria-label="닫기">✕</button>' : '');
+      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>' + (isIOS ? '홈 화면에 추가하기' : '홈 화면에 추가하면 앱처럼 열려요') + '</b><small>' + (isIOS ? '앱스토어 출시를 준비하고 있어요' : '식단표·레시피를 다시 검색할 필요 없이 한 번에') + '</small></div><button type="button" class="go">추가하기</button>' + (asBar ? '<button type="button" class="a2hs-x" aria-label="닫기">✕</button>' : '');
       var sp = document.createElement('div'); sp.className = 'a2hs-steps'; sp.innerHTML = steps;
       if(asBar){ sp.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(90px + env(safe-area-inset-bottom));z-index:91;margin:0;box-shadow:0 8px 24px rgba(40,30,20,.15)'; }
       box.querySelector('.go').addEventListener('click', function(){

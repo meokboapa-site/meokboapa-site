@@ -6,7 +6,7 @@
    그래서 /재료/소고기/ 같은 별도 페이지를 한 번 열면 앱 본체 캐시가 그 페이지로 바뀌어,
    오프라인에서 앱을 열었을 때 엉뚱한 페이지가 뜨는 문제가 있었습니다.
    이제 앱 본체(루트)만 './index.html'로 저장하고, 나머지 페이지는 각자 주소로 저장합니다. */
-const CACHE_NAME = 'meokbo-cache-v305';
+const CACHE_NAME = 'meokbo-cache-v306';
 const CORE_ASSETS = [
   './',
   './index.html',
