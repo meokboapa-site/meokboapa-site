@@ -61,7 +61,7 @@
       if(hid && Date.now() - hid < 3*864e5) return false;
       var box = document.createElement('div'); box.className = 'a2hs a2hs-bar';
       box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>안드로이드 앱 테스터를 모아요</b><small>14일 동안 계속 설치해 두실 분을 찾아요. 그룹에 가입하면 출시 때 설치 링크를 보내드려요</small></div><button type="button" class="go">그룹 가입</button><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
-      box.querySelector('.go').addEventListener('click', function(){ ga('tester_click'); window.open('https://groups.google.com/g/meokboapa-testers', '_blank', 'noopener'); });
+      box.querySelector('.go').addEventListener('click', function(){ ga('tester_click'); location.href = '/tester/'; });
       box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); try{ localStorage.setItem('tester_hide', String(Date.now())); }catch(e){} ga('tester_close'); });
       var tryShow = function(){ var mo = document.getElementById('modalOverlay'); if(mo && mo.classList.contains('open')){ setTimeout(tryShow, 2000); return; } document.body.appendChild(box); ga('tester_show'); };
       setTimeout(tryShow, 3000);
