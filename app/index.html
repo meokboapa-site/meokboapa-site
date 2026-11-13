@@ -3955,7 +3955,7 @@ function buildStartPage(container){
     <a class="sp-kakao" href="https://pf.kakao.com/_LxoWxiX/friend" target="_blank" rel="noopener" onclick="try{gtag('event','kakao_add',{where:'plan'})}catch(e){}"><b>💬 카카오톡 채널 추가 <span class="hot">알림 받기</span></b><span>다음 단계 식단표가 나오면 카톡으로 알려드려요 · 궁금한 건 1:1로 물어보세요</span></a>
     ${window.MB_ABROAD?`<a class="sp-kakao sp-abroad" href="https://meokbodad.etsy.com/listing/4603252073" target="_blank" rel="noopener" onclick="try{gtag('event','etsy_click',{edition:'ko',where:'app_abroad'})}catch(e){}"><b>🌏 해외에 계세요? <span class="hot">해외 맘 필수</span></b><span>미국·캐나다·영국 마트 재료로 바꾼 한국식 이유식 첫 5주 · 한국어 PDF</span></a>`:''}
     ${MB_APP_MODE ? (Object.keys(COUPANG_LINKS).length ? `<a class="sp-prep" href="#" onclick="openPrepTools();return false;"><b>🛒 시작 전 준비물 <span class="hot">초보 필수</span></b><small>초기에 쓰는 식사·손질·조리도구 모아보기</small></a>` : '') : `<a class="sp-prep" href="/%EA%B0%80%EC%9D%B4%EB%93%9C/%EC%9D%B4%EC%9C%A0%EC%8B%9D-%EC%A4%80%EB%B9%84%EB%AC%BC/" onclick="try{gtag('event','guide_open',{id:'prep',where:'start30'})}catch(e){}"><b>🛒 시작 전 준비물 <span class="hot">초보 필수</span></b><small>초기에 살 것만 체크리스트로 · 조리도구·보관용기·식재료</small></a>`}
-    ${(MB_APP_MODE || new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
+    ${(new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
     <a class="sp-blog" href="${BLOG_POSTS.start5w.url}" target="_blank" rel="noopener">📝 이 5주를 일기로 풀어 쓴 블로그 글 — ${BLOG_POSTS.start5w.title} <span>›</span></a>
     <div class="dbox tip"><span class="dbox-label">시작 전에 이것만</span>
       <ul class="sp-notes" style="margin-top:4px;">
@@ -4396,7 +4396,7 @@ function buildMidPage(container){
     </div>
     <a class="sp-kakao" href="https://pf.kakao.com/_LxoWxiX/friend" target="_blank" rel="noopener" onclick="try{gtag('event','kakao_add',{where:'plan'})}catch(e){}"><b>💬 카카오톡 채널 추가 <span class="hot">알림 받기</span></b><span>다음 단계 식단표가 나오면 카톡으로 알려드려요 · 궁금한 건 1:1로 물어보세요</span></a>
     ${window.MB_ABROAD?`<a class="sp-kakao sp-abroad" href="https://meokbodad.etsy.com/listing/4603252073" target="_blank" rel="noopener" onclick="try{gtag('event','etsy_click',{edition:'ko',where:'app_abroad'})}catch(e){}"><b>🌏 해외에 계세요? <span class="hot">해외 맘 필수</span></b><span>미국·캐나다·영국 마트 재료로 바꾼 한국식 이유식 첫 5주 · 한국어 PDF</span></a>`:''}
-    ${(MB_APP_MODE || new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season_mid'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
+    ${(new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season_mid'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
     <div class="sp-alert sp-note">양과 재료는 기준일 뿐이에요 — <b>덜 먹어도, 다른 재료로 바꿔도 괜찮아요.</b> 순서와 한 가지씩만 지키면 충분해요.</div>
     <a class="sp-blog" href="${BLOG_POSTS.mid8w.url}" target="_blank" rel="noopener">📝 이 8주를 실제 기록으로 풀어 쓴 블로그 글 — ${BLOG_POSTS.mid8w.title} <span>›</span></a>
     <div class="dbox tip"><span class="dbox-label">먹보 아빠네 1일 2식 모듈</span>
@@ -4676,7 +4676,7 @@ function buildLatePage(container){
     </div>
     <a class="sp-kakao" href="https://pf.kakao.com/_LxoWxiX/friend" target="_blank" rel="noopener" onclick="try{gtag('event','kakao_add',{where:'plan'})}catch(e){}"><b>💬 카카오톡 채널 추가 <span class="hot">알림 받기</span></b><span>다음 단계 식단표가 나오면 카톡으로 알려드려요 · 궁금한 건 1:1로 물어보세요</span></a>
     ${window.MB_ABROAD?`<a class="sp-kakao sp-abroad" href="https://meokbodad.etsy.com/listing/4603252073" target="_blank" rel="noopener" onclick="try{gtag('event','etsy_click',{edition:'ko',where:'app_abroad'})}catch(e){}"><b>🌏 해외에 계세요? <span class="hot">해외 맘 필수</span></b><span>미국·캐나다·영국 마트 재료로 바꾼 한국식 이유식 첫 5주 · 한국어 PDF</span></a>`:''}
-    ${(MB_APP_MODE || new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season_late'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
+    ${(new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season_late'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
     <div class="sp-alert sp-note">양과 재료는 기준일 뿐이에요 — <b>덜 먹어도, 다른 재료로 바꿔도 괜찮아요.</b> 순서와 한 가지씩만 지키면 충분해요.</div>
     <a class="sp-blog" href="${BLOG_POSTS.late12w.url}" target="_blank" rel="noopener">📝 이 12주를 풀어 쓴 블로그 글 — ${BLOG_POSTS.late12w.title} <span>›</span></a>
     <div class="dbox tip"><span class="dbox-label">후기 한 끼 = 식판 한 판</span>
