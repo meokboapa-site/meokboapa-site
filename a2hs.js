@@ -68,6 +68,20 @@
       return true;
     }
 
+    /* 앱 홈이 아닌 일반 페이지(메뉴·가이드 등)에서도 안드로이드에게는 '홈 화면에 추가' 카드 대신 테스터 모집 카드 — 닫으면 3일 숨김 */
+    function testerCard(anchor){
+      var hid = 0; try{ hid = +(localStorage.getItem('tester_hide') || 0); }catch(e){}
+      if(hid && Date.now() - hid < 3*864e5) return false;
+      var box = document.createElement('div'); box.className = 'a2hs'; box.style.position = 'relative';
+      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>안드로이드 앱 테스터를 모아요</b><small>14일 동안 설치만 해 두실 분을 찾아요. 그룹에 가입하면 출시 때 설치 링크를 보내드려요</small></div><button type="button" class="go">그룹 가입</button><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
+      box.querySelector('.go').addEventListener('click', function(){ ga('tester_click', {where:'page'}); location.href = '/tester/'; });
+      box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); try{ localStorage.setItem('tester_hide', String(Date.now())); }catch(e){} ga('tester_close', {where:'page'}); });
+      if(anchor.matches && anchor.matches('a.cta')){ anchor.insertAdjacentElement('afterend', box); }
+      else { anchor.parentNode.insertBefore(box, anchor); }
+      ga('tester_show', {where:'page'});
+      return true;
+    }
+
     function mount(){
       if(isApp && isAndroid && Date.now() < TESTER_UNTIL && testerBar()) return;
       if(isApp){
@@ -78,6 +92,7 @@
       }
       var anchor = document.querySelector('a.cta[href="https://meokboapa.com/"]') || document.querySelector('nav.sitelinks') || document.querySelector('footer');
       if(!anchor) return;
+      if(isAndroid && Date.now() < TESTER_UNTIL && path.indexOf('/tester') !== 0 && testerCard(anchor)) return;
       var p = build(false);
       if(anchor.matches && anchor.matches('a.cta')){ anchor.insertAdjacentElement('afterend', p[0]); p[0].insertAdjacentElement('afterend', p[1]); }
       else { anchor.parentNode.insertBefore(p[0], anchor); anchor.parentNode.insertBefore(p[1], anchor); }
