@@ -5184,7 +5184,7 @@ function buildIngredientPage(container, stage){
           <button class="mini-icon fav-btn${favSet.has(item.name)?' on':''}" type="button" title="즐겨찾기">★</button>
           <button class="mini-icon tried-btn${triedSet.has(item.name)?' on':''}" type="button" title="시도함">✓</button>
         </div>
-        <span class="name">${item.name.replace(/\(/g,'<wbr>(').replace(/\//g,'/<wbr>')}</span>${(isNew||showTest)?`<span class="badges">${isNew?'<span class="new-badge">NEW</span>':''}${showTest?'<span class="test-badge">TEST</span>':''}</span>`:''}${reactionMap[item.name]?`<span class="reaction-badge">${REACTION_EMOJI[reactionMap[item.name]]}</span>`:''}`;
+        <span class="name">${item.name.length>9?item.name.replace(/\(/g,'<wbr>(').replace(/\//g,'/<wbr>'):item.name}</span>${(isNew||showTest)?`<span class="badges">${isNew?'<span class="new-badge">NEW</span>':''}${showTest?'<span class="test-badge">TEST</span>':''}</span>`:''}${reactionMap[item.name]?`<span class="reaction-badge">${REACTION_EMOJI[reactionMap[item.name]]}</span>`:''}`;
       c.onclick=(e)=>{ if(e.target.classList.contains('mini-icon')) return; onCardClick(cat, item, c); };
       const favBtn = c.querySelector('.fav-btn');
       favBtn.onclick=(e)=>{ e.stopPropagation(); toggleFav(item.name, favBtn); };
@@ -9036,5 +9036,101 @@ try{gtag('event','blog_click',{label:(a.textContent||'').trim().slice(0,60),link
 })();
 </script>
 <script src="/a2hs.js" defer></script>
+<style>
+/* 줄바꿈 정돈: 지원되는 기기(iOS 17.5+/Chrome 114+)에서는 브라우저가 알아서 균형 맞춤 */
+#stageBody p,#stageBody li,#stageBody td,#stageBody .note,#stageBody .desc{text-wrap:pretty}
+#stageBody h1,#stageBody h2,#stageBody h3,#stageBody .sec-title{text-wrap:balance}
+@media (max-width:380px){#ingGrid .card .name{font-size:11px !important;letter-spacing:-.03em;}}
+</style>
+<script>
+/* 줄바꿈 정돈(mbTypo): ① 문장 마지막 두 단어를 붙여 한두 글자만 덜렁 남는 줄 방지
+   ② '1:1', '+ 주의사항', '파스타/면' 같은 기호가 줄 끝에서 끊기지 않게 붙임. 글자 내용은 그대로, 공백 종류만 바뀜 */
+(function(){
+  var NB=' ',WJ='⁠';
+  var INL={B:1,STRONG:1,I:1,EM:1,SPAN:1,A:1,SMALL:1,U:1,MARK:1,SUP:1,SUB:1,BR:1,WBR:1};
+  var SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1,INPUT:1,SELECT:1,OPTION:1,CODE:1,PRE:1,SVG:1,NOSCRIPT:1};
+  var done=new WeakSet();
+  function skipped(el){
+    for(var e=el;e&&e!==document.body;e=e.parentElement){
+      if(SKIP[e.tagName]||SKIP[(e.tagName||'').toUpperCase()])return true;
+      if(e.classList&&(e.classList.contains('stab')||e.classList.contains('subtab')||e.classList.contains('name')||e.classList.contains('mini-icon')||e.isContentEditable))return true;
+    }
+    return false;
+  }
+  function isInline(e){
+    if(!INL[e.tagName])return false;
+    if(e.tagName==='BR'||e.tagName==='WBR')return true;
+    var d=getComputedStyle(e).display;
+    return d==='inline'||d==='contents';
+  }
+  function glue(s){
+    s=s.replace(/(\d):(?=\d)/g,'$1:'+WJ);
+    s=s.replace(/ ([+＋]) (?=\S)/g,' $1'+NB);
+    s=s.replace(/([가-힣\)])\/(?=[가-힣])/g,'$1/'+WJ);
+    s=s.replace(/([가-힣])\((?=[A-Za-z0-9])/g,'$1'+WJ+'(');
+    s=s.replace(/\(([^()]{1,16})\)/g,function(m){return m.replace(/·/g,WJ+'·'+WJ);});
+    return s;
+  }
+  function textNodes(el){
+    var a=[],w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT),n;
+    while(n=w.nextNode()){if(n.nodeValue.length)a.push(n);}
+    return a;
+  }
+  function fixBlock(el){
+    if(done.has(el))return;done.add(el);
+    var tn=textNodes(el);if(!tn.length)return;
+    var total=0,i;
+    for(i=0;i<tn.length;i++){var v=glue(tn[i].nodeValue);if(v!==tn[i].nodeValue)tn[i].nodeValue=v;total+=tn[i].nodeValue.trim().length;}
+    if(total<12)return;
+    // 마지막 글자가 있는 텍스트 노드 찾기
+    var k=tn.length-1;while(k>=0&&!tn[k].nodeValue.trim())k--;
+    if(k<0)return;
+    var last=tn[k],val=last.nodeValue,m;
+    var m3=/^(.*\S) (\S{1,10}) (\S{1,4})(\s*)$/.exec(val);
+    if(m3&&m3[2].length+m3[3].length<=6){
+      last.nodeValue=m3[1]+NB+m3[2]+NB+m3[3]+m3[4];
+    }else if(m=/^(.*\S) (\S{1,10})(\s*)$/.exec(val)){
+      var pw=/(\S+)$/.exec(m[1]);
+      if(pw&&pw[1].length+m[2].length<=20)last.nodeValue=m[1]+NB+m[2]+m[3];
+    }else if(/^\s?\S{1,7}\s*$/.test(val)){
+      // 마지막 단어가 <b> 등 태그 뒤/안에 홀로 있는 경우: 앞 단어와의 공백을 붙임
+      if(/^ /.test(val)){
+        var q=k-1;while(q>=0&&!tn[q].nodeValue.trim())q--;
+        var pw2=q>=0?/(\S+)\s*$/.exec(tn[q].nodeValue):null;
+        if(pw2&&pw2[1].length<=12)last.nodeValue=NB+val.slice(1);
+      }else{
+        var p=k-1;while(p>=0&&!tn[p].nodeValue.length)p--;
+        if(p>=0){var pv=tn[p].nodeValue,pm=/(\S+) $/.exec(pv);
+          if(pm&&pm[1].length<=12)tn[p].nodeValue=pv.replace(/ $/,NB);}
+      }
+    }
+  }
+  function run(root){
+    root=root||document.body;if(!root||root.nodeType!==1)return;
+    var els=root.querySelectorAll('*'),list=[root].concat([].slice.call(els));
+    for(var i=0;i<list.length;i++){
+      var e=list[i];
+      if(isInline(e)||skipped(e)||done.has(e))continue;
+      var ok=true,hasText=false;
+      for(var c=e.firstChild;c;c=c.nextSibling){
+        if(c.nodeType===3){if(c.nodeValue.trim())hasText=true;}
+        else if(c.nodeType===1&&!isInline(c)){ok=false;break;}
+      }
+      if(ok&&hasText)fixBlock(e);
+    }
+  }
+  var pending=[],t=null;
+  function flush(){t=null;var l=pending;pending=[];for(var i=0;i<l.length;i++){if(l[i].isConnected)run(l[i]);}}
+  function init(){
+    run(document.body);
+    try{new MutationObserver(function(ms){
+      for(var i=0;i<ms.length;i++){var a=ms[i].addedNodes;for(var j=0;j<a.length;j++){if(a[j].nodeType===1)pending.push(a[j]);}}
+      if(pending.length&&!t)t=setTimeout(flush,60);
+    }).observe(document.body,{childList:true,subtree:true});}catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+  window.mbTypo=run;
+})();
+</script>
 </body>
 </html>
