@@ -34,7 +34,7 @@
     var isIphone = /iPhone|iPod/i.test(ua);
     function buildStore(asBar){
       var box = document.createElement('div'); box.className = 'a2hs' + (asBar ? ' a2hs-bar' : ''); if(!asBar) box.style.position = 'relative';
-      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>이유식노트 앱이 나왔어요</b><small>앱스토어에서 무료로 받을 수 있어요. 가입 없이 내 기기에만 저장돼요</small></div><a class="go" href="' + APPSTORE_URL + '" style="flex:0 0 auto;background:#4B6B54;color:#fff;font-weight:800;font-size:13.5px;padding:10px 13px;border-radius:12px;text-decoration:none;font-family:inherit">앱 받기</a><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
+      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>이유식노트 앱이 나왔어요</b><small>앱스토어에서 무료로 받을 수 있어요</small></div><a class="go" href="' + APPSTORE_URL + '" style="flex:0 0 auto;background:#4B6B54;color:#fff;font-weight:800;font-size:13.5px;padding:10px 13px;border-radius:12px;text-decoration:none;font-family:inherit">앱 받기</a><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
       box.querySelector('.go').addEventListener('click', function(){ ga('appstore_click', {where: asBar ? 'app' : 'page'}); });
       box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); ga('appstore_close'); });
       var sp = document.createElement('div'); sp.style.display = 'none';
