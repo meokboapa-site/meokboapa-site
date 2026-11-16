@@ -860,6 +860,11 @@
 .rc-head h3{margin:0 !important;flex:1;min-width:0}
 .rc-img{width:88px;height:88px;object-fit:contain;flex:none;pointer-events:none;-webkit-user-drag:none}
 /* RECIPEIMG_END css */
+
+/* MENUIMG_BEGIN css */
+.mn-thumb{width:60px;height:60px;object-fit:contain;flex:none;pointer-events:none;-webkit-user-drag:none}
+.menupage .cp-head .tt{min-width:0}
+/* MENUIMG_END css */
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -5163,7 +5168,7 @@ function menuCardsHtml(stage, opts){
   const card = m => `
       <div class="cp-acc" id="mn-${m.id}">
         <button class="cp-head" type="button" onclick="toggleMenu('${m.id}', this)">
-          <span class="tt">${m.name}${BEST_MENU_IDS.indexOf(m.id)>=0?' <span class="best-hot">BEST</span>':''}</span>
+          ${mnThumb(m.id)}<span class="tt">${m.name}${BEST_MENU_IDS.indexOf(m.id)>=0?' <span class="best-hot">BEST</span>':''}</span>
           <span class="mn-meta">${m.from}부터 · ${m.mins}분</span>
           <span class="ar">▾</span>
         </button>
@@ -5261,7 +5266,7 @@ function buildMenuPage(container, stage){
     html += items.map(m=>{ count++; return `
       <div class="cp-acc" id="mn-${m.id}">
         <button class="cp-head" type="button" onclick="toggleMenu('${m.id}')">
-          <span class="tt">${m.name}${BEST_MENU_IDS.indexOf(m.id)>=0?' <span class="best-hot">BEST</span>':''}</span>
+          ${mnThumb(m.id)}<span class="tt">${m.name}${BEST_MENU_IDS.indexOf(m.id)>=0?' <span class="best-hot">BEST</span>':''}</span>
           <span class="mn-meta">${m.from}부터 · ${m.mins}분</span>
           <span class="ar">▾</span>
         </button>
@@ -6016,6 +6021,16 @@ function rcHead(name){
   return '<div class="rc-head">' + (id ? '<img class="rc-img" src="/dogam/r/'+id+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '') + '<h3>'+name+'</h3></div>';
 }
 /* RECIPEIMG_END js */
+
+/* MENUIMG_BEGIN js */
+const MENU_IMG = {"beefstick":"001","vegstick":"002","oatstick":"003","pumpkinball":"004","bapbol":"005","bapjeon":"006","bunyu":"007","ragu":"008","cream":"009","janchi":"010","fishjeon":"011","hobakjeon":"012","dubustk":"013","sausage":"014","miyeok":"015","gyeranjjim":"016","pancake":"017","drumstick":"018","jjimdak":"019","ribs":"020","yukjeon":"021","bapmuffin":"022","wonmul":"023","avobeef":"024"};
+const BT_IMG = {};
+function mnThumb(id){ const k = MENU_IMG[id]; return k ? '<img class="mn-thumb" src="/dogam/m/'+k+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : ''; }
+function btHead(name){
+  const k = BT_IMG[name];
+  return '<div class="rc-head">' + (k ? '<img class="rc-img" src="/dogam/m/'+k+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '') + '<h3>'+name+'</h3></div>';
+}
+/* MENUIMG_END js */
 function buildRecipePage(container, stage){
   const recipes = RECIPES_BY_STAGE[stage];
   if(!recipes){
@@ -6693,7 +6708,7 @@ function buildBantaegiPage(container){
     const card = document.createElement('div');
     card.className='recipe-card';
     card.innerHTML = `
-      <h3>${r.name}</h3>
+      ${btHead(r.name)}
       <div class="sec-sub" style="margin-bottom:6px;"><strong>적합 시기</strong> ${r.stage}</div>
       <div class="selector-row"><span class="selector-label">인분</span><div class="ratio-btns" id="${cid}-meal"></div></div>
       <div class="amount-box" id="${cid}-amt"></div>
