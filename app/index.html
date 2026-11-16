@@ -786,6 +786,90 @@
   padding:7px 14px;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;min-height:34px;}
 .ing-filter-on button:active{transform:translateY(1px);}
 .real-photo{margin:4px 0 12px}.real-photo img{width:100%;height:auto;max-height:340px;object-fit:cover;border-radius:12px;display:block;background:#efe8dd}.real-photo figcaption{font-size:12.5px;color:var(--ink-soft);margin-top:6px;line-height:1.5;word-break:keep-all}
+
+
+/* DOGAM_BEGIN css */
+.dg-wrap{max-width:560px;margin:0 auto;padding:0 0 30px}
+.dg-top{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 14px 12px;margin-bottom:12px;box-shadow:0 1px 3px rgba(46,43,36,.05)}
+.dg-top-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.dg-top-row b{font-size:16px;color:var(--moss-deep)}
+.dg-top-row span{font-size:12.5px;color:var(--ink-soft)}
+.dg-bar{height:10px;border-radius:99px;background:#EEE7DA;margin:10px 0 8px;overflow:hidden}
+.dg-bar i{display:block;height:100%;background:var(--moss);border-radius:99px;transition:width .4s}
+.dg-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft)}
+.dg-legend em{font-style:normal;display:inline-flex;align-items:center;gap:5px}
+.dg-dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.dg-tabs{display:flex;gap:6px;overflow-x:auto;margin:0 0 6px;padding:2px 0;scrollbar-width:none}
+.dg-tabs::-webkit-scrollbar{display:none}
+.dg-tab{flex:none;border:1px solid var(--line);background:#fff;color:var(--ink-soft);padding:7px 13px;border-radius:99px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.dg-tab[aria-pressed="true"]{background:var(--moss);color:#fff;border-color:var(--moss)}
+.dg-sec{margin:16px 0 8px;display:flex;align-items:baseline;gap:8px}
+.dg-sec h3{margin:0;font-size:16px;font-weight:800;color:var(--moss-deep)}
+.dg-sec span{color:var(--ink-soft);font-size:12px}
+.dg-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.dg-it{position:relative;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:7px 2px 7px;text-align:center;cursor:pointer;font:inherit;color:var(--ink);min-width:0}
+.dg-it .dg-ico{width:100%;aspect-ratio:1/1;display:block;padding:2px 9px 0}
+.dg-ico img,.dg-sh-ico img{width:100%;height:100%;display:block;object-fit:contain;pointer-events:none;-webkit-user-drag:none}
+.dg-it .dg-nm{font-size:12px;font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px}
+.dg-it .dg-meta{font-size:10.5px;color:var(--ink-soft);margin-top:1px;min-height:13px}
+.dg-it.off{background:#F1EFEA;border-color:transparent}
+.dg-it.off .dg-ico img{filter:grayscale(1) opacity(.5)}
+.dg-it.off .dg-nm{color:#9a9488;font-weight:500}
+.dg-star{position:absolute;top:4px;right:5px;font-size:14px;line-height:1;color:#DDD5C4}
+.dg-star.on{color:#F2A33A}
+.dg-badge{position:absolute;left:4px;top:4px;font-size:9.5px;padding:2px 6px;border-radius:99px;background:var(--apricot);color:#fff;font-weight:800;line-height:1.3}
+.dg-badge.ok{background:var(--moss)}
+.dg-bg{position:fixed;inset:0;background:rgba(30,26,20,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:400}
+.dg-bg.show{display:flex}
+.dg-sheet{width:100%;max-width:560px;max-height:86vh;overflow-y:auto;background:var(--bg);border-radius:22px;padding:18px 18px 22px;animation:dgup .22s ease-out}
+@keyframes dgup{from{transform:scale(.95);opacity:0}to{transform:none;opacity:1}}
+.dg-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:-18px;z-index:2;margin:-18px -18px 12px;padding:10px 12px;background:var(--bg);border-radius:22px 22px 0 0;border-bottom:1px solid var(--line)}
+.dg-nav button{border:1px solid var(--line);background:#fff;color:var(--moss-deep);font:inherit;font-size:13px;font-weight:800;padding:8px 14px;border-radius:99px;cursor:pointer;min-height:38px}
+.dg-nav button:disabled{opacity:.35}
+.dg-sh-top{display:flex;gap:14px;align-items:center}
+.dg-sh-ico{width:84px;height:84px;flex:none;background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px}
+.dg-sh-top h3{margin:0 0 4px;font-size:19px;color:var(--moss-deep);line-height:1.25}
+.dg-sh-top p{margin:0;font-size:13px;color:var(--ink-soft);line-height:1.45}
+.dg-watch{margin:14px 0 0;background:var(--apricot-soft);border-radius:14px;padding:11px 12px;font-size:13px;line-height:1.55}
+.dg-watch.bad{background:#F8E1D8}
+.dg-steps{display:flex;gap:6px;margin-top:8px}
+.dg-steps i{flex:1;height:8px;border-radius:99px;background:#E7DFD0}
+.dg-steps i.on{background:var(--apricot)}.dg-steps i.done{background:var(--moss)}
+.dg-btns{display:grid;gap:8px;margin-top:14px}
+.dg-btn{border:0;border-radius:14px;padding:13px;font:inherit;font-size:15px;font-weight:800;cursor:pointer}
+.dg-btn.pri{background:var(--moss);color:#fff}
+.dg-btn.pri:active{background:var(--moss-deep)}
+.dg-btn.sec{background:#fff;border:1px solid var(--line);color:var(--ink);font-weight:700}
+.dg-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dg-react{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--ink-soft)}
+.dg-react button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;font-size:17px;cursor:pointer;line-height:1.2}
+.dg-react button.on{background:var(--apricot-soft);border-color:var(--apricot)}
+.dg-info{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:4px 14px}
+.dg-info div{padding:9px 0;border-bottom:1px solid #F0EADD;font-size:13px;line-height:1.55}
+.dg-info div:last-child{border-bottom:0}
+.dg-info b{display:inline-block;min-width:64px;color:var(--moss-deep);font-weight:800}
+.dg-info .w{color:var(--warn)}
+.dg-link{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:700;color:var(--apricot);text-decoration:none}
+.dg-undo{display:block;margin:12px auto 0;background:none;border:0;color:var(--ink-soft);font:inherit;font-size:12px;text-decoration:underline;cursor:pointer}
+.dg-disc{font-size:11.5px;color:var(--ink-soft);line-height:1.55;margin-top:10px}
+.dg-toast{position:fixed;left:50%;bottom:calc(24px + var(--safe-b));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:99px;font-size:13px;white-space:nowrap;max-width:calc(100% - 32px);overflow:hidden;text-overflow:ellipsis;z-index:500;opacity:0;pointer-events:none;transition:opacity .2s}
+.dg-toast.show{opacity:1}
+/* 시기별 재료 카드의 작은 그림 */
+#ingGrid .card{flex-direction:column !important;justify-content:flex-start !important;gap:2px;padding:13px 3px 7px !important}
+.ing-thumb{width:42px;height:42px;object-fit:contain;display:block;margin:0 auto;pointer-events:none;-webkit-user-drag:none}
+/* DOGAM_END css */
+
+/* RECIPEIMG_BEGIN css */
+.rc-head{display:flex;align-items:center;gap:12px;margin:0 0 4px}
+.rc-head h3{margin:0 !important;flex:1;min-width:0}
+.rc-img{width:88px;height:88px;object-fit:contain;flex:none;pointer-events:none;-webkit-user-drag:none}
+/* RECIPEIMG_END css */
+
+
+/* MENUIMG_BEGIN css */
+.mn-thumb{width:60px;height:60px;object-fit:contain;flex:none;pointer-events:none;-webkit-user-drag:none}
+.menupage .cp-head .tt{min-width:0}
+/* MENUIMG_END css */
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -3385,6 +3469,13 @@ STAGES.forEach((s,i)=>{
   btn.onclick=()=>selectStage(s.id, btn);
   stageNav.appendChild(btn);
 });
+/* DOGAM_BEGIN nav */
+const dogamBtn=document.createElement('button');
+dogamBtn.className='stab';
+dogamBtn.textContent='📖 재료 도감';
+dogamBtn.onclick=()=>selectDogamPage(dogamBtn);
+stageNav.appendChild(dogamBtn);
+/* DOGAM_END nav */
 const bantaegiBtn=document.createElement('button');
 bantaegiBtn.className='stab';
 bantaegiBtn.textContent='밥태기 탈출';
@@ -3482,6 +3573,160 @@ function selectCarePage(btn){
   body.innerHTML=`<div class="stagebody" id="careBody" style="padding-top:16px;"></div>`;
   buildCarePage(document.getElementById('careBody'));
 }
+
+
+/* DOGAM_BEGIN js */
+/* ===================== 재료 도감 =====================
+   먹어본 재료 = 기존 ✓(triedSet) 그대로. 날짜·횟수·3일 관찰·이상 반응만 dogamLog 에 따로 저장합니다.
+   그래서 시기별 재료 카드의 ★·✓ 와 도감이 항상 같은 상태를 봅니다. 기록은 이 기기에만 저장됩니다. */
+const DOGAM_SECTIONS = [{"id":"leaf","t":"잎채소","s":"비타민 · 식이섬유","items":[["시금치","시금치","001"],["청경채","청경채","002"],["얼갈이배추","얼갈이배추","003"],["비타민채소","비타민채소","004"],["케일","케일","005"],["근대","근대","006"],["아욱","아욱","007"],["알배추","알배추","008"],["양배추","양배추","009"],["적채","적채","010"],["콜리플라워","콜리플라워","011"],["브로콜리","브로콜리","012"],["셀러리","셀러리","013"],["아스파라거스","아스파라거스","014"],["콩나물","콩나물","015"]]},{"id":"fruitveg","t":"열매채소","s":"비타민 · 수분","items":[["애호박","애호박","016"],["단호박","단호박","017"],["오이","오이","018"],["가지","가지","019"],["토마토","토마토","020"],["파프리카(빨강)","빨간파프리카","021"],["파프리카(노랑)","노란파프리카","022"],["파프리카(주황)","주황파프리카","023"],["완두콩","완두콩","024"],["그린빈","그린빈","025"],["옥수수","옥수수","026"]]},{"id":"root","t":"뿌리채소","s":"식이섬유 · 당질","items":[["당근","당근","027"],["무","무","028"],["비트","비트","029"],["연근","연근","030"],["우엉","우엉","031"],["콜라비","콜라비","032"],["양파","양파","033"],["마","마","034"]]},{"id":"mush","t":"버섯·해조","s":"식이섬유 · 무기질","items":[["표고버섯","표고버섯","035"],["새송이버섯","새송이버섯","036"],["느타리버섯","느타리버섯","037"],["양송이버섯","양송이버섯","038"],["팽이버섯","팽이버섯","039"],["미역","미역","040"]]},{"id":"grain","t":"곡류","s":"탄수화물 · 에너지","items":[["쌀","쌀","041"],["오트밀/귀리","오트밀","042"],["현미","현미","043"],["진밥","진밥","044"],["통밀 파스타/면","통밀파스타","045"],["소면","소면","046"],["감자","감자","047"],["고구마","고구마","048"],["밤","밤","049"]]},{"id":"protein","t":"단백질","s":"철분 · 근육","items":[["소고기","소고기","050"],["닭고기","닭고기","051"],["돼지고기","돼지고기","052"],["달걀(완숙)","달걀","053"],["두부","두부","054"],["순두부","순두부","055"],["가자미(흰살생선)","흰살생선","056"],["대구","대구","057"],["연어","연어","058"],["새우","새우","059"],["게","게","060"],["전복","전복","061"],["렌틸콩","렌틸콩","062"],["검은콩","검은콩","063"],["견과류(페이스트/가루)","견과류","064"],["땅콩버터","땅콩버터","065"]]},{"id":"fruit","t":"과일","s":"비타민 · 간식","items":[["사과","사과","066"],["배","배","067"],["바나나","바나나","068"],["복숭아","복숭아","069"],["블루베리","블루베리","070"],["딸기","딸기","071"],["수박","수박","072"],["참외","참외","073"],["멜론","멜론","074"],["포도","포도","075"],["파인애플","파인애플","076"],["망고","망고","077"],["아보카도","아보카도","078"],["대추","대추","079"]]},{"id":"dairy","t":"유제품","s":"칼슘 · 단백질","items":[["플레인 요거트(무가당)","요거트","080"],["무염 치즈","무염치즈","081"],["일반 우유","우유","082"],["두유(무첨가)","두유","083"],["무염버터","무염버터","084"],["저염버터","저염버터","085"],["기버터","기버터","086"]]},{"id":"sauce","t":"양념·기름","s":"간 · 풍미 (소량)","items":[["참기름","참기름","087"],["들기름","들기름","088"],["들깨가루","들깨가루","089"],["검은깨","검은깨","090"],["마늘가루","마늘가루","091"],["저염간장","저염간장","092"],["된장(저염)","된장","093"],["고추장(순한맛)","고추장","094"],["소금","소금","095"],["배도라지즙(조림용)","배도라지즙","096"],["저염 김치(순화판)","저염김치","097"],["순한카레가루","카레","098"],["순한짜장소스","짜장","099"]]}];
+let dogamLog = {};
+try { dogamLog = JSON.parse(localStorage.getItem('dogamLog')||'{}') || {}; } catch(e){}
+let dgCur = 'all';
+function dgSave(){ try{ localStorage.setItem('dogamLog', JSON.stringify(dogamLog)); }catch(e){} }
+function dgPad(n){ return String(n).padStart(2,'0'); }
+function dgToday(){ const d=new Date(); return d.getFullYear()+'-'+dgPad(d.getMonth()+1)+'-'+dgPad(d.getDate()); }
+function dgDate(s){ const p=s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+function dgDiff(s){ return Math.round((dgDate(dgToday()) - dgDate(s)) / 86400000); }
+function dgFmt(s){ const p=s.split('-'); return (+p[1])+'/'+(+p[2]); }
+function dgWatch(name){
+  const r = dogamLog[name];
+  if(!r || !r.first || r.bad || !triedSet.has(name)) return 0;
+  const d = dgDiff(r.first) + 1;
+  return (d>=1 && d<=3) ? d : 0;
+}
+function dgInfo(name){
+  const order = ['초기','중기','후기','완료기','일반식'];
+  for(const st of order){
+    const arr = INGREDIENTS_BY_STAGE[st];
+    if(!arr) continue;
+    const it = arr.find(i=>i.name===name);
+    if(it) return {stage:st, item:it};
+  }
+  return {stage:null, item:null};
+}
+function dgThumb(name){
+  const it = dgFind(name);
+  return it ? '<img class="ing-thumb" src="/dogam/i/'+it[2]+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '';
+}
+function dgSlug(name){ return name.replace(/[\/ ()]+/g,'-').replace(/-+$/,''); }
+function dgEsc(s){ return String(s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function dgToast(m){
+  let t = document.getElementById('dgToast');
+  if(!t){ t=document.createElement('div'); t.id='dgToast'; t.className='dg-toast'; document.body.appendChild(t); }
+  t.textContent = m; t.classList.add('show');
+  clearTimeout(dgToast._t); dgToast._t = setTimeout(()=>t.classList.remove('show'), 1900);
+}
+function selectDogamPage(btn){
+  isWorkshop = true;
+  document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  scrollTabIntoView(btn);
+  const body = document.getElementById('stageBody');
+  body.innerHTML = '<div class="stagebody" id="dogamBody" style="padding-top:16px;"></div>';
+  buildDogamPage(document.getElementById('dogamBody'));
+  try{ gtag('event','dogam_open',{where:'tab'}); }catch(e){}
+}
+function buildDogamPage(root){
+  let tried=0, total=0, watch=0;
+  DOGAM_SECTIONS.forEach(s=>s.items.forEach(it=>{ total++; if(triedSet.has(it[0])) tried++; if(dgWatch(it[0])) watch++; }));
+  const tabs = [{id:'all',t:'전체'}].concat(DOGAM_SECTIONS.map(s=>({id:s.id,t:s.t})));
+  let h = '<div class="dg-wrap">'
+    + '<h2 style="margin:0 0 2px;font-size:21px;font-weight:900;color:var(--moss-deep);letter-spacing:-.02em">재료 도감</h2>'
+    + '<p style="margin:0 0 12px;font-size:13px;color:var(--ink-soft)">우리 아기가 먹어본 재료를 모아보는 도감이에요. 칸을 눌러 기록해 보세요.</p>'
+    + '<div class="dg-top"><div class="dg-top-row"><b>도감 '+tried+'/'+total+'종</b><span>'+(watch?('관찰 중 '+watch+'종'):(tried?'관찰 중인 재료가 없어요':'첫 재료를 기록해 보세요'))+'</span></div>'
+    + '<div class="dg-bar"><i style="width:'+(tried*100/total)+'%"></i></div>'
+    + '<div class="dg-legend"><em><span class="dg-dot" style="background:var(--moss)"></span>먹어본 재료</em><em><span class="dg-dot" style="background:var(--apricot)"></span>알레르기 관찰 중</em><em><span class="dg-dot" style="background:#B9B3A6"></span>아직 안 먹어봤어요</em></div></div>'
+    + '<div class="dg-tabs">' + tabs.map(t=>'<button type="button" class="dg-tab" data-t="'+t.id+'" aria-pressed="'+(dgCur===t.id)+'">'+t.t+'</button>').join('') + '</div>';
+  DOGAM_SECTIONS.forEach(s=>{
+    if(dgCur!=='all' && dgCur!==s.id) return;
+    h += '<div class="dg-sec"><h3>'+s.t+'</h3><span>'+s.s+'</span></div><div class="dg-grid">';
+    s.items.slice().sort((a,b)=>(triedSet.has(b[0])?1:0)-(triedSet.has(a[0])?1:0)).forEach(it=>{
+      const name=it[0], on=triedSet.has(name), r=dogamLog[name]||{}, wd=dgWatch(name);
+      const passed = on && !wd && r.first && !r.bad && dgDiff(r.first)>=3 && dgDiff(r.first)<=4;
+      h += '<button type="button" class="dg-it'+(on?'':' off')+'" data-n="'+dgEsc(name)+'">'
+        + (on&&wd?'<span class="dg-badge">관찰 '+wd+'/3</span>':'')+(passed?'<span class="dg-badge ok">통과</span>':'')
+        + '<span class="dg-star'+(favSet.has(name)?' on':'')+'">'+(favSet.has(name)?'★':'☆')+'</span>'
+        + '<span class="dg-ico"><img src="/dogam/i/'+it[2]+'.webp" alt="" loading="lazy" decoding="async" draggable="false"></span>'
+        + '<div class="dg-nm">'+dgEsc(it[1])+'</div><div class="dg-meta">'+(on&&r.last?dgFmt(r.last)+' · '+r.n+'번':'')+'</div></button>';
+    });
+    h += '</div>';
+  });
+  h += '</div>';
+  root.innerHTML = h;
+  root.querySelectorAll('.dg-tab').forEach(b=>b.onclick=()=>{ dgCur=b.dataset.t; buildDogamPage(root); });
+  root.querySelectorAll('.dg-it').forEach(b=>b.onclick=()=>openDogamSheet(b.dataset.n, root));
+}
+function dgFind(name){ for(const s of DOGAM_SECTIONS){ const it=s.items.find(x=>x[0]===name); if(it) return it; } return null; }
+function dgClose(){ const bg=document.getElementById('dgBg'); if(bg) bg.classList.remove('show'); }
+function openDogamSheet(name, root){
+  const it = dgFind(name); if(!it) return;
+  const on = triedSet.has(name), r = dogamLog[name]||{}, wd = dgWatch(name);
+  const {stage, item} = dgInfo(name);
+  let st;
+  if(!on) st = '아직 먹어보지 않았어요';
+  else if(r.first) st = '처음 먹인 날 '+dgFmt(r.first)+' · 마지막 '+dgFmt(r.last||r.first)+' · 총 '+(r.n||1)+'번';
+  else if(r.last) st = '먹어본 재료예요 · 마지막 '+dgFmt(r.last)+' · 기록 '+(r.n||1)+'번';
+  else st = '먹어본 재료로 체크돼 있어요 (날짜 기록은 아직 없어요)';
+  const dgList = [...document.querySelectorAll('.dg-it')].map(b=>b.dataset.n), dgIdx = dgList.indexOf(name);
+  let h = '<div class="dg-nav"><button type="button" id="dgPrev"'+(dgIdx<=0?' disabled':'')+'>‹ 이전 재료</button><button type="button" id="dgClz">닫기 ✕</button><button type="button" id="dgNext"'+(dgIdx<0||dgIdx>=dgList.length-1?' disabled':'')+'>다음 재료 ›</button></div>';
+  h += '<div class="dg-sh-top"><div class="dg-sh-ico"><img src="/dogam/i/'+it[2]+'.webp" alt="" draggable="false"></div><div><h3>'+dgEsc(name)+'</h3><p>'+st+'</p></div></div>';
+  if(r.bad) h += '<div class="dg-watch bad"><b>이상 반응을 기록해 두었어요.</b><br>다시 먹이기 전에 소아과 선생님과 먼저 상의해 주세요.</div>';
+  else if(wd) h += '<div class="dg-watch"><b>알레르기 관찰 '+wd+'/3일차</b><br>새 재료는 3일 동안 한 가지씩 먹이며 지켜봐요. 이상한 반응이 보이면 아래에서 기록해 주세요.<div class="dg-steps"><i class="'+(wd>=1?(wd===3?'done':'on'):'')+'"></i><i class="'+(wd>=2?(wd===3?'done':'on'):'')+'"></i><i class="'+(wd>=3?'done':'')+'"></i></div></div>';
+  else if(on && r.first) h += '<div class="dg-watch"><b>관찰 3일을 마쳤어요.</b> 이제 다른 새 재료를 도전해 볼까요?</div>';
+  h += '<div class="dg-btns"><button type="button" class="dg-btn pri" id="dgEat">'+(on?'오늘 또 먹였어요':'오늘 처음 먹였어요 (관찰 시작)')+'</button><div class="dg-row2"><button type="button" class="dg-btn sec" id="dgFav">'+(favSet.has(name)?'★ 즐겨찾기 해제':'☆ 즐겨찾기')+'</button>'
+    + (on?(r.bad?'<button type="button" class="dg-btn sec" id="dgOk">이상 반응 기록 지우기</button>':'<button type="button" class="dg-btn sec" id="dgBad">이상 반응 기록</button>'):'<button type="button" class="dg-btn sec" id="dgX">닫기</button>')+'</div></div>';
+  if(on) h += '<div class="dg-react"><span>아기 반응</span>'+['like','neutral','dislike'].map(k=>'<button type="button" data-k="'+k+'" class="'+(reactionMap[name]===k?'on':'')+'">'+REACTION_EMOJI[k]+'</button>').join('')+'</div>';
+  if(item){
+    h += '<div class="dg-info">'
+      + (stage?'<div><b>도입 시기</b>'+stage+'</div>':'')
+      + (item.nutrients?'<div><b>영양</b>'+dgEsc(item.nutrients)+'</div>':'')
+      + (item.allergy?'<div><b>알레르기</b>'+dgEsc(item.allergy)+(item.allergyTest?' · 새로 시작할 때 소량부터':'')+'</div>':'')
+      + (item.tip?'<div><b>손질 팁</b>'+dgEsc(item.tip)+'</div>':'')
+      + (item.warn?'<div class="w"><b>주의</b>'+dgEsc(item.warn)+'</div>':'')
+      + (item.note?'<div><b>참고</b>'+dgEsc(item.note)+'</div>':'')
+      + '</div>';
+  }
+  if(!MB_APP_MODE) h += '<a class="dg-link" target="_blank" rel="noopener" href="/%EC%9E%AC%EB%A3%8C/'+encodeURIComponent(dgSlug(name))+'/">'+dgEsc(it[1])+' 손질·보관·월령 자세히 보기 ›</a>';
+  if(on) h += '<button type="button" class="dg-undo" id="dgUndo">먹어본 목록에서 빼기</button>';
+  h += '<div class="dg-disc">기록은 이 기기에만 저장돼요. 도감은 참고용이며 진단이나 의학적 판단이 아니에요. 걱정되는 증상이 있으면 소아과에 문의해 주세요.</div>';
+  let bg = document.getElementById('dgBg');
+  if(!bg){ bg=document.createElement('div'); bg.id='dgBg'; bg.className='dg-bg'; bg.innerHTML='<div class="dg-sheet" id="dgSheet" role="dialog" aria-modal="true"></div>'; document.body.appendChild(bg); bg.onclick=e=>{ if(e.target===bg) dgClose(); }; }
+  const sh = document.getElementById('dgSheet'); sh.innerHTML = h; sh.scrollTop = 0; bg.classList.add('show');
+  const refresh = ()=>{ dgClose(); buildDogamPage(root); };
+  const clz=document.getElementById('dgClz'); if(clz) clz.onclick=dgClose;
+  const pv=document.getElementById('dgPrev'), nx=document.getElementById('dgNext');
+  if(pv) pv.onclick=()=>{ if(dgIdx>0) openDogamSheet(dgList[dgIdx-1], root); };
+  if(nx) nx.onclick=()=>{ if(dgIdx>=0&&dgIdx<dgList.length-1) openDogamSheet(dgList[dgIdx+1], root); };
+  document.getElementById('dgEat').onclick = ()=>{
+    const x = dogamLog[name] || (dogamLog[name] = {});
+    const wasTried = triedSet.has(name);
+    x.n = (x.n||0) + 1; x.last = dgToday();
+    if(!wasTried){ x.first = dgToday(); markTried([name]); }
+    dgSave(); refresh();
+    dgToast(wasTried ? it[1]+' 기록했어요 ('+x.n+'번)' : it[1]+' 첫 도전! 관찰 1/3일차 시작');
+    try{ gtag('event','dogam_eat',{first:wasTried?0:1}); }catch(e){}
+  };
+  document.getElementById('dgFav').onclick = ()=>{
+    if(favSet.has(name)) favSet.delete(name); else favSet.add(name);
+    try{ localStorage.setItem('favIngredients', JSON.stringify([...favSet])); }catch(e){}
+    const c = document.getElementById('card-'+name); const b = c && c.querySelector('.fav-btn'); if(b) b.classList.toggle('on', favSet.has(name));
+    refresh();
+  };
+  const bad = document.getElementById('dgBad'); if(bad) bad.onclick = ()=>{ (dogamLog[name]||(dogamLog[name]={})).bad = 1; dgSave(); refresh(); dgToast('이상 반응을 기록했어요'); };
+  const ok = document.getElementById('dgOk'); if(ok) ok.onclick = ()=>{ delete dogamLog[name].bad; dgSave(); refresh(); };
+  const cl = document.getElementById('dgX'); if(cl) cl.onclick = dgClose;
+  sh.querySelectorAll('.dg-react button').forEach(b=>b.onclick=()=>{ setReaction(name, b.dataset.k); openDogamSheet(name, root); });
+  const un = document.getElementById('dgUndo');
+  if(un) un.onclick = ()=>{
+    if(!un.dataset.sure){ un.dataset.sure='1'; un.textContent='정말 뺄까요? 날짜·횟수 기록이 지워져요 (한 번 더 누르면 빼요)'; return; }
+    triedSet.delete(name); try{ localStorage.setItem('triedIngredients', JSON.stringify([...triedSet])); }catch(e){}
+    delete dogamLog[name]; dgSave();
+    const c = document.getElementById('card-'+name); const b = c && c.querySelector('.tried-btn'); if(b) b.classList.remove('on');
+    refreshTriedBorders(); refresh(); dgToast(it[1]+'을(를) 먹어본 목록에서 뺐어요');
+  };
+}
+/* DOGAM_END js */
 function selectAiPage(btn){
   isWorkshop=true;
   document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
@@ -4934,7 +5179,7 @@ function menuCardsHtml(stage, opts){
   const card = m => `
       <div class="cp-acc" id="mn-${m.id}">
         <button class="cp-head" type="button" onclick="toggleMenu('${m.id}', this)">
-          <span class="tt">${m.name}${BEST_MENU_IDS.indexOf(m.id)>=0?' <span class="best-hot">BEST</span>':''}</span>
+          ${mnThumb(m.id)}<span class="tt">${m.name}${BEST_MENU_IDS.indexOf(m.id)>=0?' <span class="best-hot">BEST</span>':''}</span>
           <span class="mn-meta">${m.from}부터 · ${m.mins}분</span>
           <span class="ar">▾</span>
         </button>
@@ -5032,7 +5277,7 @@ function buildMenuPage(container, stage){
     html += items.map(m=>{ count++; return `
       <div class="cp-acc" id="mn-${m.id}">
         <button class="cp-head" type="button" onclick="toggleMenu('${m.id}')">
-          <span class="tt">${m.name}${BEST_MENU_IDS.indexOf(m.id)>=0?' <span class="best-hot">BEST</span>':''}</span>
+          ${mnThumb(m.id)}<span class="tt">${m.name}${BEST_MENU_IDS.indexOf(m.id)>=0?' <span class="best-hot">BEST</span>':''}</span>
           <span class="mn-meta">${m.from}부터 · ${m.mins}분</span>
           <span class="ar">▾</span>
         </button>
@@ -5184,7 +5429,7 @@ function buildIngredientPage(container, stage){
           <button class="mini-icon fav-btn${favSet.has(item.name)?' on':''}" type="button" title="즐겨찾기">★</button>
           <button class="mini-icon tried-btn${triedSet.has(item.name)?' on':''}" type="button" title="시도함">✓</button>
         </div>
-        <span class="name">${item.name.length>9?item.name.replace(/\(/g,'<wbr>(').replace(/\//g,'/<wbr>'):item.name}</span>${(isNew||showTest)?`<span class="badges">${isNew?'<span class="new-badge">NEW</span>':''}${showTest?'<span class="test-badge">TEST</span>':''}</span>`:''}${reactionMap[item.name]?`<span class="reaction-badge">${REACTION_EMOJI[reactionMap[item.name]]}</span>`:''}`;
+        ${dgThumb(item.name)}<span class="name">${item.name.length>9?item.name.replace(/\(/g,'<wbr>(').replace(/\//g,'/<wbr>'):item.name}</span>${(isNew||showTest)?`<span class="badges">${isNew?'<span class="new-badge">NEW</span>':''}${showTest?'<span class="test-badge">TEST</span>':''}</span>`:''}${reactionMap[item.name]?`<span class="reaction-badge">${REACTION_EMOJI[reactionMap[item.name]]}</span>`:''}`;
       c.onclick=(e)=>{ if(e.target.classList.contains('mini-icon')) return; onCardClick(cat, item, c); };
       const favBtn = c.querySelector('.fav-btn');
       favBtn.onclick=(e)=>{ e.stopPropagation(); toggleFav(item.name, favBtn); };
@@ -5779,6 +6024,25 @@ function renderFridgeResults(stage){
   const lb = document.getElementById('frLaterBtn');
   if(lb) lb.onclick = ()=>{ const b=document.getElementById('frLaterBox'); b.hidden=!b.hidden; lb.textContent = b.hidden ? `조금 뒤에 할 수 있는 메뉴 ${later.length}개 보기 ▾` : '접기 ▴'; };
 }
+
+/* RECIPEIMG_BEGIN js */
+const RECIPE_IMG = {"애호박 소고기죽":"001","브로콜리 감자 소고기죽":"002","청경채 소고기죽":"003","시금치 소고기죽":"004","당근 소고기죽":"005","완두콩 애호박 소고기죽":"006","근대 오이 소고기죽":"007","파프리카 소고기죽":"008","케일 감자 소고기죽":"009","콜리플라워 소고기죽":"010","소고기 단호박 콜리플라워죽":"011","닭고기 알배추죽":"012","두부 청경채죽":"013","가자미 무죽":"014","렌틸콩 단호박죽":"015","소고기 콩나물 가지죽":"016","소고기 양파 감자죽":"017","닭고기 표고버섯 애호박죽":"018","가자미 연근죽":"019","소고기 우엉죽":"020","두부 아보카도죽":"021","소고기 콜라비 애호박죽":"022","닭고기 그린빈 감자죽":"023","소고기 아스파라거스 양파죽":"024","두부 적채 애호박죽":"025","닭고기 느타리버섯 알배추죽":"026","소고기 비트 감자죽":"027","돼지고기 애호박 진밥":"028","연어 브로콜리 진밥":"029","검은콩 단호박죽":"030","대구 무 진밥":"031","소고기 미역 진밥":"032","닭고기 콩나물 당근죽":"033","무염치즈 감자 브로콜리 진밥":"034","전복 애호박 당근죽":"035","소고기 밤 단호박죽":"036","닭고기 옥수수 브로콜리죽":"037","소고기 새송이버섯 애호박 진밥":"038","닭고기 셀러리 당근 진밥":"039","대구 아스파라거스 감자 진밥":"040","돼지고기 콜라비 양파 진밥":"041","새우 애호박 양파 진밥":"042","소고기 당근 양파 완두콩 진밥":"043","닭고기 렌틸콩 청경채 진밥":"044","두부 브로콜리 당근 진밥":"045","연어 브로콜리 애호박 진밥":"046","기버터 당근 완두콩 감자 볶음밥":"047","대구 저염김치 당근 양파 진밥":"048","두유 아보카도 당근 진밥":"049","대구 검은깨 채소진밥":"050","닭고기 대추 채소진밥":"051","소고기 그린빈 당근 진밥":"052","닭고기 새송이버섯 애호박 진밥":"053","연어 적채 감자 진밥":"054","소고기 카레라이스":"055","채소 짜장밥":"056","계란 채소 볶음밥":"057","소고기 채소 볶음밥":"058","두부 된장 채소밥":"059","새우 채소 볶음밥":"060","닭고기 채소밥":"061","치킨 아보카도 덮밥":"062","소고기 밤조림 덮밥":"063","대구 옥수수 볶음밥":"064","소고기 아스파라거스 볶음밥":"065","닭고기 느타리버섯 덮밥":"066","두부 콜라비 채소밥":"067","계란말이":"068","두부조림":"069","감자조림":"070","소고기 야채볶음":"071","콩나물무침":"072","우엉조림":"073","아보카도 계란찜":"074"};
+function rcHead(name){
+  const id = RECIPE_IMG[name];
+  return '<div class="rc-head">' + (id ? '<img class="rc-img" src="/dogam/r/'+id+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '') + '<h3>'+name+'</h3></div>';
+}
+/* RECIPEIMG_END js */
+
+
+/* MENUIMG_BEGIN js */
+const MENU_IMG = {"beefstick":"001","vegstick":"002","oatstick":"003","pumpkinball":"004","bapbol":"005","bapjeon":"006","bunyu":"007","ragu":"008","cream":"009","janchi":"010","fishjeon":"011","hobakjeon":"012","dubustk":"013","sausage":"014","miyeok":"015","gyeranjjim":"016","pancake":"017","drumstick":"018","jjimdak":"019","ribs":"020","yukjeon":"021","bapmuffin":"022","wonmul":"023","avobeef":"024","sweetpuree":"025","ragupasta":"026","beefanshim":"027","jangjorim":"028","porkanshim":"029","porkloin":"030","chickjeon":"031","chickthigh":"032","crabrice":"033","crabrisotto":"034","salmonrisotto":"035","beefrisotto":"036","spinachrisotto":"037","gamjajeon":"038"};
+const BT_IMG = {"빵(아기용 미니 머핀)":"039","아기파스타":"040","아기짜장면":"041","아기들기름막국수":"042"};
+function mnThumb(id){ const k = MENU_IMG[id]; return k ? '<img class="mn-thumb" src="/dogam/m/'+k+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : ''; }
+function btHead(name){
+  const k = BT_IMG[name];
+  return '<div class="rc-head">' + (k ? '<img class="rc-img" src="/dogam/m/'+k+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '') + '<h3>'+name+'</h3></div>';
+}
+/* MENUIMG_END js */
 function buildRecipePage(container, stage){
   const recipes = RECIPES_BY_STAGE[stage];
   if(!recipes){
@@ -5823,7 +6087,7 @@ function buildRecipePage(container, stage){
     const card=document.createElement('div');
     card.className='recipe-card';
     card.innerHTML = `
-      <h3>${r.name}</h3>
+      ${rcHead(r.name)}
       <div class="selector-row"><span class="selector-label">그릇</span><div class="ratio-btns" id="${cid}-meal"></div></div>
       <div class="selector-row"><span class="selector-label">개월수</span><div class="ratio-btns" id="${cid}-month"></div></div>
       <div class="selector-row"><span class="selector-label">배죽</span><div class="ratio-btns" id="${cid}-ratio"></div><span class="ratio-hint" id="${cid}-hint"></span></div>
@@ -5960,7 +6224,7 @@ function buildRecipePage(container, stage){
       const scard = document.createElement('div');
       scard.className='recipe-card';
       scard.innerHTML = `
-        <h3>${sd.name}</h3>
+        ${rcHead(sd.name)}
         <div class="selector-row"><span class="selector-label">인분</span><div class="ratio-btns" id="${scid}-meal"></div></div>
         <div class="selector-row"><span class="selector-label">개월수</span><div class="ratio-btns" id="${scid}-month"></div></div>
         <div class="amount-box" id="${scid}-amt"></div>
@@ -6321,6 +6585,14 @@ document.getElementById('modalOverlay').addEventListener('click', e=>{ if(e.targ
    후기 간식 중 '스틱'이면서 재료가 전부 중기까지 나온 것만 골라 중기에도 접어서 보여줍니다.
    분량은 원래 시기(후기) 기준 그대로 둡니다 — 어린 쪽으로 늘려 잡지 않으려고요. */
 const EARLY_SNACKS = {};   // 중기 손으로 집어먹기는 이제 추천레시피 아래 끼니 메뉴에서 보입니다
+
+/* SNACKIMG_BEGIN js */
+const SNACK_IMG = {"고구마 매쉬":"001","단호박 매쉬":"002","사과 퓨레":"003","고구마 러스크(티딩러스크)":"004","아보카도 매쉬":"005","당근 브로콜리 찜 스틱":"006","바나나 블루베리 매쉬":"007","무염치즈 스틱":"008","닭 안심 스틱":"009","밤조림":"010","찐 옥수수 (으깬 알갱이)":"011","미니 채소 주먹밥":"012","단호박 두부 볼":"013","과일 요거트":"014","망고 요거트":"015","검은깨주먹밥":"016","옥수수 알갱이 볼":"017","고구마 칩(오븐)":"018","두유 바나나 스무디":"019","옥수수전":"020"};
+function snHead(name){
+  const k = SNACK_IMG[name];
+  return '<div class="rc-head">' + (k ? '<img class="rc-img" src="/dogam/s/'+k+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '') + '<h3>'+name+'</h3></div>';
+}
+/* SNACKIMG_END js */
 function buildSnackPage(container, stage){
   const data = SNACKS_BY_STAGE[stage];
   container.innerHTML = `<p class="sec-sub">${data.note}</p>`;
@@ -6361,7 +6633,7 @@ function snackCard(container, item, cid, stage){
     const card=document.createElement('div');
     card.className='recipe-card';
     card.innerHTML = `
-      <h3>${item.name}</h3>
+      ${snHead(item.name)}
       <div class="selector-row"><span class="selector-label">인분</span><div class="ratio-btns" id="${cid}-meal"></div></div>
       <div class="selector-row"><span class="selector-label">개월수</span><div class="ratio-btns" id="${cid}-month"></div></div>
       <div class="amount-box" id="${cid}-amt"></div>
@@ -6456,7 +6728,7 @@ function buildBantaegiPage(container){
     const card = document.createElement('div');
     card.className='recipe-card';
     card.innerHTML = `
-      <h3>${r.name}</h3>
+      ${btHead(r.name)}
       <div class="sec-sub" style="margin-bottom:6px;"><strong>적합 시기</strong> ${r.stage}</div>
       <div class="selector-row"><span class="selector-label">인분</span><div class="ratio-btns" id="${cid}-meal"></div></div>
       <div class="amount-box" id="${cid}-amt"></div>
