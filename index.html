@@ -861,6 +861,7 @@
 .rc-img{width:88px;height:88px;object-fit:contain;flex:none;pointer-events:none;-webkit-user-drag:none}
 /* RECIPEIMG_END css */
 
+
 /* MENUIMG_BEGIN css */
 .mn-thumb{width:60px;height:60px;object-fit:contain;flex:none;pointer-events:none;-webkit-user-drag:none}
 .menupage .cp-head .tt{min-width:0}
@@ -6022,9 +6023,10 @@ function rcHead(name){
 }
 /* RECIPEIMG_END js */
 
+
 /* MENUIMG_BEGIN js */
-const MENU_IMG = {"beefstick":"001","vegstick":"002","oatstick":"003","pumpkinball":"004","bapbol":"005","bapjeon":"006","bunyu":"007","ragu":"008","cream":"009","janchi":"010","fishjeon":"011","hobakjeon":"012","dubustk":"013","sausage":"014","miyeok":"015","gyeranjjim":"016","pancake":"017","drumstick":"018","jjimdak":"019","ribs":"020","yukjeon":"021","bapmuffin":"022","wonmul":"023","avobeef":"024"};
-const BT_IMG = {};
+const MENU_IMG = {"beefstick":"001","vegstick":"002","oatstick":"003","pumpkinball":"004","bapbol":"005","bapjeon":"006","bunyu":"007","ragu":"008","cream":"009","janchi":"010","fishjeon":"011","hobakjeon":"012","dubustk":"013","sausage":"014","miyeok":"015","gyeranjjim":"016","pancake":"017","drumstick":"018","jjimdak":"019","ribs":"020","yukjeon":"021","bapmuffin":"022","wonmul":"023","avobeef":"024","sweetpuree":"025","ragupasta":"026","beefanshim":"027","jangjorim":"028","porkanshim":"029","porkloin":"030","chickjeon":"031","chickthigh":"032","crabrice":"033","crabrisotto":"034","salmonrisotto":"035","beefrisotto":"036","spinachrisotto":"037","gamjajeon":"038"};
+const BT_IMG = {"빵(아기용 미니 머핀)":"039","아기파스타":"040","아기짜장면":"041","아기들기름막국수":"042"};
 function mnThumb(id){ const k = MENU_IMG[id]; return k ? '<img class="mn-thumb" src="/dogam/m/'+k+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : ''; }
 function btHead(name){
   const k = BT_IMG[name];
