@@ -36,7 +36,7 @@
       var box = document.createElement('div'); box.className = 'a2hs' + (asBar ? ' a2hs-bar' : ''); if(!asBar) box.style.position = 'relative';
       box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>이유식노트 앱이 나왔어요</b><small>앱스토어에서 무료로 받을 수 있어요. 가입 없이 내 기기에만 저장돼요</small></div><a class="go" href="' + APPSTORE_URL + '" style="flex:0 0 auto;background:#4B6B54;color:#fff;font-weight:800;font-size:13.5px;padding:10px 13px;border-radius:12px;text-decoration:none;font-family:inherit">앱 받기</a><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
       box.querySelector('.go').addEventListener('click', function(){ ga('appstore_click', {where: asBar ? 'app' : 'page'}); });
-      box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); try{ localStorage.setItem('appstore_hide', String(Date.now())); }catch(e){} ga('appstore_close'); });
+      box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); ga('appstore_close'); });
       var sp = document.createElement('div'); sp.style.display = 'none';
       return [box, sp];
     }
@@ -98,7 +98,7 @@
     function mount(){
       if(isApp && isAndroid && Date.now() < TESTER_UNTIL && testerBar()) return;
       if(isApp){
-        var hidden = 0, hideDays = 14; try{ if(isIphone){ hidden = +(localStorage.getItem('appstore_hide') || 0); hideDays = 2; } else { hidden = +(localStorage.getItem('a2hs_hide') || 0); } }catch(e){}
+        var hidden = 0, hideDays = 14; try{ if(isIphone){ hidden = 0; } else { hidden = +(localStorage.getItem('a2hs_hide') || 0); } }catch(e){}
         if(hidden && Date.now() - hidden < hideDays*864e5) return;
         var tryShow = function(){ var mo = document.getElementById('modalOverlay'); if(mo && mo.classList.contains('open')){ setTimeout(tryShow, 2000); return; } var p = build(true); document.body.appendChild(p[1]); document.body.appendChild(p[0]); ga(isIphone ? 'appstore_show' : 'a2hs_show', {where:'app'}); }; setTimeout(tryShow, 3000);
         return;
