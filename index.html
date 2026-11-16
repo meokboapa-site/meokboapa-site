@@ -786,6 +786,7 @@
 .ing-filter-on button:active{transform:translateY(1px);}
 .real-photo{margin:4px 0 12px}.real-photo img{width:100%;height:auto;max-height:340px;object-fit:cover;border-radius:12px;display:block;background:#efe8dd}.real-photo figcaption{font-size:12.5px;color:var(--ink-soft);margin-top:6px;line-height:1.5;word-break:keep-all}
 
+
 /* DOGAM_BEGIN css */
 .dg-wrap{max-width:560px;margin:0 auto;padding:0 0 30px}
 .dg-top{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 14px 12px;margin-bottom:12px;box-shadow:0 1px 3px rgba(46,43,36,.05)}
@@ -849,6 +850,9 @@
 .dg-disc{font-size:11.5px;color:var(--ink-soft);line-height:1.55;margin-top:10px}
 .dg-toast{position:fixed;left:50%;bottom:calc(24px + var(--safe-b));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:99px;font-size:13px;white-space:nowrap;max-width:calc(100% - 32px);overflow:hidden;text-overflow:ellipsis;z-index:500;opacity:0;pointer-events:none;transition:opacity .2s}
 .dg-toast.show{opacity:1}
+/* 시기별 재료 카드의 작은 그림 */
+#ingGrid .card{flex-direction:column !important;justify-content:flex-start !important;gap:2px;padding:13px 3px 7px !important}
+.ing-thumb{width:42px;height:42px;object-fit:contain;display:block;margin:0 auto;pointer-events:none;-webkit-user-drag:none}
 /* DOGAM_END css */
 </style>
 <style id="layout-polish">
@@ -3554,6 +3558,7 @@ function selectCarePage(btn){
   buildCarePage(document.getElementById('careBody'));
 }
 
+
 /* DOGAM_BEGIN js */
 /* ===================== 재료 도감 =====================
    먹어본 재료 = 기존 ✓(triedSet) 그대로. 날짜·횟수·3일 관찰·이상 반응만 dogamLog 에 따로 저장합니다.
@@ -3583,6 +3588,10 @@ function dgInfo(name){
     if(it) return {stage:st, item:it};
   }
   return {stage:null, item:null};
+}
+function dgThumb(name){
+  const it = dgFind(name);
+  return it ? '<img class="ing-thumb" src="/dogam/i/'+it[2]+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '';
 }
 function dgSlug(name){ return name.replace(/[\/ ()]+/g,'-').replace(/-+$/,''); }
 function dgEsc(s){ return String(s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
@@ -5398,7 +5407,7 @@ function buildIngredientPage(container, stage){
           <button class="mini-icon fav-btn${favSet.has(item.name)?' on':''}" type="button" title="즐겨찾기">★</button>
           <button class="mini-icon tried-btn${triedSet.has(item.name)?' on':''}" type="button" title="시도함">✓</button>
         </div>
-        <span class="name">${item.name.length>9?item.name.replace(/\(/g,'<wbr>(').replace(/\//g,'/<wbr>'):item.name}</span>${(isNew||showTest)?`<span class="badges">${isNew?'<span class="new-badge">NEW</span>':''}${showTest?'<span class="test-badge">TEST</span>':''}</span>`:''}${reactionMap[item.name]?`<span class="reaction-badge">${REACTION_EMOJI[reactionMap[item.name]]}</span>`:''}`;
+        ${dgThumb(item.name)}<span class="name">${item.name.length>9?item.name.replace(/\(/g,'<wbr>(').replace(/\//g,'/<wbr>'):item.name}</span>${(isNew||showTest)?`<span class="badges">${isNew?'<span class="new-badge">NEW</span>':''}${showTest?'<span class="test-badge">TEST</span>':''}</span>`:''}${reactionMap[item.name]?`<span class="reaction-badge">${REACTION_EMOJI[reactionMap[item.name]]}</span>`:''}`;
       c.onclick=(e)=>{ if(e.target.classList.contains('mini-icon')) return; onCardClick(cat, item, c); };
       const favBtn = c.querySelector('.fav-btn');
       favBtn.onclick=(e)=>{ e.stopPropagation(); toggleFav(item.name, favBtn); };
