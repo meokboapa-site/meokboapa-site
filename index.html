@@ -6575,6 +6575,14 @@ document.getElementById('modalOverlay').addEventListener('click', e=>{ if(e.targ
    후기 간식 중 '스틱'이면서 재료가 전부 중기까지 나온 것만 골라 중기에도 접어서 보여줍니다.
    분량은 원래 시기(후기) 기준 그대로 둡니다 — 어린 쪽으로 늘려 잡지 않으려고요. */
 const EARLY_SNACKS = {};   // 중기 손으로 집어먹기는 이제 추천레시피 아래 끼니 메뉴에서 보입니다
+
+/* SNACKIMG_BEGIN js */
+const SNACK_IMG = {"고구마 매쉬":"001","단호박 매쉬":"002","사과 퓨레":"003","고구마 러스크(티딩러스크)":"004","아보카도 매쉬":"005","당근 브로콜리 찜 스틱":"006","바나나 블루베리 매쉬":"007","무염치즈 스틱":"008","닭 안심 스틱":"009","밤조림":"010","찐 옥수수 (으깬 알갱이)":"011","미니 채소 주먹밥":"012","단호박 두부 볼":"013","과일 요거트":"014","망고 요거트":"015","검은깨주먹밥":"016","옥수수 알갱이 볼":"017","고구마 칩(오븐)":"018","두유 바나나 스무디":"019","옥수수전":"020"};
+function snHead(name){
+  const k = SNACK_IMG[name];
+  return '<div class="rc-head">' + (k ? '<img class="rc-img" src="/dogam/s/'+k+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '') + '<h3>'+name+'</h3></div>';
+}
+/* SNACKIMG_END js */
 function buildSnackPage(container, stage){
   const data = SNACKS_BY_STAGE[stage];
   container.innerHTML = `<p class="sec-sub">${data.note}</p>`;
@@ -6615,7 +6623,7 @@ function snackCard(container, item, cid, stage){
     const card=document.createElement('div');
     card.className='recipe-card';
     card.innerHTML = `
-      <h3>${item.name}</h3>
+      ${snHead(item.name)}
       <div class="selector-row"><span class="selector-label">인분</span><div class="ratio-btns" id="${cid}-meal"></div></div>
       <div class="selector-row"><span class="selector-label">개월수</span><div class="ratio-btns" id="${cid}-month"></div></div>
       <div class="amount-box" id="${cid}-amt"></div>
