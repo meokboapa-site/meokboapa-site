@@ -822,6 +822,9 @@
 .dg-bg.show{display:flex}
 .dg-sheet{width:100%;max-width:560px;max-height:86vh;overflow-y:auto;background:var(--bg);border-radius:22px;padding:18px 18px 22px;animation:dgup .22s ease-out}
 @keyframes dgup{from{transform:scale(.95);opacity:0}to{transform:none;opacity:1}}
+.dg-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:-18px;z-index:2;margin:-18px -18px 12px;padding:10px 12px;background:var(--bg);border-radius:22px 22px 0 0;border-bottom:1px solid var(--line)}
+.dg-nav button{border:1px solid var(--line);background:#fff;color:var(--moss-deep);font:inherit;font-size:13px;font-weight:800;padding:8px 14px;border-radius:99px;cursor:pointer;min-height:38px}
+.dg-nav button:disabled{opacity:.35}
 .dg-sh-top{display:flex;gap:14px;align-items:center}
 .dg-sh-ico{width:84px;height:84px;flex:none;background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px}
 .dg-sh-top h3{margin:0 0 4px;font-size:19px;color:var(--moss-deep);line-height:1.25}
@@ -3664,7 +3667,9 @@ function openDogamSheet(name, root){
   else if(r.first) st = '처음 먹인 날 '+dgFmt(r.first)+' · 마지막 '+dgFmt(r.last||r.first)+' · 총 '+(r.n||1)+'번';
   else if(r.last) st = '먹어본 재료예요 · 마지막 '+dgFmt(r.last)+' · 기록 '+(r.n||1)+'번';
   else st = '먹어본 재료로 체크돼 있어요 (날짜 기록은 아직 없어요)';
-  let h = '<div class="dg-sh-top"><div class="dg-sh-ico"><img src="/dogam/i/'+it[2]+'.webp" alt="" draggable="false"></div><div><h3>'+dgEsc(name)+'</h3><p>'+st+'</p></div></div>';
+  const dgList = [...document.querySelectorAll('.dg-it')].map(b=>b.dataset.n), dgIdx = dgList.indexOf(name);
+  let h = '<div class="dg-nav"><button type="button" id="dgPrev"'+(dgIdx<=0?' disabled':'')+'>‹ 이전 재료</button><button type="button" id="dgClz">닫기 ✕</button><button type="button" id="dgNext"'+(dgIdx<0||dgIdx>=dgList.length-1?' disabled':'')+'>다음 재료 ›</button></div>';
+  h += '<div class="dg-sh-top"><div class="dg-sh-ico"><img src="/dogam/i/'+it[2]+'.webp" alt="" draggable="false"></div><div><h3>'+dgEsc(name)+'</h3><p>'+st+'</p></div></div>';
   if(r.bad) h += '<div class="dg-watch bad"><b>이상 반응을 기록해 두었어요.</b><br>다시 먹이기 전에 소아과 선생님과 먼저 상의해 주세요.</div>';
   else if(wd) h += '<div class="dg-watch"><b>알레르기 관찰 '+wd+'/3일차</b><br>새 재료는 3일 동안 한 가지씩 먹이며 지켜봐요. 이상한 반응이 보이면 아래에서 기록해 주세요.<div class="dg-steps"><i class="'+(wd>=1?(wd===3?'done':'on'):'')+'"></i><i class="'+(wd>=2?(wd===3?'done':'on'):'')+'"></i><i class="'+(wd>=3?'done':'')+'"></i></div></div>';
   else if(on && r.first) h += '<div class="dg-watch"><b>관찰 3일을 마쳤어요.</b> 이제 다른 새 재료를 도전해 볼까요?</div>';
@@ -3688,6 +3693,10 @@ function openDogamSheet(name, root){
   if(!bg){ bg=document.createElement('div'); bg.id='dgBg'; bg.className='dg-bg'; bg.innerHTML='<div class="dg-sheet" id="dgSheet" role="dialog" aria-modal="true"></div>'; document.body.appendChild(bg); bg.onclick=e=>{ if(e.target===bg) dgClose(); }; }
   const sh = document.getElementById('dgSheet'); sh.innerHTML = h; sh.scrollTop = 0; bg.classList.add('show');
   const refresh = ()=>{ dgClose(); buildDogamPage(root); };
+  const clz=document.getElementById('dgClz'); if(clz) clz.onclick=dgClose;
+  const pv=document.getElementById('dgPrev'), nx=document.getElementById('dgNext');
+  if(pv) pv.onclick=()=>{ if(dgIdx>0) openDogamSheet(dgList[dgIdx-1], root); };
+  if(nx) nx.onclick=()=>{ if(dgIdx>=0&&dgIdx<dgList.length-1) openDogamSheet(dgList[dgIdx+1], root); };
   document.getElementById('dgEat').onclick = ()=>{
     const x = dogamLog[name] || (dogamLog[name] = {});
     const wasTried = triedSet.has(name);
