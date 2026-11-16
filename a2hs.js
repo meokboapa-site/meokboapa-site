@@ -77,7 +77,7 @@
       box.querySelector('.go').addEventListener('click', function(){ ga('tester_click'); location.href = '/tester/'; });
       box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); try{ localStorage.setItem('tester_hide', String(Date.now())); }catch(e){} ga('tester_close'); });
       var tryShow = function(){ var mo = document.getElementById('modalOverlay'); if(mo && mo.classList.contains('open')){ setTimeout(tryShow, 2000); return; } document.body.appendChild(box); ga('tester_show'); };
-      setTimeout(tryShow, 3000);
+      setTimeout(tryShow, 1000);
       return true;
     }
 
@@ -100,7 +100,7 @@
       if(isApp){
         var hidden = 0, hideDays = 14; try{ if(isIphone){ hidden = 0; } else { hidden = +(localStorage.getItem('a2hs_hide') || 0); } }catch(e){}
         if(hidden && Date.now() - hidden < hideDays*864e5) return;
-        var tryShow = function(){ var mo = document.getElementById('modalOverlay'); if(mo && mo.classList.contains('open')){ setTimeout(tryShow, 2000); return; } var p = build(true); document.body.appendChild(p[1]); document.body.appendChild(p[0]); ga(isIphone ? 'appstore_show' : 'a2hs_show', {where:'app'}); }; setTimeout(tryShow, 3000);
+        var tryShow = function(){ var mo = document.getElementById('modalOverlay'); if(mo && mo.classList.contains('open')){ setTimeout(tryShow, 2000); return; } var p = build(true); document.body.appendChild(p[1]); document.body.appendChild(p[0]); ga(isIphone ? 'appstore_show' : 'a2hs_show', {where:'app'}); }; setTimeout(tryShow, 1000);
         return;
       }
       var anchor = document.querySelector('a.cta[href="https://meokboapa.com/"]') || document.querySelector('nav.sitelinks') || document.querySelector('footer');
