@@ -29,7 +29,20 @@
     else if(isIOS){ steps = iosNotSafari ? '아이폰은 <b>Safari</b>에서만 추가돼요. 이 주소를 Safari로 열어 주세요.<br>그다음 아래 <b>공유 버튼(□↑)</b> → <b>홈 화면에 추가</b>' : '① 화면 아래 <b>공유 버튼(□↑)</b>을 눌러요<br>② 목록을 내려 <b>홈 화면에 추가</b> → <b>추가</b>'; }
     else { steps = '브라우저 메뉴 <b>⋮</b> → <b>홈 화면에 추가</b> (또는 <b>앱 설치</b>)'; }
 
+    /* 아이폰: 앱스토어 정식 앱이 나왔으니 '홈 화면에 추가' 안내 대신 앱스토어 카드 (앱은 아이폰 전용, 아이패드는 기존 안내 유지) */
+    var APPSTORE_URL = 'https://apps.apple.com/kr/app/id6834141266';
+    var isIphone = /iPhone|iPod/i.test(ua);
+    function buildStore(asBar){
+      var box = document.createElement('div'); box.className = 'a2hs' + (asBar ? ' a2hs-bar' : ''); if(!asBar) box.style.position = 'relative';
+      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>이유식노트 앱이 나왔어요</b><small>앱스토어에서 무료로 받을 수 있어요. 가입 없이 내 기기에만 저장돼요</small></div><a class="go" href="' + APPSTORE_URL + '" style="flex:0 0 auto;background:#4B6B54;color:#fff;font-weight:800;font-size:13.5px;padding:10px 13px;border-radius:12px;text-decoration:none;font-family:inherit">앱 받기</a><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
+      box.querySelector('.go').addEventListener('click', function(){ ga('appstore_click', {where: asBar ? 'app' : 'page'}); });
+      box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); try{ localStorage.setItem('a2hs_hide', String(Date.now())); }catch(e){} ga('appstore_close'); });
+      var sp = document.createElement('div'); sp.style.display = 'none';
+      return [box, sp];
+    }
+
     function build(asBar){
+      if(isIphone) return buildStore(asBar);
       var box = document.createElement('div'); box.className = 'a2hs' + (asBar ? ' a2hs-bar' : '');
       box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>' + (isIOS ? '홈 화면에 추가하기' : '홈 화면에 추가하면 앱처럼 열려요') + '</b><small>' + (isIOS ? '앱스토어 출시를 준비하고 있어요' : '식단표·레시피를 다시 검색할 필요 없이 한 번에') + '</small></div><button type="button" class="go">추가하기</button>' + (asBar ? '<button type="button" class="a2hs-x" aria-label="닫기">✕</button>' : '');
       var sp = document.createElement('div'); sp.className = 'a2hs-steps'; sp.innerHTML = steps;
@@ -87,7 +100,7 @@
       if(isApp){
         var hidden = 0; try{ hidden = +(localStorage.getItem('a2hs_hide') || 0); }catch(e){}
         if(hidden && Date.now() - hidden < 14*864e5) return;
-        var tryShow = function(){ var mo = document.getElementById('modalOverlay'); if(mo && mo.classList.contains('open')){ setTimeout(tryShow, 2000); return; } var p = build(true); document.body.appendChild(p[1]); document.body.appendChild(p[0]); ga('a2hs_show', {where:'app'}); }; setTimeout(tryShow, 3000);
+        var tryShow = function(){ var mo = document.getElementById('modalOverlay'); if(mo && mo.classList.contains('open')){ setTimeout(tryShow, 2000); return; } var p = build(true); document.body.appendChild(p[1]); document.body.appendChild(p[0]); ga(isIphone ? 'appstore_show' : 'a2hs_show', {where:'app'}); }; setTimeout(tryShow, 3000);
         return;
       }
       var anchor = document.querySelector('a.cta[href="https://meokboapa.com/"]') || document.querySelector('nav.sitelinks') || document.querySelector('footer');
@@ -96,7 +109,7 @@
       var p = build(false);
       if(anchor.matches && anchor.matches('a.cta')){ anchor.insertAdjacentElement('afterend', p[0]); p[0].insertAdjacentElement('afterend', p[1]); }
       else { anchor.parentNode.insertBefore(p[0], anchor); anchor.parentNode.insertBefore(p[1], anchor); }
-      ga('a2hs_show', {where:'page'});
+      ga(isIphone ? 'appstore_show' : 'a2hs_show', {where:'page'});
     }
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
   }catch(e){}
