@@ -854,6 +854,12 @@
 #ingGrid .card{flex-direction:column !important;justify-content:flex-start !important;gap:2px;padding:13px 3px 7px !important}
 .ing-thumb{width:42px;height:42px;object-fit:contain;display:block;margin:0 auto;pointer-events:none;-webkit-user-drag:none}
 /* DOGAM_END css */
+
+/* RECIPEIMG_BEGIN css */
+.rc-head{display:flex;align-items:center;gap:12px;margin:0 0 4px}
+.rc-head h3{margin:0 !important;flex:1;min-width:0}
+.rc-img{width:88px;height:88px;object-fit:contain;flex:none;pointer-events:none;-webkit-user-drag:none}
+/* RECIPEIMG_END css */
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -6002,6 +6008,14 @@ function renderFridgeResults(stage){
   const lb = document.getElementById('frLaterBtn');
   if(lb) lb.onclick = ()=>{ const b=document.getElementById('frLaterBox'); b.hidden=!b.hidden; lb.textContent = b.hidden ? `조금 뒤에 할 수 있는 메뉴 ${later.length}개 보기 ▾` : '접기 ▴'; };
 }
+
+/* RECIPEIMG_BEGIN js */
+const RECIPE_IMG = {"애호박 소고기죽":"001","브로콜리 감자 소고기죽":"002","청경채 소고기죽":"003","시금치 소고기죽":"004","당근 소고기죽":"005","완두콩 애호박 소고기죽":"006","근대 오이 소고기죽":"007","파프리카 소고기죽":"008","케일 감자 소고기죽":"009","콜리플라워 소고기죽":"010","소고기 단호박 콜리플라워죽":"011","닭고기 알배추죽":"012","두부 청경채죽":"013","가자미 무죽":"014","렌틸콩 단호박죽":"015","소고기 콩나물 가지죽":"016","소고기 양파 감자죽":"017","닭고기 표고버섯 애호박죽":"018","가자미 연근죽":"019","소고기 우엉죽":"020","두부 아보카도죽":"021","소고기 콜라비 애호박죽":"022","닭고기 그린빈 감자죽":"023","소고기 아스파라거스 양파죽":"024","두부 적채 애호박죽":"025","닭고기 느타리버섯 알배추죽":"026","소고기 비트 감자죽":"027","돼지고기 애호박 진밥":"028","연어 브로콜리 진밥":"029","검은콩 단호박죽":"030","대구 무 진밥":"031","소고기 미역 진밥":"032","닭고기 콩나물 당근죽":"033","무염치즈 감자 브로콜리 진밥":"034","전복 애호박 당근죽":"035","소고기 밤 단호박죽":"036","닭고기 옥수수 브로콜리죽":"037","소고기 새송이버섯 애호박 진밥":"038","닭고기 셀러리 당근 진밥":"039","대구 아스파라거스 감자 진밥":"040","돼지고기 콜라비 양파 진밥":"041","새우 애호박 양파 진밥":"042","소고기 당근 양파 완두콩 진밥":"043","닭고기 렌틸콩 청경채 진밥":"044","두부 브로콜리 당근 진밥":"045","연어 브로콜리 애호박 진밥":"046","기버터 당근 완두콩 감자 볶음밥":"047","대구 저염김치 당근 양파 진밥":"048","두유 아보카도 당근 진밥":"049","대구 검은깨 채소진밥":"050","닭고기 대추 채소진밥":"051","소고기 그린빈 당근 진밥":"052","닭고기 새송이버섯 애호박 진밥":"053","연어 적채 감자 진밥":"054","소고기 카레라이스":"055","채소 짜장밥":"056","계란 채소 볶음밥":"057","소고기 채소 볶음밥":"058","두부 된장 채소밥":"059","새우 채소 볶음밥":"060","닭고기 채소밥":"061","치킨 아보카도 덮밥":"062","소고기 밤조림 덮밥":"063","대구 옥수수 볶음밥":"064","소고기 아스파라거스 볶음밥":"065","닭고기 느타리버섯 덮밥":"066","두부 콜라비 채소밥":"067","계란말이":"068","두부조림":"069","감자조림":"070","소고기 야채볶음":"071","콩나물무침":"072","우엉조림":"073","아보카도 계란찜":"074"};
+function rcHead(name){
+  const id = RECIPE_IMG[name];
+  return '<div class="rc-head">' + (id ? '<img class="rc-img" src="/dogam/r/'+id+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '') + '<h3>'+name+'</h3></div>';
+}
+/* RECIPEIMG_END js */
 function buildRecipePage(container, stage){
   const recipes = RECIPES_BY_STAGE[stage];
   if(!recipes){
@@ -6046,7 +6060,7 @@ function buildRecipePage(container, stage){
     const card=document.createElement('div');
     card.className='recipe-card';
     card.innerHTML = `
-      <h3>${r.name}</h3>
+      ${rcHead(r.name)}
       <div class="selector-row"><span class="selector-label">그릇</span><div class="ratio-btns" id="${cid}-meal"></div></div>
       <div class="selector-row"><span class="selector-label">개월수</span><div class="ratio-btns" id="${cid}-month"></div></div>
       <div class="selector-row"><span class="selector-label">배죽</span><div class="ratio-btns" id="${cid}-ratio"></div><span class="ratio-hint" id="${cid}-hint"></span></div>
@@ -6183,7 +6197,7 @@ function buildRecipePage(container, stage){
       const scard = document.createElement('div');
       scard.className='recipe-card';
       scard.innerHTML = `
-        <h3>${sd.name}</h3>
+        ${rcHead(sd.name)}
         <div class="selector-row"><span class="selector-label">인분</span><div class="ratio-btns" id="${scid}-meal"></div></div>
         <div class="selector-row"><span class="selector-label">개월수</span><div class="ratio-btns" id="${scid}-month"></div></div>
         <div class="amount-box" id="${scid}-amt"></div>
