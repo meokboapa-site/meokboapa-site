@@ -818,10 +818,10 @@
 .dg-star.on{color:#F2A33A}
 .dg-badge{position:absolute;left:4px;top:4px;font-size:9.5px;padding:2px 6px;border-radius:99px;background:var(--apricot);color:#fff;font-weight:800;line-height:1.3}
 .dg-badge.ok{background:var(--moss)}
-.dg-bg{position:fixed;inset:0;background:rgba(30,26,20,.5);display:none;align-items:flex-end;justify-content:center;z-index:400}
+.dg-bg{position:fixed;inset:0;background:rgba(30,26,20,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:400}
 .dg-bg.show{display:flex}
-.dg-sheet{width:100%;max-width:560px;max-height:88vh;overflow-y:auto;background:var(--bg);border-radius:22px 22px 0 0;padding:18px 18px calc(22px + var(--safe-b));animation:dgup .22s ease-out}
-@keyframes dgup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.dg-sheet{width:100%;max-width:560px;max-height:86vh;overflow-y:auto;background:var(--bg);border-radius:22px;padding:18px 18px 22px;animation:dgup .22s ease-out}
+@keyframes dgup{from{transform:scale(.95);opacity:0}to{transform:none;opacity:1}}
 .dg-sh-top{display:flex;gap:14px;align-items:center}
 .dg-sh-ico{width:84px;height:84px;flex:none;background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px}
 .dg-sh-top h3{margin:0 0 4px;font-size:19px;color:var(--moss-deep);line-height:1.25}
