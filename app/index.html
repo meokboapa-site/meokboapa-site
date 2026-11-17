@@ -3387,12 +3387,21 @@ function mbLoadStats(){
     if(d){ mbStats = d; try{ sessionStorage.setItem('mbStats', JSON.stringify({t:Date.now(), d})); }catch(e){} }
   }).catch(()=>{});
 }
+/* 먹보네 반응: 서버·집계와 무관한 고정 데이터(한 집의 기록).
+   웹(/app/)에서는 꺼져 있고, iOS 빌드 스크립트(build_www.py)가 true로 바꿔서 앱에서만 보여요. */
+const MB_OWNER_VIEW = false;
+function mbOwnerBox(name){
+  if(!MB_OWNER_VIEW) return '';
+  const own = MB_OWNER_REACTION[name];
+  if(!own) return '';
+  const E = REACTION_EMOJI, T = {like:'잘 먹음', neutral:'보통', dislike:'잘 안 먹음'};
+  const hint = own==='dislike' ? '<div class="mbx-note">아기마다 달라요 · 처음엔 거부해도 여러 번 시도하면 먹기도 해요</div>' : '';
+  return `<div class="dbox note"><span class="dbox-label">먹보네 반응</span><div class="mbx-line" style="font-size:14px;font-weight:800;margin:2px 0 0">${E[own]} ${T[own]}</div>${hint}</div>`;
+}
 function mbReactBox(name){
   if(!MB_SYNC || !mbStats) return '';
   const E = REACTION_EMOJI, T = {like:'잘 먹음', neutral:'보통', dislike:'잘 안 먹음'};
   const s = (mbStats.ingredients||{})[name];
-  const own = MB_OWNER_REACTION[name];
-  const ownLine = own ? `<div class="mbx-line">먹보 아빠네 반응: ${E[own]} ${T[own]}</div>` : '';
   let body;
   if(s && typeof s.n === 'number'){
     body = `<div class="mbx-big">먹어본 아기 ${s.n}명 중 ${s.like}%가 잘 먹었어요</div>
@@ -3403,7 +3412,7 @@ function mbReactBox(name){
   } else {
     body = `<div class="mbx-big">첫 기록을 남겨주세요</div>`;
   }
-  return `<div class="dbox note"><span class="dbox-label">먹어본 아기 반응</span>${ownLine}${body}<div class="mbx-note">앱 사용자 기준 · 의학 통계가 아니에요</div></div>`;
+  return `<div class="dbox note"><span class="dbox-label">먹어본 아기 반응</span>${body}<div class="mbx-note">앱 사용자 기준 · 의학 통계가 아니에요</div></div>`;
 }
 function mbMadeRow(name){
   if(!MB_SYNC) return '';
@@ -5748,6 +5757,7 @@ function toggleInlineDetail(cat, item, cardEl){
     ${item.warn?`<div class="dbox warn"><span class="dbox-label">${/조합/.test(item.warn)?'조합 주의':'주의'}</span>${item.warn}</div>`:''}
     ${item.note?`<div class="dbox note"><span class="dbox-label">비고</span>${item.note}</div>`:''}
     ${alts.length?`<div class="dbox note"><span class="dbox-label">대체 가능 재료</span>${alts.join(', ')} 등 같은 분류에서 바꿔볼 수 있어요</div>`:''}
+    ${mbOwnerBox(item.name)}
     ${mbReactBox(item.name)}
     <div class="dbox note">
       <span class="dbox-label" style="display:block; margin-bottom:6px;">반응 기록</span>
