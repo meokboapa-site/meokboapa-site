@@ -3385,7 +3385,7 @@ function mbLoadStats(){
 }
 function mbReactBox(name){
   if(!MB_SYNC || !mbStats) return '';
-  const E = REACTION_EMOJI, T = {like:'좋아함', neutral:'보통', dislike:'잘 안 먹어요'};
+  const E = REACTION_EMOJI, T = {like:'잘 먹음', neutral:'보통', dislike:'잘 안 먹음'};
   const s = (mbStats.ingredients||{})[name];
   const own = MB_OWNER_REACTION[name];
   const ownLine = own ? `<div class="mbx-line">먹보 아빠네 반응: ${E[own]} ${T[own]}</div>` : '';
@@ -5748,9 +5748,9 @@ function toggleInlineDetail(cat, item, cardEl){
     <div class="dbox note">
       <span class="dbox-label" style="display:block; margin-bottom:6px;">반응 기록</span>
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
-        <button class="reaction-btn${rx==='like'?' sel':''}" data-r="like">😋 좋아함</button>
+        <button class="reaction-btn${rx==='like'?' sel':''}" data-r="like">😋 잘 먹음</button>
         <button class="reaction-btn${rx==='neutral'?' sel':''}" data-r="neutral">😐 보통</button>
-        <button class="reaction-btn${rx==='dislike'?' sel':''}" data-r="dislike">😖 잘 안 먹어요</button>
+        <button class="reaction-btn${rx==='dislike'?' sel':''}" data-r="dislike">😖 잘 안 먹음</button>
       </div>
     </div>
     <div class="dbox alert"><span class="dbox-label">알레르기 반응 시</span>두드러기가 얼굴·몸으로 번지거나, 입술·눈이 붓거나, 구토·설사·기침·쌕쌕거림이 같이 오면 즉시 병원으로 가세요(숨쉬기 힘들면 119). <b>입 주변만 살짝 붉고 다른 증상이 없으면</b> 음식이 닿아 생긴 자극일 수 있어요 — 닦아주고 지켜보세요(ASCIA 2026).</div>
