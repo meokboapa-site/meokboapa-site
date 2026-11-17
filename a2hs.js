@@ -7,7 +7,32 @@
     var ua = navigator.userAgent || '';
     var isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     var isAndroid = /Android/i.test(ua);
-    if(!isIOS && !isAndroid) return; /* PC에서는 안 보여요 */
+    if(!isIOS && !isAndroid){ /* PC: 폰 앱 다운로드 안내 카드 (접속할 때마다, 닫으면 그 페이지에서만 사라져요) */
+      var ga = function(n,p){ try{ if(window.gtag){ p = p || {}; p.page = location.pathname; gtag('event', n, p); } }catch(e){} };
+      var pcMount = function(){
+        if(document.querySelector('.pc-app')) return;
+        var s = document.createElement('style');
+        s.textContent = '.pc-app{position:fixed;right:20px;bottom:20px;z-index:90;width:min(340px,calc(100vw - 24px));background:#fff;border:1.5px solid #E7DFD0;border-radius:18px;padding:16px 16px 14px;box-shadow:0 10px 30px rgba(40,30,20,.2);font-family:inherit;word-break:keep-all;color:#2E2B24}'
+          + '.pc-app .hd{display:flex;gap:11px;align-items:center}.pc-app img{width:44px;height:44px;border-radius:11px;flex:0 0 44px}'
+          + '.pc-app b{display:block;font-size:15px;line-height:1.35}.pc-app small{display:block;font-size:12.5px;color:#6B6558;margin-top:2px;line-height:1.4}'
+          + '.pc-app .bt{display:flex;flex-direction:column;gap:8px;margin-top:13px}'
+          + '.pc-app .bt a{display:block;text-align:center;text-decoration:none;font-weight:800;font-size:13.5px;padding:11px 12px;border-radius:12px;font-family:inherit}'
+          + '.pc-app .ios{background:#4B6B54;color:#fff}.pc-app .and{background:#F4EFE3;color:#4A4637;border:1px solid #E7DFD0}'
+          + '.pc-app .and span{font-weight:600;font-size:12px;color:#6B6558}'
+          + '.pc-app .x{position:absolute;top:-9px;right:-7px;width:26px;height:26px;border-radius:50%;border:0;background:#6B6558;color:#fff;font-size:14px;line-height:26px;padding:0;cursor:pointer}';
+        document.head.appendChild(s);
+        var b = document.createElement('div'); b.className = 'pc-app';
+        b.innerHTML = '<button type="button" class="x" aria-label="닫기">✕</button><div class="hd"><img src="/icons/icon-192.png" alt=""><div><b>이유식노트 앱이 나왔어요</b><small>휴대폰에서 앱으로 받으면 더 편해요</small></div></div>'
+          + '<div class="bt"><a class="ios" href="https://apps.apple.com/kr/app/id6834141266" target="_blank" rel="noopener">앱스토어에서 받기 (아이폰)</a>'
+          + '<a class="and" href="/tester/">Google Play 준비 중 <span>· 테스터 참여하기</span></a></div>';
+        b.querySelector('.ios').addEventListener('click', function(){ ga('appstore_click', {where:'pc'}); });
+        b.querySelector('.and').addEventListener('click', function(){ ga('tester_click', {where:'pc'}); });
+        b.querySelector('.x').addEventListener('click', function(){ b.remove(); ga('appstore_close', {where:'pc'}); });
+        setTimeout(function(){ if(!document.body) return; document.body.appendChild(b); ga('appstore_show', {where:'pc'}); }, 1000);
+      };
+      if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pcMount); else pcMount();
+      return;
+    }
     var inApp = /Instagram|Barcelona|FBAN|FBAV|KAKAOTALK|NAVER\(|Line\/|DaumApps|everytimeApp/i.test(ua);
     var iosNotSafari = isIOS && /CriOS|FxiOS|EdgiOS|Whale/i.test(ua);
     var path = location.pathname;
