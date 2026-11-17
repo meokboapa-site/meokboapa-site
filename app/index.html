@@ -3348,7 +3348,12 @@ function renderSettingsRow(){
 const MB_SYNC = false;
 const MB_API = 'https://meokboapa-api.sentimetal12.workers.dev';
 /* 먹보 아빠네가 직접 먹여본 반응(재료 이름 → like|neutral|dislike). 형섭님이 알려주시면 채웁니다. */
-const MB_OWNER_REACTION = {};
+const MB_OWNER_REACTION = {
+  /* 2026-11-17 형섭님 폰 앱 캡처 기준, 초기 추천재료 20개 */
+  '쌀':'like','오트밀/귀리':'like','달걀(완숙)':'like','땅콩버터':'like','시금치':'like','당근':'like','고구마':'like','감자':'like','단호박':'like','애호박':'like','브로콜리':'like','오이':'like','토마토':'like',
+  '소고기':'neutral','청경채':'neutral','비타민채소':'neutral','양배추':'neutral',
+  '파프리카(빨강)':'dislike','파프리카(노랑)':'dislike','파프리카(주황)':'dislike'
+};
 let mbStats = null;
 let mbMadeSet = new Set();
 try { mbMadeSet = new Set(JSON.parse(localStorage.getItem('mbMade')||'[]')); } catch(e){}
