@@ -3352,7 +3352,11 @@ const MB_OWNER_REACTION = {
   /* 2026-11-17 형섭님 폰 앱 캡처 기준, 초기 추천재료 20개 */
   '쌀':'like','오트밀/귀리':'like','달걀(완숙)':'like','땅콩버터':'like','시금치':'like','당근':'like','고구마':'like','감자':'like','단호박':'like','애호박':'like','브로콜리':'like','오이':'like','토마토':'like',
   '소고기':'neutral','청경채':'neutral','비타민채소':'neutral','양배추':'neutral',
-  '파프리카(빨강)':'dislike','파프리카(노랑)':'dislike','파프리카(주황)':'dislike'
+  '파프리카(빨강)':'dislike','파프리카(노랑)':'dislike','파프리카(주황)':'dislike',
+  /* 2026-11-17 중기 추천재료 */
+  '통밀 파스타/면':'like','플레인 요거트(무가당)':'like','닭고기':'like','알배추':'like','표고버섯':'like','느타리버섯':'like','가지':'like','아보카도':'like','사과':'like','배':'like',
+  '양파':'neutral','비트':'neutral',
+  '두부':'dislike','적채':'dislike'
 };
 let mbStats = null;
 let mbMadeSet = new Set();
@@ -3381,7 +3385,7 @@ function mbLoadStats(){
 }
 function mbReactBox(name){
   if(!MB_SYNC || !mbStats) return '';
-  const E = REACTION_EMOJI, T = {like:'좋아함', neutral:'보통', dislike:'거부'};
+  const E = REACTION_EMOJI, T = {like:'좋아함', neutral:'보통', dislike:'잘 안 먹어요'};
   const s = (mbStats.ingredients||{})[name];
   const own = MB_OWNER_REACTION[name];
   const ownLine = own ? `<div class="mbx-line">먹보 아빠네 반응: ${E[own]} ${T[own]}</div>` : '';
@@ -5746,7 +5750,7 @@ function toggleInlineDetail(cat, item, cardEl){
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
         <button class="reaction-btn${rx==='like'?' sel':''}" data-r="like">😋 좋아함</button>
         <button class="reaction-btn${rx==='neutral'?' sel':''}" data-r="neutral">😐 보통</button>
-        <button class="reaction-btn${rx==='dislike'?' sel':''}" data-r="dislike">😖 거부</button>
+        <button class="reaction-btn${rx==='dislike'?' sel':''}" data-r="dislike">😖 잘 안 먹어요</button>
       </div>
     </div>
     <div class="dbox alert"><span class="dbox-label">알레르기 반응 시</span>두드러기가 얼굴·몸으로 번지거나, 입술·눈이 붓거나, 구토·설사·기침·쌕쌕거림이 같이 오면 즉시 병원으로 가세요(숨쉬기 힘들면 119). <b>입 주변만 살짝 붉고 다른 증상이 없으면</b> 음식이 닿아 생긴 자극일 수 있어요 — 닦아주고 지켜보세요(ASCIA 2026).</div>
