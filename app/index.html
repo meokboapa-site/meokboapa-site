@@ -182,6 +182,12 @@
   .card-icons{position:absolute; top:3px; left:3px; display:flex; gap:0px; z-index:2;}
   .reaction-badge{position:absolute; bottom:3px; right:5px; font-size:13px; line-height:1;}
   .reaction-btn{border:1.5px solid var(--line); background:#fff; padding:5px 10px; border-radius:100px; font-size:11.5px; cursor:pointer; color:var(--ink-soft); font-weight:700;}
+  .mbx-line{font-size:12.5px; margin-bottom:5px;} .mbx-big{font-size:14px; font-weight:900; margin-bottom:4px;}
+  .mbx-bar{display:flex; height:9px; border-radius:9px; overflow:hidden; margin:7px 0 5px; background:var(--line);} .mbx-bar i{display:block;}
+  .mbx-row{display:flex; justify-content:space-between; font-size:11px; color:var(--ink-soft);} .mbx-note{font-size:10.5px; color:var(--ink-soft); margin-top:6px;}
+  .mbx-chips{display:flex; gap:6px; flex-wrap:wrap;} .mbx-chip{border:1.5px solid var(--apricot); background:var(--apricot-soft); color:var(--warn); border-radius:100px; padding:4px 10px; font-size:11.5px; font-weight:700;}
+  .mbx-made{display:flex; align-items:center; gap:10px; margin:2px 0 10px; flex-wrap:wrap;} .mbx-made-btn{border:1.5px solid var(--moss); background:#fff; color:var(--moss-deep); border-radius:100px; padding:6px 13px; font-size:12.5px; font-weight:800; cursor:pointer;} .mbx-made-btn.on{background:var(--moss); color:#fff;} .mbx-made-n{font-size:12px; color:var(--ink-soft);}
+  .mbx-top{display:flex; justify-content:space-between; font-size:13px; padding:2px 0;}
   .reaction-btn.sel{background:var(--apricot-soft); border-color:var(--apricot); color:var(--warn);}
   .step-timer{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:10px; font-size:14px; font-weight:800; color:var(--moss-deep); font-variant-numeric:tabular-nums;}
   /* 좁은 화면에서 "30:00"이 "30:0 / 0"으로 쪼개지던 문제 */
@@ -3319,6 +3325,7 @@ function renderSettingsRow(){
     <div class="settings-title">환경설정</div>
     <div class="settings-item"><span class="settings-label">기본 간</span><div class="ratio-btns" id="saltPrefBtns"></div></div>
     <div class="settings-item"><span class="settings-label">손질 방식</span><div class="ratio-btns" id="prepPrefBtns"></div></div>
+    ${MB_SYNC ? '<div class="settings-item"><span class="settings-label">내 반응 기록</span><button class="ratio-btn" id="mbForgetBtn" type="button">서버 기록 삭제</button></div>' : ''}
   </div></div>`;
   const makeToggle = (elId, key, options)=>{
     const btnWrap = document.getElementById(elId);
@@ -3332,6 +3339,115 @@ function renderSettingsRow(){
   };
   makeToggle('saltPrefBtns', 'saltPref', ["무염","저염"]);
   makeToggle('prepPrefBtns', 'prepPref', ["직접손질","손질된재료"]);
+  const fb = document.getElementById('mbForgetBtn');
+  if(fb) fb.onclick = ()=>{ fb.disabled = true; fb.textContent = '삭제 중...'; mbForgetAll().then(ok=>{ fb.textContent = ok ? '삭제했어요' : '실패했어요, 다시 눌러주세요'; fb.disabled = !ok ? false : true; }); };
+}
+
+/* ===================== 익명 반응 집계 (MB_SYNC) ===================== */
+/* 꺼짐이 기본값입니다. 개인정보 처리방침·앱스토어 개인정보 항목을 고친 뒤에만 true 로 바꿉니다. */
+const MB_SYNC = false;
+const MB_API = 'https://meokboapa-api.sentimetal12.workers.dev';
+/* 먹보 아빠네가 직접 먹여본 반응(재료 이름 → like|neutral|dislike). 형섭님이 알려주시면 채웁니다. */
+const MB_OWNER_REACTION = {};
+let mbStats = null;
+let mbMadeSet = new Set();
+try { mbMadeSet = new Set(JSON.parse(localStorage.getItem('mbMade')||'[]')); } catch(e){}
+function mbAnonId(){
+  try{
+    let a = localStorage.getItem('mbAnon');
+    if(!a){
+      a = 'a' + Array.from(crypto.getRandomValues(new Uint8Array(20))).map(b=>b.toString(36).padStart(2,'0')).join('').slice(0,30);
+      localStorage.setItem('mbAnon', a);
+    }
+    return a;
+  }catch(e){ return ''; }
+}
+function mbPost(path, body){
+  if(!MB_SYNC) return;
+  const a = mbAnonId(); if(!a) return;
+  try{ fetch(MB_API+path, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(Object.assign({anon:a}, body)), keepalive:true}).catch(()=>{}); }catch(e){}
+}
+function mbLoadStats(){
+  if(!MB_SYNC) return Promise.resolve();
+  try{ const c = JSON.parse(sessionStorage.getItem('mbStats')||'null'); if(c && Date.now()-c.t < 300000){ mbStats = c.d; return Promise.resolve(); } }catch(e){}
+  return fetch(MB_API+'/v1/stats').then(r=>r.ok?r.json():null).then(d=>{
+    if(d){ mbStats = d; try{ sessionStorage.setItem('mbStats', JSON.stringify({t:Date.now(), d})); }catch(e){} }
+  }).catch(()=>{});
+}
+function mbReactBox(name){
+  if(!MB_SYNC || !mbStats) return '';
+  const E = REACTION_EMOJI, T = {like:'좋아함', neutral:'보통', dislike:'거부'};
+  const s = (mbStats.ingredients||{})[name];
+  const own = MB_OWNER_REACTION[name];
+  const ownLine = own ? `<div class="mbx-line">먹보 아빠네 반응: ${E[own]} ${T[own]}</div>` : '';
+  let body;
+  if(s && typeof s.n === 'number'){
+    body = `<div class="mbx-big">먹어본 아기 ${s.n}명 중 ${s.like}%가 잘 먹었어요</div>
+      <div class="mbx-bar"><i style="width:${s.like}%;background:var(--moss)"></i><i style="width:${s.neutral}%;background:#C9B98F"></i><i style="width:${s.dislike}%;background:var(--apricot)"></i></div>
+      <div class="mbx-row"><span>😋 ${s.like}%</span><span>😐 ${s.neutral}%</span><span>😖 ${s.dislike}%</span></div>`;
+  } else if(s && s.kinds && s.kinds.length){
+    body = `<div class="mbx-chips">${s.kinds.map(k=>`<span class="mbx-chip">${E[k]} ${T[k]}</span>`).join('')}</div>`;
+  } else {
+    body = `<div class="mbx-big">첫 기록을 남겨주세요</div>`;
+  }
+  return `<div class="dbox note"><span class="dbox-label">먹어본 아기 반응</span>${ownLine}${body}<div class="mbx-note">앱 사용자 기준 · 의학 통계가 아니에요</div></div>`;
+}
+function mbMadeRow(name){
+  if(!MB_SYNC) return '';
+  const on = mbMadeSet.has(name);
+  const safe = String(name).replace(/"/g,'&quot;');
+  return `<div class="mbx-made" data-mbx-recipe="${safe}"><button type="button" class="mbx-made-btn${on?' on':''}">✋ 나도 만들어봤어요</button><span class="mbx-made-n"></span></div>`;
+}
+function mbMadeCount(name){
+  const base = ((mbStats && mbStats.made) || {})[name] || 0;
+  return base;
+}
+function mbRenderMade(el){
+  const name = el.dataset.mbxRecipe;
+  const btn = el.querySelector('.mbx-made-btn'), n = el.querySelector('.mbx-made-n');
+  const on = mbMadeSet.has(name);
+  const shown = Math.max(0, mbMadeCount(name) + Number(el.dataset.mbxDelta || 0));
+  btn.classList.toggle('on', on);
+  n.textContent = shown > 0 ? `${shown}명이 만들어봤어요` : '첫 번째로 만들어보세요';
+}
+function mbTopHtml(){
+  if(!MB_SYNC || !mbStats || !(mbStats.topViewed||[]).length) return '';
+  return `<div class="dbox note" style="margin:10px 0 14px"><span class="dbox-label">인기 레시피 TOP 5</span>${mbStats.topViewed.map((r,i)=>`<div class="mbx-top"><span>${i+1}. ${String(r.recipe).replace(/</g,'&lt;')}</span><span>${r.views}</span></div>`).join('')}</div>`;
+}
+function mbHydrate(){
+  if(!MB_SYNC) return;
+  document.querySelectorAll('.mbx-made:not([data-mbx-h])').forEach(el=>{
+    el.dataset.mbxH = '1';
+    const name = el.dataset.mbxRecipe;
+    mbRenderMade(el);
+    el.querySelector('.mbx-made-btn').onclick = ()=>{
+      const on = !mbMadeSet.has(name);
+      if(on) mbMadeSet.add(name); else mbMadeSet.delete(name);
+      try{ localStorage.setItem('mbMade', JSON.stringify([...mbMadeSet])); }catch(e){}
+      el.dataset.mbxDelta = String((Number(el.dataset.mbxDelta||0)) + (on?1:-1));
+      mbRenderMade(el);
+      mbPost('/v1/made', {recipe:name, on});
+    };
+    if(window.IntersectionObserver){
+      const io = new IntersectionObserver(es=>{ es.forEach(e=>{
+        if(e.isIntersecting){
+          setTimeout(()=>{ if(el.isConnected && !el.dataset.mbxViewed){ const r=el.getBoundingClientRect(); if(r.bottom>0 && r.top<innerHeight){ el.dataset.mbxViewed='1'; mbPost('/v1/view',{recipe:name}); io.disconnect(); } } }, 1500);
+        }
+      }); }, {threshold:0.6});
+      io.observe(el);
+    }
+  });
+}
+function mbForgetAll(){
+  const a = mbAnonId();
+  const done = ()=>{ try{ localStorage.removeItem('mbAnon'); localStorage.removeItem('mbMade'); sessionStorage.removeItem('mbStats'); }catch(e){} mbMadeSet = new Set(); };
+  if(!a) return Promise.resolve(false);
+  return fetch(MB_API+'/v1/forget', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({anon:a})})
+    .then(r=>{ if(r.ok){ done(); return true; } return false; }).catch(()=>false);
+}
+if(MB_SYNC){
+  mbLoadStats().then(()=>mbHydrate());
+  new MutationObserver(()=>{ if(!mbHydrate._t){ mbHydrate._t = setTimeout(()=>{ mbHydrate._t=null; mbHydrate(); }, 120); } }).observe(document.body, {childList:true, subtree:true});
 }
 
 /* ===================== 즐겨찾기 / 시도 체크리스트 ===================== */
@@ -3346,6 +3462,7 @@ function setReaction(name, r){
   if(reactionMap[name]===r) delete reactionMap[name];
   else reactionMap[name]=r;
   try{ localStorage.setItem('ingredientReactions', JSON.stringify(reactionMap)); }catch(e){}
+  mbPost('/v1/reaction', {ingredient:name, value:reactionMap[name]||null});
   const card = document.getElementById('card-'+name);
   if(card){
     let badge = card.querySelector('.reaction-badge');
@@ -5618,6 +5735,7 @@ function toggleInlineDetail(cat, item, cardEl){
     ${item.warn?`<div class="dbox warn"><span class="dbox-label">${/조합/.test(item.warn)?'조합 주의':'주의'}</span>${item.warn}</div>`:''}
     ${item.note?`<div class="dbox note"><span class="dbox-label">비고</span>${item.note}</div>`:''}
     ${alts.length?`<div class="dbox note"><span class="dbox-label">대체 가능 재료</span>${alts.join(', ')} 등 같은 분류에서 바꿔볼 수 있어요</div>`:''}
+    ${mbReactBox(item.name)}
     <div class="dbox note">
       <span class="dbox-label" style="display:block; margin-bottom:6px;">반응 기록</span>
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
@@ -6029,7 +6147,7 @@ function renderFridgeResults(stage){
 const RECIPE_IMG = {"애호박 소고기죽":"001","브로콜리 감자 소고기죽":"002","청경채 소고기죽":"003","시금치 소고기죽":"004","당근 소고기죽":"005","완두콩 애호박 소고기죽":"006","근대 오이 소고기죽":"007","파프리카 소고기죽":"008","케일 감자 소고기죽":"009","콜리플라워 소고기죽":"010","소고기 단호박 콜리플라워죽":"011","닭고기 알배추죽":"012","두부 청경채죽":"013","가자미 무죽":"014","렌틸콩 단호박죽":"015","소고기 콩나물 가지죽":"016","소고기 양파 감자죽":"017","닭고기 표고버섯 애호박죽":"018","가자미 연근죽":"019","소고기 우엉죽":"020","두부 아보카도죽":"021","소고기 콜라비 애호박죽":"022","닭고기 그린빈 감자죽":"023","소고기 아스파라거스 양파죽":"024","두부 적채 애호박죽":"025","닭고기 느타리버섯 알배추죽":"026","소고기 비트 감자죽":"027","돼지고기 애호박 진밥":"028","연어 브로콜리 진밥":"029","검은콩 단호박죽":"030","대구 무 진밥":"031","소고기 미역 진밥":"032","닭고기 콩나물 당근죽":"033","무염치즈 감자 브로콜리 진밥":"034","전복 애호박 당근죽":"035","소고기 밤 단호박죽":"036","닭고기 옥수수 브로콜리죽":"037","소고기 새송이버섯 애호박 진밥":"038","닭고기 셀러리 당근 진밥":"039","대구 아스파라거스 감자 진밥":"040","돼지고기 콜라비 양파 진밥":"041","새우 애호박 양파 진밥":"042","소고기 당근 양파 완두콩 진밥":"043","닭고기 렌틸콩 청경채 진밥":"044","두부 브로콜리 당근 진밥":"045","연어 브로콜리 애호박 진밥":"046","기버터 당근 완두콩 감자 볶음밥":"047","대구 저염김치 당근 양파 진밥":"048","두유 아보카도 당근 진밥":"049","대구 검은깨 채소진밥":"050","닭고기 대추 채소진밥":"051","소고기 그린빈 당근 진밥":"052","닭고기 새송이버섯 애호박 진밥":"053","연어 적채 감자 진밥":"054","소고기 카레라이스":"055","채소 짜장밥":"056","계란 채소 볶음밥":"057","소고기 채소 볶음밥":"058","두부 된장 채소밥":"059","새우 채소 볶음밥":"060","닭고기 채소밥":"061","치킨 아보카도 덮밥":"062","소고기 밤조림 덮밥":"063","대구 옥수수 볶음밥":"064","소고기 아스파라거스 볶음밥":"065","닭고기 느타리버섯 덮밥":"066","두부 콜라비 채소밥":"067","계란말이":"068","두부조림":"069","감자조림":"070","소고기 야채볶음":"071","콩나물무침":"072","우엉조림":"073","아보카도 계란찜":"074"};
 function rcHead(name){
   const id = RECIPE_IMG[name];
-  return '<div class="rc-head">' + (id ? '<img class="rc-img" src="/dogam/r/'+id+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '') + '<h3>'+name+'</h3></div>';
+  return '<div class="rc-head">' + (id ? '<img class="rc-img" src="/dogam/r/'+id+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '') + '<h3>'+name+'</h3></div>' + mbMadeRow(name);
 }
 /* RECIPEIMG_END js */
 
@@ -6040,7 +6158,7 @@ const BT_IMG = {"빵(아기용 미니 머핀)":"039","아기파스타":"040","�
 function mnThumb(id){ const k = MENU_IMG[id]; return k ? '<img class="mn-thumb" src="/dogam/m/'+k+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : ''; }
 function btHead(name){
   const k = BT_IMG[name];
-  return '<div class="rc-head">' + (k ? '<img class="rc-img" src="/dogam/m/'+k+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '') + '<h3>'+name+'</h3></div>';
+  return '<div class="rc-head">' + (k ? '<img class="rc-img" src="/dogam/m/'+k+'.webp" alt="" loading="lazy" decoding="async" draggable="false">' : '') + '<h3>'+name+'</h3></div>' + mbMadeRow(name);
 }
 /* MENUIMG_END js */
 function buildRecipePage(container, stage){
@@ -6053,7 +6171,7 @@ function buildRecipePage(container, stage){
   updateDividerBar();
   const isSaltStage = SALT_TOGGLE_STAGES.includes(stage);
   const useDivider = DIVIDER_STAGES.includes(stage);
-  container.innerHTML = `<p class="sec-sub">영양·미각 균형과 비추천 조합 회피를 기준으로 고른 ${stage} 이유식 추천 레시피입니다. 그릇 수·개월수·배죽을 고르면 재료량과 물양이 자동으로 바뀌어요.${stage===STAGE_ORDER[0] ? " 초기에 <b>7·8개월</b> 선택지가 있는 건 <b>늦게 시작한 아기</b>를 위한 거예요 — 생일을 넣으시면 7개월부터는 중기로 안내합니다." : ""}${isSaltStage ? " 무염/저염을 선택할 수 있어요." : ""}${useDivider ? " 마음에 드는 레시피를 최대 3개까지 '칸막이에 담기'로 골라두면 한 번에 쪄낼 수 있어요." : ""}${stage==="일반식" ? " 이 시기는 밥알 식감이 있는 진짜 밥 요리라 두유제조기(블렌더형)는 조리법에서 제외했어요." : ""}</p><p class="source-note">${PORTION_INFO.badge}</p>`;
+  container.innerHTML = `<p class="sec-sub">영양·미각 균형과 비추천 조합 회피를 기준으로 고른 ${stage} 이유식 추천 레시피입니다. 그릇 수·개월수·배죽을 고르면 재료량과 물양이 자동으로 바뀌어요.${stage===STAGE_ORDER[0] ? " 초기에 <b>7·8개월</b> 선택지가 있는 건 <b>늦게 시작한 아기</b>를 위한 거예요 — 생일을 넣으시면 7개월부터는 중기로 안내합니다." : ""}${isSaltStage ? " 무염/저염을 선택할 수 있어요." : ""}${useDivider ? " 마음에 드는 레시피를 최대 3개까지 '칸막이에 담기'로 골라두면 한 번에 쪄낼 수 있어요." : ""}${stage==="일반식" ? " 이 시기는 밥알 식감이 있는 진짜 밥 요리라 두유제조기(블렌더형)는 조리법에서 제외했어요." : ""}</p><p class="source-note">${PORTION_INFO.badge}</p>` + mbTopHtml();
   const monthOptions = Object.keys(MONTH_FACTORS_BY_STAGE[stage] || {"6개월":1});
   const autoR = getAutoMonthAndRatio(stage);
   const hasSideDishes = !!SIDE_DISHES_BY_STAGE[stage];
