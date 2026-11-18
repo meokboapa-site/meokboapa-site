@@ -104,6 +104,11 @@ h1,h3,.sect,.realrec .rr-t{text-wrap:balance}
 .realrec .rr-k{font-size:12px;font-weight:800;color:#B5542F;letter-spacing:.02em}
 .realrec .rr-shopbox{margin:10px 0 0;padding:2px 12px}.realrec .rr-shopbox .shop-a{border-top:0}
 .realrec .rr-note{font-size:8.5px;line-height:1.35;opacity:.8;color:var(--ink-soft);margin:6px 4px 0;letter-spacing:-.01em}
+.realrec .rr-vw{position:relative;flex:none;cursor:zoom-in}
+.realrec .rr-zoom{position:absolute;left:6px;right:6px;bottom:6px;text-align:center;font-size:11px;font-weight:700;color:#fff;background:rgba(0,0,0,.45);border-radius:999px;padding:3px 0;pointer-events:none}
+.mb-lb{position:fixed;inset:0;z-index:9999;background:rgba(20,16,12,.92);display:flex;align-items:center;justify-content:center;padding:56px 16px 24px}
+.mb-lb video{max-height:100%;max-width:100%;aspect-ratio:9/16;border-radius:14px;background:#000}
+.mb-lb button{position:absolute;top:12px;right:14px;border:0;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font-size:15px;font-weight:800;padding:9px 16px;font-family:inherit}
 .realrec .rr-row{display:flex;gap:10px;align-items:center}
 .realrec .rr-v{width:104px;flex:none;aspect-ratio:9/16;object-fit:cover;border-radius:10px;background:#000;display:block}
 .realrec .rr-col{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:7px}
@@ -201,7 +206,7 @@ ol.steps li::marker{color:var(--apricot);font-weight:900}
 <h1>아기방 온도·습도·공기질, 겨울엔 이렇게</h1>
 <p class="lede">겨울엔 난방으로 건조해지고, 창문을 덜 열어서 공기가 탁해져요.<br><b>공식 권고</b>와 먹보 아빠네가 <b>신생아 때부터 실제로 맞춘 기준</b>을 같이 정리했어요.</p>
   <div class="realrec"><div class="rr-k">먹보 아빠네 실제 기록</div><div class="rr-t">우리 집 아기방 가습기 — 신생아 때부터 가열식 3L</div>
-    <div class="rr-row"><video class="rr-v" src="/s/humid/night.mp4" poster="/s/humid/night.jpg" autoplay muted loop playsinline preload="metadata" aria-label="밤에 저소음 가열 모드로 켜둔 가습기 (15초)"></video>
+    <div class="rr-row"><div class="rr-vw" role="button" tabindex="0" aria-label="영상 크게 보기"><video class="rr-v" src="/s/humid/night.mp4" poster="/s/humid/night.jpg" autoplay muted loop playsinline preload="metadata" aria-label="밤에 저소음 가열 모드로 켜둔 가습기 (15초)"></video><span class="rr-zoom">⤢ 크게 보기</span></div>
     <div class="rr-col">
     <div class="rr-q">침대에서 <b>먼 쪽</b>에</div>
     <div class="rr-q">재우기 <b>10분 전</b>에 미리 켜기</div>
@@ -299,5 +304,17 @@ ol.steps li::marker{color:var(--apricot);font-weight:900}
 </div>
 <script src="/a2hs.js?v=337" defer></script>
 <script src="/typo.js" defer></script>
+<script>
+(function(){var w=document.querySelector('.rr-vw');if(!w)return;
+function open(){var v=w.querySelector('video');var lb=document.createElement('div');lb.className='mb-lb';
+lb.innerHTML='<button type="button">닫기 ✕</button><video autoplay muted loop playsinline controls></video>';
+var big=lb.querySelector('video');big.src=v.currentSrc||v.src;big.poster=v.poster;try{big.currentTime=v.currentTime||0;}catch(e){}
+function close(){lb.remove();document.documentElement.style.overflow='';}
+lb.addEventListener('click',function(e){if(e.target===lb||e.target.tagName==='BUTTON')close();});
+document.addEventListener('keydown',function k(e){if(e.key==='Escape'){close();document.removeEventListener('keydown',k);}});
+document.body.appendChild(lb);document.documentElement.style.overflow='hidden';
+try{gtag('event','video_zoom',{id:'humid_night'})}catch(e){}}
+w.addEventListener('click',open);w.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});})();
+</script>
 </body>
 </html>
