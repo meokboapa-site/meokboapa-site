@@ -59,7 +59,7 @@
     var isIphone = /iPhone|iPod/i.test(ua);
     function buildStore(asBar){
       var box = document.createElement('div'); box.className = 'a2hs' + (asBar ? ' a2hs-bar' : ''); if(!asBar) box.style.position = 'relative';
-      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>이유식노트 앱이 나왔어요</b><small>앱스토어에서 무료로 받을 수 있어요</small></div><a class="go" href="' + APPSTORE_URL + '" style="flex:0 0 auto;background:#4B6B54;color:#fff;font-weight:800;font-size:13.5px;padding:10px 13px;border-radius:12px;text-decoration:none;font-family:inherit">앱 받기</a><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
+      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>이유식노트 앱 · 무료</b><small>시기별 메뉴, 99가지 재료도감, 필요한 알림까지 폰에서 바로</small></div><a class="go" href="' + APPSTORE_URL + '" style="flex:0 0 auto;background:#4B6B54;color:#fff;font-weight:800;font-size:13.5px;padding:10px 13px;border-radius:12px;text-decoration:none;font-family:inherit">앱 받기</a><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
       box.querySelector('.go').addEventListener('click', function(){ ga('appstore_click', {where: asBar ? 'app' : 'page'}); });
       box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); ga('appstore_close'); });
       var sp = document.createElement('div'); sp.style.display = 'none';
@@ -132,6 +132,9 @@
       if(!anchor) return;
       if(isAndroid && Date.now() < TESTER_UNTIL && path.indexOf('/tester') !== 0 && testerCard(anchor)) return;
       var p = build(false);
+      /* 아이폰: 글 맨 아래까지 내려가는 사람이 적어서, 첫 문단(lede) 바로 아래에 앱스토어 카드를 둠 */
+      var lede = isIphone ? (document.querySelector('.wrap > p.lede') || document.querySelector('.wrap > .faq-a')) : null;
+      if(lede){ lede.insertAdjacentElement('afterend', p[0]); p[0].style.margin = '0 0 18px'; ga('appstore_show', {where:'page_top'}); return; }
       if(anchor.matches && anchor.matches('a.cta')){ anchor.insertAdjacentElement('afterend', p[0]); p[0].insertAdjacentElement('afterend', p[1]); }
       else { anchor.parentNode.insertBefore(p[0], anchor); anchor.parentNode.insertBefore(p[1], anchor); }
       ga(isIphone ? 'appstore_show' : 'a2hs_show', {where:'page'});
