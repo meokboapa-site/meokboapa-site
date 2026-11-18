@@ -4,6 +4,9 @@
     if('serviceWorker' in navigator){ navigator.serviceWorker.register('/sw.js').catch(function(){}); }
     var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
     if(standalone) return;
+    /* 앱(1.0.3~)이 사이트 글을 앱 안 브라우저로 열 때 ?mbapp=1 을 붙임 → 이미 앱을 쓰는 사람에게는 앱 설치 안내를 띄우지 않음 */
+    try{ if(/[?&]mbapp=1(&|$)/.test(location.search)) sessionStorage.setItem('mb_inapp','1'); }catch(e){}
+    try{ if(sessionStorage.getItem('mb_inapp') === '1') return; }catch(e){}
     var ua = navigator.userAgent || '';
     var isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     var isAndroid = /Android/i.test(ua);
