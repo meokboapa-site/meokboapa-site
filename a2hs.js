@@ -59,8 +59,8 @@
           + '.pc-app b{display:block;font-size:15px;line-height:1.35}.pc-app small{display:block;font-size:12.5px;color:#6B6558;margin-top:2px;line-height:1.4}'
           + '.pc-app .bt{display:flex;flex-direction:column;gap:8px;margin-top:13px}'
           + '.pc-app .bt a{display:block;text-align:center;text-decoration:none;font-weight:800;font-size:13.5px;padding:11px 12px;border-radius:12px;font-family:inherit}'
-          + '.pc-app .ios{background:#4B6B54;color:#fff}.pc-app .and{background:#F4EFE3;color:#4A4637;border:1px solid #E7DFD0}'
-          + '.pc-app .and span{font-weight:600;font-size:12px;color:#6B6558}'
+          + '.pc-app .ios{background:#007AFF;color:#fff}.pc-app .and{position:relative;overflow:hidden;background:#fff;color:#202124;border:1px solid #DADCE0}.pc-app .and::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#4285F4 0 25%,#EA4335 25% 50%,#FBBC05 50% 75%,#34A853 75%)}'
+          + '.pc-app .and span{font-weight:600;font-size:12px;color:#5F6368}'
           + '.pc-app .x{position:absolute;top:-9px;right:-7px;width:26px;height:26px;border-radius:50%;border:0;background:#6B6558;color:#fff;font-size:14px;line-height:26px;padding:0;cursor:pointer}';
         document.head.appendChild(s);
         var b = document.createElement('div'); b.className = 'pc-app';
@@ -85,7 +85,7 @@
     var css = '.a2hs{display:flex;gap:12px;align-items:center;background:#fff;border:1.5px solid #E7DFD0;border-radius:16px;padding:13px 14px;margin:12px 0 18px;font-family:inherit;word-break:keep-all}'
       + '.a2hs img{width:44px;height:44px;border-radius:11px;flex:0 0 44px}'
       + '.a2hs .tx{flex:1;min-width:0}.a2hs b{display:block;font-size:14.5px;color:#2E2B24;line-height:1.35}.a2hs small{display:block;font-size:12.5px;color:#6B6558;margin-top:2px;line-height:1.4}'
-      + '.a2hs button{flex:0 0 auto;border:0;background:#4B6B54;color:#fff;font-weight:800;font-size:13.5px;padding:10px 13px;border-radius:12px;font-family:inherit}'
+      + '.a2hs button:not(.a2hs-x){flex:0 0 auto;position:relative;overflow:hidden;border:1px solid #DADCE0;background:#fff;color:#202124;font-weight:800;font-size:13.5px;padding:10px 13px;border-radius:12px;font-family:inherit}.a2hs button:not(.a2hs-x)::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#4285F4 0 25%,#EA4335 25% 50%,#FBBC05 50% 75%,#34A853 75%)}'
       + '.a2hs-steps{display:none;font-size:13px;color:#34493B;background:#EAF1E9;border-radius:12px;padding:10px 13px;margin:-8px 0 18px;line-height:1.65;word-break:keep-all}'
       + '.a2hs-bar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:90;margin:0;box-shadow:0 8px 24px rgba(40,30,20,.18)}'
       + '.a2hs-x{position:absolute;top:-9px;right:-6px;width:26px;height:26px;border-radius:50%;background:#6B6558 !important;color:#fff;font-size:14px !important;padding:0 !important;line-height:26px}';
@@ -101,7 +101,7 @@
     var isIphone = /iPhone|iPod/i.test(ua);
     function buildStore(asBar){
       var box = document.createElement('div'); box.className = 'a2hs' + (asBar ? ' a2hs-bar' : ''); if(!asBar) box.style.position = 'relative';
-      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>이유식노트 앱 · 무료</b><small>시기별 메뉴, 99가지 재료도감, 필요한 알림까지 폰에서 바로</small></div><a class="go" href="' + APPSTORE_URL + '" style="flex:0 0 auto;background:#4B6B54;color:#fff;font-weight:800;font-size:13.5px;padding:10px 13px;border-radius:12px;text-decoration:none;font-family:inherit">앱 받기</a><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
+      box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>이유식노트 앱 · 무료</b><small>시기별 메뉴, 99가지 재료도감, 필요한 알림까지 폰에서 바로</small></div><a class="go" href="' + APPSTORE_URL + '" style="flex:0 0 auto;background:#007AFF;color:#fff;font-weight:800;font-size:13.5px;padding:10px 13px;border-radius:12px;text-decoration:none;font-family:inherit">앱 받기</a><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
       box.querySelector('.go').addEventListener('click', function(){ ga('appstore_click', {where: asBar ? 'app' : 'page'}); });
       box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); ga('appstore_close'); });
       var sp = document.createElement('div'); sp.style.display = 'none';
@@ -139,7 +139,7 @@
     function testerBar(){
       var hid = 0; try{ hid = +(localStorage.getItem('tester_hide') || 0); }catch(e){}
       if(hid && Date.now() - hid < 3*864e5) return false;
-      var box = document.createElement('div'); box.className = 'a2hs a2hs-bar';
+      var box = document.createElement('div'); box.className = 'a2hs a2hs-bar a2hs-g';
       box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>안드로이드 앱 테스터를 모아요</b><small>14일 동안 계속 설치해 두실 분을 찾아요. 그룹에 가입하면 출시 때 설치 링크를 보내드려요</small></div><button type="button" class="go">그룹 가입</button><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
       box.querySelector('.go').addEventListener('click', function(){ ga('tester_click'); location.href = '/tester/'; });
       box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); try{ localStorage.setItem('tester_hide', String(Date.now())); }catch(e){} ga('tester_close'); });
@@ -152,7 +152,7 @@
     function testerCard(anchor){
       var hid = 0; try{ hid = +(localStorage.getItem('tester_hide') || 0); }catch(e){}
       if(hid && Date.now() - hid < 3*864e5) return false;
-      var box = document.createElement('div'); box.className = 'a2hs'; box.style.position = 'relative';
+      var box = document.createElement('div'); box.className = 'a2hs a2hs-g'; box.style.position = 'relative';
       box.innerHTML = '<img src="/icons/icon-192.png" alt=""><div class="tx"><b>안드로이드 앱 테스터를 모아요</b><small>14일 동안 설치만 해 두실 분을 찾아요. 그룹에 가입하면 출시 때 설치 링크를 보내드려요</small></div><button type="button" class="go">그룹 가입</button><button type="button" class="a2hs-x" aria-label="닫기">✕</button>';
       box.querySelector('.go').addEventListener('click', function(){ ga('tester_click', {where:'page'}); location.href = '/tester/'; });
       box.querySelector('.a2hs-x').addEventListener('click', function(){ box.remove(); try{ localStorage.setItem('tester_hide', String(Date.now())); }catch(e){} ga('tester_close', {where:'page'}); });
