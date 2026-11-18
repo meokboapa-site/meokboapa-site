@@ -22,6 +22,12 @@
           var a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if(!a) return;
           var u; try{ u = new URL(a.href, location.href); }catch(x){ return; }
           if(!/^https?:$/.test(u.protocol)) return;
+          /* 유튜브: 글 안의 쇼츠 카드(.yt)는 원래대로 그 자리에서 재생, 그 밖의 쇼츠 링크는 앱 안 쇼츠 화면으로 */
+          if(/(^|\.)(youtube\.com|youtu\.be|youtube-nocookie\.com)$/i.test(u.hostname)){
+            if(a.classList.contains('yt')) return;
+            var ym = u.href.match(/(?:shorts\/|embed\/|youtu\.be\/|[?&]v=)([A-Za-z0-9_-]{6,20})/);
+            if(ym){ e.preventDefault(); e.stopImmediatePropagation(); location.href = '/play/?v=' + ym[1] + '&mbapp=1'; return; }
+          }
           var own = /^(www\.)?meokboapa\.com$/i.test(u.hostname), p = decodeURIComponent(u.pathname);
           if(own && (p === '/' || p === '/index.html' || p.indexOf('/app') === 0)){ e.preventDefault(); post({mb:'close'}); return; }
           if(!own || p.indexOf('/files/') === 0){ e.preventDefault(); e.stopImmediatePropagation(); post({mb:'open', url:u.toString()}); return; }
