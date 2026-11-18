@@ -3,3 +3,7 @@
 
 /a2hs.js
   Cache-Control: no-cache
+
+/_asc/*
+  Access-Control-Allow-Origin: *
+  X-Robots-Tag: noindex
