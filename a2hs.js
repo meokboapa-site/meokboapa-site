@@ -6,7 +6,30 @@
     if(standalone) return;
     /* 앱(1.0.3~)이 사이트 글을 앱 안 브라우저로 열 때 ?mbapp=1 을 붙임 → 이미 앱을 쓰는 사람에게는 앱 설치 안내를 띄우지 않음 */
     try{ if(/[?&]mbapp=1(&|$)/.test(location.search)) sessionStorage.setItem('mb_inapp','1'); }catch(e){}
-    try{ if(sessionStorage.getItem('mb_inapp') === '1') return; }catch(e){}
+    var inApp = false; try{ inApp = sessionStorage.getItem('mb_inapp') === '1'; }catch(e){}
+    if(inApp){
+      /* 앱(1.0.3~) 화면 위에 띄운 글: 앱 설치 안내 없음, '웹에서 열기' 버튼 숨김, 바깥 링크·닫기는 앱에 넘김 */
+      if(window.parent !== window){
+        var post = function(m){ try{ window.parent.postMessage(m, '*'); }catch(e){} };
+        var css = document.createElement('style');
+        css.textContent = 'a.cta[href="https://meokboapa.com/"]{display:none!important}';
+        (document.head || document.documentElement).appendChild(css);
+        window.mbBack = function(){
+          try{ if(document.referrer && document.referrer.indexOf(location.origin) === 0){ history.back(); return; } }catch(e){}
+          post({mb:'close'});
+        };
+        document.addEventListener('click', function(e){
+          var a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if(!a) return;
+          var u; try{ u = new URL(a.href, location.href); }catch(x){ return; }
+          if(!/^https?:$/.test(u.protocol)) return;
+          var own = /^(www\.)?meokboapa\.com$/i.test(u.hostname), p = decodeURIComponent(u.pathname);
+          if(own && (p === '/' || p === '/index.html' || p.indexOf('/app') === 0)){ e.preventDefault(); post({mb:'close'}); return; }
+          if(!own || p.indexOf('/files/') === 0){ e.preventDefault(); e.stopImmediatePropagation(); post({mb:'open', url:u.toString()}); return; }
+          /* 같은 사이트의 다른 글은 앱 화면 안에서 그대로 이동 */
+        }, true);
+      }
+      return;
+    }
     var ua = navigator.userAgent || '';
     var isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     var isAndroid = /Android/i.test(ua);
