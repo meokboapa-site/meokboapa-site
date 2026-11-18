@@ -66,6 +66,7 @@ h2::before{content:"";width:6px;height:6px;border-radius:99px;background:var(--a
 .mini-tbl th{text-align:left;font-size:12.5px;color:var(--moss-deep);padding:7px 6px;border-bottom:1px solid var(--line)}
 .mini-tbl td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
 .mini-tbl tr:last-child td{border-bottom:none}
+@media(max-width:600px){.mini-tbl,.mini-tbl tbody{display:block}.mini-tbl tr:first-child{display:none}.mini-tbl tr{display:block;padding:12px 14px;border-bottom:1px solid var(--line)}.mini-tbl tr:last-child{border-bottom:none}.mini-tbl td{display:block;border:0!important;padding:2px 0!important;word-break:keep-all;overflow-wrap:anywhere}.mini-tbl td:first-child{font-size:15px;margin-bottom:3px}.mini-tbl td[data-l]+td[data-l]::before{content:attr(data-l) ' · ';color:var(--ink-soft);font-size:12px;font-weight:700}}
 .mt-s{font-size:12px;color:var(--ink-soft);font-weight:700}
 .daysched{margin:10px 0 12px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
 .daysched-row{display:flex;border-bottom:1px solid var(--line);font-size:14px;line-height:1.55}
@@ -198,14 +199,14 @@ ol.steps li::marker{color:var(--apricot);font-weight:900}
   <div class="sect">언제 생겼는지로 먼저 나눠요</div>
   <table class="mini-tbl">
     <tr><th>시작 시점</th><th>무엇일 가능성</th><th>어떻게 하나</th></tr>
-    <tr><td><b>출생~1·2일</b></td><td>좁쌀종(밀리아)<br><span class="mt-s">볼·턱·이마의 1~2mm 진주빛 알갱이</span></td><td>대개 한 달 안에 저절로(두세 달까지 가기도 해요). 그냥 둡니다</td></tr>
-    <tr><td><b>생후 2~3일</b></td><td>신생아 독성 홍반<br><span class="mt-s">붉은 반점 가운데 흰 점</span></td><td>1~2주면 저절로. 바를 필요 없어요</td></tr>
-    <tr><td><b>첫 1~2주</b></td><td>생리적 각질 탈락<br><span class="mt-s">손발·배가 종잇장처럼 벗겨짐</span></td><td>정상 과정. 억지로 벗기지 않기</td></tr>
-    <tr><td><b>첫 몇 주</b></td><td>땀띠<br><span class="mt-s">목주름·가슴·등 좁쌀</span></td><td>시원하게. <b>두껍고 기름진 연고는 피하기</b></td></tr>
-    <tr><td><b>2~4주</b></td><td>신생아 여드름<br><span class="mt-s">볼에 붉은 좁쌀, 고름집도 흔함</span></td><td>1~3개월에 저절로, 흉 안 남아요</td></tr>
-    <tr><td><b>3주~2개월</b></td><td>지루 피부염(크래들캡)<br><span class="mt-s">두피 노란 기름 각질</span></td><td>오일로 불려 씻어내기(아래 참고)</td></tr>
-    <tr><td><b>아무 때나</b></td><td>기저귀 피부염<br><span class="mt-s">기저귀 닿는 면이 붉고, 접히는 골은 비켜감</span></td><td><b>배리어 크림을 발라</b> 막아줍니다. 2~3일 지나도 안 낫거나 둘레에 점점이 번지면 진료</td></tr>
-    <tr><td><b>대개 2~3개월 이후</b></td><td>아토피 피부염<br><span class="mt-s">건조·가려움·반복</span></td><td>저절로 안 나음. <b>보습이 치료</b></td></tr>
+    <tr><td data-l="시작 시점"><b>출생~1·2일</b></td><td data-l="무엇일 가능성">좁쌀종(밀리아)<br><span class="mt-s">볼·턱·이마의 1~2mm 진주빛 알갱이</span></td><td data-l="어떻게 하나">대개 한 달 안에 저절로(두세 달까지 가기도 해요). 그냥 둡니다</td></tr>
+    <tr><td data-l="시작 시점"><b>생후 2~3일</b></td><td data-l="무엇일 가능성">신생아 독성 홍반<br><span class="mt-s">붉은 반점 가운데 흰 점</span></td><td data-l="어떻게 하나">1~2주면 저절로. 바를 필요 없어요</td></tr>
+    <tr><td data-l="시작 시점"><b>첫 1~2주</b></td><td data-l="무엇일 가능성">생리적 각질 탈락<br><span class="mt-s">손발·배가 종잇장처럼 벗겨짐</span></td><td data-l="어떻게 하나">정상 과정. 억지로 벗기지 않기</td></tr>
+    <tr><td data-l="시작 시점"><b>첫 몇 주</b></td><td data-l="무엇일 가능성">땀띠<br><span class="mt-s">목주름·가슴·등 좁쌀</span></td><td data-l="어떻게 하나">시원하게. <b>두껍고 기름진 연고는 피하기</b></td></tr>
+    <tr><td data-l="시작 시점"><b>2~4주</b></td><td data-l="무엇일 가능성">신생아 여드름<br><span class="mt-s">볼에 붉은 좁쌀, 고름집도 흔함</span></td><td data-l="어떻게 하나">1~3개월에 저절로, 흉 안 남아요</td></tr>
+    <tr><td data-l="시작 시점"><b>3주~2개월</b></td><td data-l="무엇일 가능성">지루 피부염(크래들캡)<br><span class="mt-s">두피 노란 기름 각질</span></td><td data-l="어떻게 하나">오일로 불려 씻어내기(아래 참고)</td></tr>
+    <tr><td data-l="시작 시점"><b>아무 때나</b></td><td data-l="무엇일 가능성">기저귀 피부염<br><span class="mt-s">기저귀 닿는 면이 붉고, 접히는 골은 비켜감</span></td><td data-l="어떻게 하나"><b>배리어 크림을 발라</b> 막아줍니다. 2~3일 지나도 안 낫거나 둘레에 점점이 번지면 진료</td></tr>
+    <tr><td data-l="시작 시점"><b>대개 2~3개월 이후</b></td><td data-l="무엇일 가능성">아토피 피부염<br><span class="mt-s">건조·가려움·반복</span></td><td data-l="어떻게 하나">저절로 안 나음. <b>보습이 치료</b></td></tr>
   </table>
   <div class="grid one"><div class="p span">
     <span class="n r">표만 보고 넘기지 마세요</span>

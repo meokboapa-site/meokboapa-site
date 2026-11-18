@@ -66,6 +66,7 @@ h2::before{content:"";width:6px;height:6px;border-radius:99px;background:var(--a
 .mini-tbl th{text-align:left;font-size:12.5px;color:var(--moss-deep);padding:7px 6px;border-bottom:1px solid var(--line)}
 .mini-tbl td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
 .mini-tbl tr:last-child td{border-bottom:none}
+@media(max-width:600px){.mini-tbl,.mini-tbl tbody{display:block}.mini-tbl tr:first-child{display:none}.mini-tbl tr{display:block;padding:12px 14px;border-bottom:1px solid var(--line)}.mini-tbl tr:last-child{border-bottom:none}.mini-tbl td{display:block;border:0!important;padding:2px 0!important;word-break:keep-all;overflow-wrap:anywhere}.mini-tbl td:first-child{font-size:15px;margin-bottom:3px}.mini-tbl td[data-l]+td[data-l]::before{content:attr(data-l) ' · ';color:var(--ink-soft);font-size:12px;font-weight:700}}
 .mt-s{font-size:12px;color:var(--ink-soft);font-weight:700}
 .daysched{margin:10px 0 12px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
 .daysched-row{display:flex;border-bottom:1px solid var(--line);font-size:14px;line-height:1.55}
@@ -190,8 +191,8 @@ ol.steps li::marker{color:var(--apricot);font-weight:900}
   <div class="sect">온도 — 20~24℃, 잘 때는 덥지 않게</div>
   <table class="mini-tbl">
     <tr><th>언제</th><th>권고</th><th>출처</th></tr>
-    <tr><td><b>아기가 있는 집</b><br><span class="mt-s">깨어 있을 때</span></td><td><b>20~24℃</b></td><td>보건복지부</td></tr>
-    <tr><td><b>아기가 자는 방</b></td><td><b>16~20℃</b><br><span class="mt-s">수면조끼를 입혀 재우는 영국 기준 · 핵심은 '덥지 않게'</span></td><td>영국 Lullaby Trust</td></tr>
+    <tr><td data-l="언제"><b>아기가 있는 집</b><br><span class="mt-s">깨어 있을 때</span></td><td data-l="권고"><b>20~24℃</b></td><td data-l="출처">보건복지부</td></tr>
+    <tr><td data-l="언제"><b>아기가 자는 방</b></td><td data-l="권고"><b>16~20℃</b><br><span class="mt-s">수면조끼를 입혀 재우는 영국 기준 · 핵심은 '덥지 않게'</span></td><td data-l="출처">영국 Lullaby Trust</td></tr>
   </table>
   <div class="realrec"><div class="rr-k">먹보 아빠네 실제 기록</div><div class="rr-t">신생아 때도, 지금도 22~24℃</div><div class="rr-m">태열 올라오던 신생아 때부터 돌이 지난 지금까지 이 정도로 맞추고 있어요. 숫자보다 중요한 건 아기 상태라서, <b>손발 말고 목 뒤·가슴</b>을 만져보고 땀이 나면 한 겹 벗겼어요.</div></div>
   <div class="box note"><b>영국 16~20℃, 왜 이렇게 낮을까?</b><br>① 아기를 <b>수면조끼(슬리핑백)에 넣어 재우는 게 전제</b>예요. 맨몸에 얇은 이불 덮고 16℃가 아니에요.<br>② 목적이 <b>'춥지 않게'가 아니라 '덥지 않게'</b>예요. 과열이 영아돌연사 위험 요인이라서요.<br>한국 집은 바닥 난방이고, 질식 위험 때문에 아기에게 두꺼운 옷을 여러 겹 입히지도 않아요. 그래서 우리 집엔 <b>보건복지부 20~24℃</b>가 더 맞고, 먹보 아빠네는 <b>잘 때도 22~24℃</b>로 둬요. 대신 <b>목 뒤·가슴에 땀이 나면</b> 덥다는 신호라 한 겹 줄여요. 미국소아과학회도 숫자 대신 <b>"어른보다 한 겹만 더 입히고, 덥지 않게"</b>라고 해요.</div>
@@ -199,9 +200,9 @@ ol.steps li::marker{color:var(--apricot);font-weight:900}
   <div class="sect">습도 — 40~60% 안에서</div>
   <table class="mini-tbl">
     <tr><th>기준</th><th>습도</th><th>출처</th></tr>
-    <tr><td><b>일반 실내</b></td><td><b>40~60%</b></td><td>보건복지부 · 서울시 어린이집 실내공기질 기준</td></tr>
-    <tr><td><b>아기가 있는 집</b></td><td><b>50~60%</b></td><td>보건복지부</td></tr>
-    <tr><td><b>가습할 때 상한</b></td><td>50%를 넘기지 않게</td><td>미국 환경보호청(EPA)</td></tr>
+    <tr><td data-l="기준"><b>일반 실내</b></td><td data-l="습도"><b>40~60%</b></td><td data-l="출처">보건복지부 · 서울시 어린이집 실내공기질 기준</td></tr>
+    <tr><td data-l="기준"><b>아기가 있는 집</b></td><td data-l="습도"><b>50~60%</b></td><td data-l="출처">보건복지부</td></tr>
+    <tr><td data-l="기준"><b>가습할 때 상한</b></td><td data-l="습도">50%를 넘기지 않게</td><td data-l="출처">미국 환경보호청(EPA)</td></tr>
   </table>
   <div class="box note">나라마다 위쪽 한계가 조금 달라요(한국 60%, 미국 50%). 두 기준이 겹치는 <b>40~50% 언저리</b>가 가장 무난하고, 결로나 곰팡이가 보이면 낮추세요.</div>
   <div class="grid one"><div class="p span"><span class="n">너무 낮아도, 너무 높아도</span><h3>건조하면 호흡기, 너무 습하면 땀과 곰팡이</h3><p>습도가 낮으면 <b>기관지 감염·호흡기 질환</b>에 취약해지고, 지나치게 높으면 <b>땀이 잘 안 마르고</b> 벽·창가에 결로와 곰팡이가 생기기 쉬워요.</p></div></div>

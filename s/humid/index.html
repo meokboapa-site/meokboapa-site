@@ -67,6 +67,7 @@ h2::before{content:"";width:6px;height:6px;border-radius:99px;background:var(--a
 .mini-tbl th{text-align:left;font-size:12.5px;color:var(--moss-deep);padding:7px 6px;border-bottom:1px solid var(--line)}
 .mini-tbl td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
 .mini-tbl tr:last-child td{border-bottom:none}
+@media(max-width:600px){.mini-tbl,.mini-tbl tbody{display:block}.mini-tbl tr:first-child{display:none}.mini-tbl tr{display:block;padding:12px 14px;border-bottom:1px solid var(--line)}.mini-tbl tr:last-child{border-bottom:none}.mini-tbl td{display:block;border:0!important;padding:2px 0!important;word-break:keep-all;overflow-wrap:anywhere}.mini-tbl td:first-child{font-size:15px;margin-bottom:3px}.mini-tbl td[data-l]+td[data-l]::before{content:attr(data-l) ' · ';color:var(--ink-soft);font-size:12px;font-weight:700}}
 .mt-s{font-size:12px;color:var(--ink-soft);font-weight:700}
 .daysched{margin:10px 0 12px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
 .daysched-row{display:flex;border-bottom:1px solid var(--line);font-size:14px;line-height:1.55}
@@ -97,6 +98,13 @@ ul.list li{margin-bottom:5px;word-break:keep-all}
 .cta small{display:block;font-weight:600;font-size:12px;opacity:.85;margin-top:3px}
 .realrec{background:#FFF7EE;border:1.5px solid #F0C9A6;border-radius:16px;padding:14px 16px;margin:0 0 14px;word-break:keep-all}
 .realrec .rr-k{font-size:12px;font-weight:800;color:#B5542F;letter-spacing:.02em}
+.realrec .rr-shopbox{margin:10px 0 0;padding:2px 12px}.realrec .rr-shopbox .shop-a{border-top:0}
+.realrec .rr-note{font-size:9.5px;line-height:1.4;color:var(--ink-soft);margin:6px 4px 0;letter-spacing:-.01em}
+.realrec .rr-row{display:flex;gap:10px;align-items:stretch}
+.realrec .rr-v{width:104px;flex:none;aspect-ratio:9/16;object-fit:cover;border-radius:10px;background:#000;display:block}
+.realrec .rr-col{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between;gap:6px}
+.realrec .rr-row .rr-q{font-size:12.5px;line-height:1.5;padding:7px 9px;margin:0}
+@media(min-width:600px){.realrec .rr-v{width:120px}.realrec .rr-row .rr-q{font-size:13.5px;padding:8px 12px}}
 .realrec .rr-t{font-size:16px;font-weight:800;margin:4px 0 8px}
 .realrec .rr-q{font-size:14px;line-height:1.6;background:#fff;border-left:4px solid #4B6B54;border-radius:0 10px 10px 0;padding:9px 12px;margin-bottom:8px}
 .realrec .rr-m{font-size:13px;color:var(--ink-soft);line-height:1.6;margin-bottom:10px}
@@ -187,12 +195,22 @@ ol.steps li::marker{color:var(--apricot);font-weight:900}
 <div class="crumb"><a href="https://meokboapa.com/">먹보 아빠의 이유식노트</a> › 응급처치·돌봄 › 아기방 온도·습도·공기질</div>
 <h1>아기방 온도·습도·공기질, 겨울엔 이렇게</h1>
 <p class="lede">겨울엔 난방으로 건조해지고, 창문을 덜 열어서 공기가 탁해져요. <b>공식 권고</b>와 먹보 아빠네가 <b>신생아 때부터 실제로 맞춘 기준</b>을 같이 정리했어요.</p>
+  <div class="realrec"><div class="rr-k">먹보 아빠네 실제 기록</div><div class="rr-t">우리 집 아기방 가습기 — 신생아 때부터 가열식 3L</div>
+    <div class="rr-row"><video class="rr-v" src="/s/humid/night.mp4" poster="/s/humid/night.jpg" autoplay muted loop playsinline preload="metadata" aria-label="밤에 저소음 가열 모드로 켜둔 가습기 (15초)"></video>
+    <div class="rr-col">
+    <div class="rr-q">침대에서 <b>먼 쪽</b>에 둬요.</div>
+    <div class="rr-q">재우기 <b>10분 전에 미리 켜서</b> 온습도를 맞춰두고, 그다음에 아기를 방에 데려가요. 낮엔 거실에서 노니까 아기방 가습기는 잘 때가 메인이에요.</div>
+    <div class="rr-q">청소는 <b>일주일에 한 번, 구연산 넣고 청소 모드</b> 돌리면 끝. 생각보다 훨씬 간편해요.</div>
+    </div></div>
+    <div class="shop rr-shopbox"><a class="shop-a" href="https://link.coupang.com/a/ihYnfvEUz6" target="_blank" rel="sponsored nofollow noopener"><span class="sh-st s-1">신생아</span><span class="sh-txt"><b>조지루시 가습기 3L</b><small>아기방이나 20평대 거실 · 먹보 아빠네가 쓰는 것 · 가열식이라 아기 손 안 닿는 곳에</small></span><span class="sh-go">›</span></a></div>
+    <p class="rr-note">쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+  </div>
 <div class="carepage">
   <div class="sect">온도 — 20~24℃, 잘 때는 덥지 않게</div>
   <table class="mini-tbl">
     <tr><th>언제</th><th>권고</th><th>출처</th></tr>
-    <tr><td><b>아기가 있는 집</b><br><span class="mt-s">깨어 있을 때</span></td><td><b>20~24℃</b></td><td>보건복지부</td></tr>
-    <tr><td><b>아기가 자는 방</b></td><td><b>16~20℃</b><br><span class="mt-s">수면조끼를 입혀 재우는 영국 기준 · 핵심은 '덥지 않게'</span></td><td>영국 Lullaby Trust</td></tr>
+    <tr><td data-l="언제"><b>아기가 있는 집</b><br><span class="mt-s">깨어 있을 때</span></td><td data-l="권고"><b>20~24℃</b></td><td data-l="출처">보건복지부</td></tr>
+    <tr><td data-l="언제"><b>아기가 자는 방</b></td><td data-l="권고"><b>16~20℃</b><br><span class="mt-s">수면조끼를 입혀 재우는 영국 기준 · 핵심은 '덥지 않게'</span></td><td data-l="출처">영국 Lullaby Trust</td></tr>
   </table>
   <div class="realrec"><div class="rr-k">먹보 아빠네 실제 기록</div><div class="rr-t">신생아 때도, 지금도 22~24℃</div><div class="rr-m">태열 올라오던 신생아 때부터 돌이 지난 지금까지 이 정도로 맞추고 있어요. 숫자보다 중요한 건 아기 상태라서, <b>손발 말고 목 뒤·가슴</b>을 만져보고 땀이 나면 한 겹 벗겼어요.</div></div>
   <div class="box note"><b>영국 16~20℃, 왜 이렇게 낮을까?</b><br>① 아기를 <b>수면조끼(슬리핑백)에 넣어 재우는 게 전제</b>예요. 맨몸에 얇은 이불 덮고 16℃가 아니에요.<br>② 목적이 <b>'춥지 않게'가 아니라 '덥지 않게'</b>예요. 과열이 영아돌연사 위험 요인이라서요.<br>한국 집은 바닥 난방이고, 질식 위험 때문에 아기에게 두꺼운 옷을 여러 겹 입히지도 않아요. 그래서 우리 집엔 <b>보건복지부 20~24℃</b>가 더 맞고, 먹보 아빠네는 <b>잘 때도 22~24℃</b>로 둬요. 대신 <b>목 뒤·가슴에 땀이 나면</b> 덥다는 신호라 한 겹 줄여요. 미국소아과학회도 숫자 대신 <b>"어른보다 한 겹만 더 입히고, 덥지 않게"</b>라고 해요.</div>
@@ -200,9 +218,9 @@ ol.steps li::marker{color:var(--apricot);font-weight:900}
   <div class="sect">습도 — 40~60% 안에서</div>
   <table class="mini-tbl">
     <tr><th>기준</th><th>습도</th><th>출처</th></tr>
-    <tr><td><b>일반 실내</b></td><td><b>40~60%</b></td><td>보건복지부 · 서울시 어린이집 실내공기질 기준</td></tr>
-    <tr><td><b>아기가 있는 집</b></td><td><b>50~60%</b></td><td>보건복지부</td></tr>
-    <tr><td><b>가습할 때 상한</b></td><td>50%를 넘기지 않게</td><td>미국 환경보호청(EPA)</td></tr>
+    <tr><td data-l="기준"><b>일반 실내</b></td><td data-l="습도"><b>40~60%</b></td><td data-l="출처">보건복지부 · 서울시 어린이집 실내공기질 기준</td></tr>
+    <tr><td data-l="기준"><b>아기가 있는 집</b></td><td data-l="습도"><b>50~60%</b></td><td data-l="출처">보건복지부</td></tr>
+    <tr><td data-l="기준"><b>가습할 때 상한</b></td><td data-l="습도">50%를 넘기지 않게</td><td data-l="출처">미국 환경보호청(EPA)</td></tr>
   </table>
   <div class="box note">나라마다 위쪽 한계가 조금 달라요(한국 60%, 미국 50%). 두 기준이 겹치는 <b>40~50% 언저리</b>가 가장 무난하고, 결로나 곰팡이가 보이면 낮추세요.</div>
   <div class="grid one"><div class="p span"><span class="n">너무 낮아도, 너무 높아도</span><h3>건조하면 호흡기, 너무 습하면 땀과 곰팡이</h3><p>습도가 낮으면 <b>기관지 감염·호흡기 질환</b>에 취약해지고, 지나치게 높으면 <b>땀이 잘 안 마르고</b> 벽·창가에 결로와 곰팡이가 생기기 쉬워요.</p></div></div>
@@ -220,10 +238,6 @@ ol.steps li::marker{color:var(--apricot);font-weight:900}
   </div>
   <div class="box note"><b>"찬 김이라 감기에 걸린다"는 건 사실이 아니에요.</b> 감기는 바이러스로 걸려요. 또 가열식이라고 방이 따뜻해질 만큼 온도가 올라가지도 않아요. 고를 때 볼 건 <b>위생 관리와 화상 위험</b>이에요.</div>
   <div class="box warn"><b>어떤 가습기든</b> 물에 살균제·첨가제를 넣지 마세요. 세척은 <b>제품 설명서에 나온 방법</b>대로 하고, 물은 매일 갈아주세요.</div>
-  <div class="realrec"><div class="rr-k">먹보 아빠네 실제 기록</div><div class="rr-t">신생아 때부터 가열식 3L</div>
-    <div class="rr-q">침대에서 <b>먼 쪽</b>에 둬요.</div>
-    <div class="rr-q">재우기 <b>10분 전에 미리 켜서</b> 온습도를 맞춰두고, 그다음에 아기를 방에 데려가요. 낮엔 거실에서 노니까 아기방 가습기는 잘 때가 메인이에요.</div>
-    <div class="rr-q">청소는 <b>일주일에 한 번, 구연산 넣고 청소 모드</b> 돌리면 끝. 생각보다 훨씬 간편해요.</div></div>
 
   <div class="box note"><b>📝 블로그 — 우리 집은 이렇게 했어요</b><br><a href="https://blog.naver.com/sentimetal12/224461068015" target="_blank" rel="noopener">아기방 온도 습도, 신생아 때부터 이렇게 맞췄어요 (겨울 가습기 위치·청소, 환기까지) ›</a></div>
   <div class="shop"><b>🌬️ 먹보 아빠네가 쓰는 것</b>
