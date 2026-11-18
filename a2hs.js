@@ -11,6 +11,7 @@
       /* 앱(1.0.3~) 화면 위에 띄운 글: 앱 설치 안내 없음, '웹에서 열기' 버튼 숨김, 바깥 링크·닫기는 앱에 넘김 */
       if(window.parent !== window){
         var post = function(m){ try{ window.parent.postMessage(m, '*'); }catch(e){} };
+        post({mb:'ready'});   /* 글 본문이 준비되면 바로 알림 → 앱이 '불러오는 중'을 걷어냄 (분석·영상 로딩을 기다리지 않음) */
         var css = document.createElement('style');
         css.textContent = 'a.cta[href="https://meokboapa.com/"]{display:none!important}';
         (document.head || document.documentElement).appendChild(css);
