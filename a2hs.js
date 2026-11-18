@@ -7,9 +7,18 @@
     var ua = navigator.userAgent || '';
     var isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     var isAndroid = /Android/i.test(ua);
+    var webWording = function(){
+      try{ document.querySelectorAll('a.cta[href="https://meokboapa.com/"]').forEach(function(a){
+        var t = a.firstChild && a.firstChild.nodeType === 3 ? a.firstChild : null; if(!t) return;
+        var v = t.nodeValue.trim(), sm = a.querySelector('small');
+        if(v === '이유식노트 앱 열기'){ t.nodeValue = '웹에서 이유식노트 열기'; }
+        else if(v === '이유식노트 앱에서 밥태기 메뉴 보기'){ t.nodeValue = '웹에서 밥태기 메뉴 바로 보기'; if(sm) sm.textContent = "설치 없이 브라우저에서 열려요. 앱에서는 하단 '밥태기' 탭에 정리돼 있어요"; }
+      }); }catch(e){}
+    };
     if(!isIOS && !isAndroid){ /* PC: 폰 앱 다운로드 안내 카드 (접속할 때마다, 닫으면 그 페이지에서만 사라져요) */
       var ga = function(n,p){ try{ if(window.gtag){ p = p || {}; p.page = location.pathname; gtag('event', n, p); } }catch(e){} };
       var pcMount = function(){
+        webWording();
         if(document.querySelector('.pc-app')) return;
         var s = document.createElement('style');
         s.textContent = '.pc-app{position:fixed;right:20px;bottom:20px;z-index:90;width:min(340px,calc(100vw - 24px));background:#fff;border:1.5px solid #E7DFD0;border-radius:18px;padding:16px 16px 14px;box-shadow:0 10px 30px rgba(40,30,20,.2);font-family:inherit;word-break:keep-all;color:#2E2B24}'
@@ -128,13 +137,7 @@
         var tryShow = function(){ var mo = document.getElementById('modalOverlay'); if(mo && mo.classList.contains('open')){ setTimeout(tryShow, 2000); return; } var p = build(true); document.body.appendChild(p[1]); document.body.appendChild(p[0]); ga(isIphone ? 'appstore_show' : 'a2hs_show', {where:'app'}); }; setTimeout(tryShow, isIphone ? 300 : 1000);
         return;
       }
-      /* 아이폰: 초록 버튼은 앱스토어 앱이 아니라 '웹 앱'으로 가므로, '앱'으로 오해되는 문구를 웹이라고 바꿈 */
-      if(isIphone){ try{ document.querySelectorAll('a.cta[href="https://meokboapa.com/"]').forEach(function(a){
-        var t = a.firstChild && a.firstChild.nodeType === 3 ? a.firstChild : null; if(!t) return;
-        var v = t.nodeValue.trim(), sm = a.querySelector('small');
-        if(v === '이유식노트 앱 열기'){ t.nodeValue = '웹에서 이유식노트 열기'; }
-        else if(v === '이유식노트 앱에서 밥태기 메뉴 보기'){ t.nodeValue = '웹에서 밥태기 메뉴 바로 보기'; if(sm) sm.textContent = "설치 없이 브라우저에서 열려요. 앱에서는 하단 '밥태기' 탭에 정리돼 있어요"; }
-      }); }catch(e){} }
+      webWording();
       var anchor = document.querySelector('a.cta[href="https://meokboapa.com/"]') || document.querySelector('nav.sitelinks') || document.querySelector('footer');
       if(!anchor) return;
       if(isAndroid && Date.now() < TESTER_UNTIL && path.indexOf('/tester') !== 0 && testerCard(anchor)) return;
