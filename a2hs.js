@@ -13,7 +13,7 @@
         var post = function(m){ try{ window.parent.postMessage(m, '*'); }catch(e){} };
         post({mb:'ready'});   /* 글 본문이 준비되면 바로 알림 → 앱이 '불러오는 중'을 걷어냄 (분석·영상 로딩을 기다리지 않음) */
         var css = document.createElement('style');
-        css.textContent = 'a.cta[href="https://meokboapa.com/"]{display:none!important}';
+        css.textContent = 'a.cta[href="https://meokboapa.com/"]{display:none!important}.topbar{padding-top:8px!important}';  /* 앱이 이미 상단 안전영역을 비워두므로 글 위쪽 여백이 두 번 생기지 않게 */
         (document.head || document.documentElement).appendChild(css);
         window.mbBack = function(){
           try{ if(document.referrer && document.referrer.indexOf(location.origin) === 0){ history.back(); return; } }catch(e){}
