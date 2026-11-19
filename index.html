@@ -598,6 +598,7 @@
 .startpage .sp-row{display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 15px;}
 .startpage .sp-row.now{border-color:var(--moss);box-shadow:0 0 0 1.5px var(--moss) inset;}
 .startpage .sp-row.past{opacity:.5;}
+.sp-past{margin:0 0 9px}.sp-past>summary{list-style:none;cursor:pointer;padding:11px 14px;border:1px dashed var(--line,#ddd);border-radius:12px;font-size:13.5px;font-weight:600;color:var(--muted,#777);display:flex;justify-content:space-between;align-items:center;gap:8px}.sp-past>summary::-webkit-details-marker{display:none}.sp-past>summary::after{content:'펼치기 ›';font-size:12px;font-weight:500;flex:none}.sp-past[open]>summary::after{content:'접기 ‹'}.sp-past>summary small{font-weight:400;font-size:12px;margin-left:auto}.sp-past[open]>.sp-list{margin-top:9px}
 .startpage .sp-day{flex:0 0 58px;text-align:center;padding-top:2px;}
 .startpage .sp-day b{display:block;font-size:14.5px;font-weight:900;color:var(--moss-deep);line-height:1.2;}
 .startpage .sp-day i{display:block;font-style:normal;font-size:10.5px;color:var(--ink-soft);font-weight:700;}
@@ -4083,6 +4084,21 @@ function mbSetNoRest(on){
   if(typeof LATE_ORIG!=='undefined'){ mbRestore(LATE_PLAN, LATE_ORIG); LATE_LAST_DAY = LATE_PLAN[LATE_PLAN.length-1].d1; }
 }
 let START_LAST_DAY = START_PLAN[START_PLAN.length-1].d1;
+/* 시작일을 넣은 사람은 지난 칸을 접어두고 오늘 칸부터 보여줘요 */
+function mbListHtml(plan, cur, arr){
+  if(cur===null || cur<1) return `<div class="sp-list">${arr.join('')}</div>`;
+  const a = plan[0].d0, b = plan[cur-1].d1;
+  return `<details class="sp-past"><summary>지난 ${a===b?a:a+'~'+b}일차 보기</summary><div class="sp-list">${arr.slice(0,cur).join('')}</div></details><div class="sp-list">${arr.slice(cur).join('')}</div>`;
+}
+/* 일요일 설정을 바꿀 때 화면이 통째로 다시 그려지면서 튀지 않게, 높이와 체크박스 위치를 붙잡아 둬요 */
+function mbStableRebuild(container, id, build){
+  const el = document.getElementById(id), top = el ? el.getBoundingClientRect().top : null;
+  container.style.minHeight = container.offsetHeight + 'px';
+  build(container);
+  const el2 = document.getElementById(id);
+  if(el2 && top!==null){ const d = el2.getBoundingClientRect().top - top; if(Math.abs(d)>1) window.scrollBy(0, d); }
+  requestAnimationFrame(()=>{ container.style.minHeight = ''; });
+}
 function startAmountHtml(st){                // 목표량 + 배죽을 크게
   return `<div class="sp-amt"><span class="sp-ml">${st.g}<small>g</small></span><span class="sp-ratio${st.ratioUp?' up':''}">${st.ratio}배죽${st.ratioUp?' 시작':''}</span></div>${startBaseHtml(st)}`;
 }
@@ -4323,7 +4339,7 @@ function buildStartPage(container){
         ${startBuyHtml(st)}
       </div>
     </div>`;
-  }).join('');
+  });
 
   container.innerHTML = `
     <p class="sec-sub">먹보 아빠네가 <b>실제로 한 5주</b>예요 — 양, 배죽, 알레르기 테스트 날짜, 그때 적어둔 반응 메모까지 그대로 옮겼어요.
@@ -4357,8 +4373,8 @@ function buildStartPage(container){
     </div>
     ${today}
 
-    <div class="sp-list">${rows}</div>
-    ${/coupang-link/.test(rows) ? coupangNoticeHtml() : ''}
+    ${mbListHtml(START_PLAN, cur, rows)}
+    ${/coupang-link/.test(rows.join('')) ? coupangNoticeHtml() : ''}
 
     <div class="dbox warn"><span class="dbox-label">이것만은</span>
       <b>새 재료는 평일 오전에</b> 시작하세요. 반응이 나오면 바로 소아과에 갈 수 있어야 합니다.
@@ -4423,7 +4439,7 @@ function buildStartPage(container){
   const clr = document.getElementById('spClear');
   if(clr) clr.onclick = ()=>{ saveWeaningStart(''); buildStartPage(container); };
   const nr = document.getElementById('spNoRest');
-  if(nr) nr.onchange = ()=>{ mbSetNoRest(nr.checked); buildStartPage(container); };
+  if(nr) nr.onchange = ()=>{ mbSetNoRest(nr.checked); mbStableRebuild(container,'spNoRest',buildStartPage); };
 }
 
 
@@ -4772,7 +4788,7 @@ function buildMidPage(container){
     }
   }
   const b1 = midBaseBatch(MID_PLAN[0]), b7 = midBaseBatch(MID_PLAN[MID_PLAN.length-1]);
-  const rows = MID_PLAN.map((st,i)=>midRowHtml(st,i,cur,day)).join('');
+  const rowArr = MID_PLAN.map((st,i)=>midRowHtml(st,i,cur,day)), rows = rowArr.join('');
   container.innerHTML = `
     <p class="sec-sub">초기 5주 다음 <b>8주(대략 생후 7~8개월)</b>예요. 재료 순서·간격·양은 <b>한국(질병관리청·대한소아청소년과학회)·미국(CDC·AAP) 권고</b>에 맞췄고,
       끼니 짜는 법은 먹보 아빠네 엑셀의 <b>'1일 2식 모듈'</b>을 그대로 옮겼어요.</p>
@@ -4819,7 +4835,7 @@ function buildMidPage(container){
       ${noRestHtml('mpNoRest')}
     </div>
     ${today}
-    <div class="sp-list">${rows}</div>
+    ${mbListHtml(MID_PLAN, cur, rowArr)}
     ${/coupang-link/.test(rows) ? coupangNoticeHtml() : ''}
 
     <div class="dbox"><span class="dbox-label">하루 일정 · 분이분이분</span>
@@ -4858,7 +4874,7 @@ function buildMidPage(container){
   const clr = document.getElementById('mpClear');
   if(clr) clr.onclick = ()=>{ saveMidStart(''); buildMidPage(container); };
   const nr = document.getElementById('mpNoRest');
-  if(nr) nr.onchange = ()=>{ mbSetNoRest(nr.checked); buildMidPage(container); };
+  if(nr) nr.onchange = ()=>{ mbSetNoRest(nr.checked); mbStableRebuild(container,'mpNoRest',buildMidPage); };
   bindStartDownloads(container);
 }
 
@@ -5057,7 +5073,7 @@ function buildLatePage(container){
         <div class="sp-d"><b>아침</b> ${lateMealsOfDay(day,true).am}</div><div class="sp-d"><b>점심</b> ${lateMealsOfDay(day,true).noon}</div><div class="sp-d"><b>저녁</b> ${lateMealsOfDay(day,true).pm}</div>${shopBtnHtml('late',day)}</div>`;
     }
   }
-  const rows = LATE_PLAN.map((st,i)=>lateRowHtml(st,i,cur,day)).join('');
+  const rowArr = LATE_PLAN.map((st,i)=>lateRowHtml(st,i,cur,day)), rows = rowArr.join('');
   container.innerHTML = `
     <p class="sec-sub">중기 8주 다음 <b>12주(대략 생후 9~11개월)</b>예요. 양과 횟수는 <b>권장량</b>(한 끼 100~150g, 하루 3끼)으로, 알레르기 식품은 <b>ASCIA</b> 권고(첫돌 전에 생선·갑각류·견과류까지)로 짰고,
       끼니 짜는 법과 자기주도 방식은 먹보 아빠네가 실제로 한 대로 옮겼어요.</p>
@@ -5100,7 +5116,7 @@ function buildLatePage(container){
       ${noRestHtml('lpNoRest')}
     </div>
     ${today}
-    <div class="sp-list">${rows}</div>
+    ${mbListHtml(LATE_PLAN, cur, rowArr)}
 
     <div class="dbox"><span class="dbox-label">하루 일정 · 3끼 + 간식</span>
       <div class="mp-day"><span>07:00 아침<small>새 재료</small></span><span>12:00 점심</span><span>15:00 간식</span><span>18:00 저녁</span></div>
@@ -5135,7 +5151,7 @@ function buildLatePage(container){
   const clr = document.getElementById('lpClear');
   if(clr) clr.onclick = ()=>{ saveLateStart(''); buildLatePage(container); };
   const nr = document.getElementById('lpNoRest');
-  if(nr) nr.onchange = ()=>{ mbSetNoRest(nr.checked); buildLatePage(container); };
+  if(nr) nr.onchange = ()=>{ mbSetNoRest(nr.checked); mbStableRebuild(container,'lpNoRest',buildLatePage); };
   bindStartDownloads(container);
 }
 
