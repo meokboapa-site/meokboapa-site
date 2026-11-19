@@ -895,6 +895,12 @@
 .shop-info{flex:1;min-width:0}.shop-info b{display:block;font-size:14.5px}.shop-info small{display:block;font-size:12px;color:var(--ink-soft,#777);line-height:1.45;margin-top:2px}
 .shop-go{flex:none;font-size:12.5px;font-weight:800;padding:8px 11px;border-radius:100px;background:var(--moss,#4f6f52);color:#fff;text-decoration:none}
 .shop-go.ghost{background:none;color:var(--moss-deep,#3c5a40);border:1px solid var(--line,#ddd)}
+.shop-drop{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:100px;background:#fdebe1;color:#b5542f;font-size:11px;font-style:normal;font-weight:700;vertical-align:2px}
+.shop-dropnote{display:block;font-size:11.5px;color:#b5542f;margin-top:3px}
+.shop-deal{margin-top:14px;padding:13px 14px;border-radius:14px;background:#fff8ef;border:1px solid #f1dcc3}
+.shop-deal-hd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}.shop-deal-hd b{font-size:13.5px}.shop-deal-hd small{font-size:11px;color:var(--muted,#888)}
+.shop-deal a{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin-top:9px;padding-top:9px;border-top:1px dashed #f1dcc3;color:inherit;text-decoration:none}
+.shop-deal a span{font-size:13px;line-height:1.4;min-width:0}.shop-deal a b{font-size:13.5px;color:#b5542f;white-space:nowrap}.shop-deal a i{grid-column:1/-1;font-style:normal;font-size:12px;color:var(--moss,#4d6b55);font-weight:600}
 .shop-more{margin-top:14px;padding:14px;border-radius:14px;background:#fff;border:1px solid var(--line,#eee)}.shop-more b{font-size:13.5px}
 .shop-more form{display:flex;gap:6px;margin-top:8px}.shop-more input{flex:1;min-width:0;padding:9px 11px;border:1px solid var(--line,#ddd);border-radius:10px;font:inherit;font-size:14px}
 .shop-more button{border:0;border-radius:10px;padding:0 14px;background:var(--ink,#333);color:#fff;font:inherit;font-size:13px}
@@ -4386,7 +4392,32 @@ function shopBtnHtml(stage, day){
   const n = shopItemsForWeek(stage, day).length; if(!n) return '';
   return `<button type="button" class="shop-open" onclick="openShop('${stage}',${day})">🛒 이번 주 장보기 <b>${n}개</b> <span>한 번에 보기 ›</span></button>`;
 }
+/* 하루 세 번 쿠팡 가격을 기록한 결과(/data/prices.json). 평소보다 싸진 품목에 배지, 골드박스 육아 특가 한 줄 */
+let MB_PRICES = null, MB_PRICES_LOADING = false;
+function mbLoadPrices(cb){
+  if(MB_PRICES || MB_PRICES_LOADING) return;
+  MB_PRICES_LOADING = true;
+  fetch('/data/prices.json', {cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{ MB_PRICES = j||{}; cb&&cb(); }).catch(()=>{ MB_PRICES = {}; });
+}
+function mbWon(n){ return Number(n).toLocaleString('ko-KR')+'원'; }
+function mbPriceBadge(url){
+  const id = (url||'').split('/a/')[1], it = MB_PRICES && MB_PRICES.items && MB_PRICES.items[id];
+  if(!it || !it.drop) return '';
+  return `<em class="shop-drop">가격 내려감</em>`;
+}
+function mbPriceNote(url){
+  const id = (url||'').split('/a/')[1], it = MB_PRICES && MB_PRICES.items && MB_PRICES.items[id];
+  if(!it || !it.drop) return '';
+  return `<span class="shop-dropnote">지난 7일 평균보다 ${mbWon(it.drop)} 싸요 · ${MB_PRICES.asof||''} 기준</span>`;
+}
+function mbDealsHtml(){
+  const d = MB_PRICES && MB_PRICES.deals;
+  if(!d || !d.length) return '';
+  return `<div class="shop-deal"><div class="shop-deal-hd"><b>⚡ 오늘의 육아 특가</b><small>오늘 밤 12시까지 · 가격은 쿠팡에서 확인</small></div>
+    ${d.slice(0,3).map(x=>`<a href="${x.url}" target="_blank" rel="noopener sponsored" onclick="try{gtag('event','shop_deal',{})}catch(e){}"><span>${x.name}</span><b>${mbWon(x.price)}</b><i>보러 가기 ›</i></a>`).join('')}</div>`;
+}
 function openShop(stage, day){
+  if(!MB_PRICES) mbLoadPrices(()=>{ const el=document.getElementById('shopSheet'); if(el && !el.hidden){ const sc=el.querySelector('.shop-box').scrollTop; openShop(stage, day); el.querySelector('.shop-box').scrollTop=sc; } });
   const items = shopItemsForWeek(stage, day), have = shopHave();
   const stName = stage==='mid'?'중기':(stage==='late'?'후기':'초기');
   const rows = items.map(it=>{
@@ -4394,7 +4425,7 @@ function openShop(stage, day){
     const btn = it.url ? `<a class="shop-go" href="${it.url}" target="_blank" rel="noopener sponsored" onclick="shopMark('${encodeURIComponent(k)}',this);try{gtag('event','shop_click',{stage:'${stage}'})}catch(e){}">장보러 가기 ›</a>`
                        : `<a class="shop-go ghost" href="https://www.coupang.com/np/search?q=${encodeURIComponent('이유식 '+it.name)}" target="_blank" rel="noopener sponsored">장보러 가기 ›</a>`;
     return `<li class="${on?'have':''}"><label class="shop-chk"><input type="checkbox" ${on?'checked':''} onchange="shopToggle('${encodeURIComponent(k)}',this)"><span></span></label>
-      <div class="shop-info"><b>${it.name}</b><small>${it.staple?'<em class="shop-tag">매주</em> ':'<em class="shop-tag new">'+it.d0+'일차 새 재료</em> '}${it.why}</small></div>${btn}</li>`;
+      <div class="shop-info"><b>${it.name}${mbPriceBadge(it.url)}</b><small>${it.staple?'<em class="shop-tag">매주</em> ':'<em class="shop-tag new">'+it.d0+'일차 새 재료</em> '}${it.why}</small>${mbPriceNote(it.url)}</div>${btn}</li>`;
   }).join('');
   let el = document.getElementById('shopSheet');
   if(!el){ el = document.createElement('div'); el.id = 'shopSheet'; document.body.appendChild(el); }
@@ -4402,6 +4433,7 @@ function openShop(stage, day){
     <div class="shop-hd"><div><b>🛒 이번 주 장보기</b><small>${stName} ${day}~${day+6}일차 · 먹보 아빠네가 실제로 쓴 것</small></div><button type="button" onclick="closeShop()" aria-label="닫기">✕</button></div>
     <p class="shop-tip">장보러 가기를 누르면 먹보 아빠네가 고른 상품으로 바로 가요. 다녀오면 ✓ 표시되고, 집에 있는 건 체크해서 빼두세요.</p>
     <ul class="shop-list">${rows}</ul>
+    ${mbDealsHtml()}
     <div class="shop-more"><b>다른 육아용품도 찾아보기</b>
       <div class="shop-chips">${[['기저귀','iObklqX9uC'],['분유','iObtP73xZY'],['물티슈','iObt9wnROn'],['아기 우유','iObus44KES'],['아기 세제','iObuMurWWO'],['육아용품 전체 ›','iObu6jUbkW']].map(([c,id])=>`<a href="https://link.coupang.com/a/${id}" target="_blank" rel="noopener sponsored" onclick="try{gtag('event','shop_more',{q:'${c}'})}catch(e){}">${c}</a>`).join('')}</div></div>
     <p class="shop-note">${COUPANG_NOTICE}</p></div>`;
