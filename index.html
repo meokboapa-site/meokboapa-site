@@ -870,6 +870,7 @@
 .mn-thumb{width:60px;height:60px;object-fit:contain;flex:none;pointer-events:none;-webkit-user-drag:none}
 .menupage .cp-head .tt{min-width:0}
 /* MENUIMG_END css */
+.sp-set .sp-norest{grid-column:1/-1;font-weight:400;color:inherit}.sp-norest{flex:1 1 100%;display:flex;gap:8px;align-items:flex-start;margin-top:10px;padding:10px 12px;border:1px solid var(--line,#e5e5e5);border-radius:10px;cursor:pointer;width:100%;box-sizing:border-box}.sp-norest input{margin-top:3px;width:18px;height:18px;flex:none}.sp-norest b{display:block;font-size:14px}.sp-norest small{display:block;font-size:12px;color:var(--muted,#888);margin-top:2px;line-height:1.45}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -1170,7 +1171,7 @@ const INGREDIENTS_BY_STAGE = {
    유럽소아소화기영양학회(ESPGHAN) 공통 권고: 알레르기 유발식품(우유·달걀·대두·밀·땅콩·견과류·생선·갑각류)은
    불필요하게 늦추지 말고 생후 4~6개월 무렵부터 한 가지씩 소량으로 도입하는 것이 오히려 알레르기 예방에 효과적. */
 const ALLERGY_BANNER = {
-  "초기": "<b>첫 30일 식단표에 달걀(22일차)·밀가루(25일차)·땅콩버터(29일차) 테스트가 들어 있어요.</b> 대한소아과학회·AAP·ESPGHAN은 공통적으로 알레르기 유발식품 도입을 불필요하게 늦추지 말 것을 권고해요. 한 번에 한 가지씩, 평일 오전에 소량으로 시작하고, 중증 습진이나 다른 음식 알레르기가 있는 아기는 시작 전에 소아청소년과와 먼저 상의하세요.",
+  "초기": "<b>첫 30일 식단표에 달걀·밀가루·땅콩버터 테스트가 들어 있어요.</b> 대한소아과학회·AAP·ESPGHAN은 공통적으로 알레르기 유발식품 도입을 불필요하게 늦추지 말 것을 권고해요. 한 번에 한 가지씩, 평일 오전에 소량으로 시작하고, 중증 습진이나 다른 음식 알레르기가 있는 아기는 시작 전에 소아청소년과와 먼저 상의하세요.",
   "중기": "알레르기 유발식품이 더 넓어지는 시기입니다. 초기에 통과한 달걀·밀가루·땅콩버터는 끊지 말고 주 1번 이상 계속 주세요 — AAP·NIAID(2017 LEAP 연구 기반 지침)와 국내 최신 연구는 이런 식품을 일찍 시작해 꾸준히 먹일수록 알레르기 위험이 줄어든다고 보고합니다. 중기에는 두부·가자미·플레인 요거트를 한 재료씩 2~3일 간격으로 소량부터 시도하고, 두드러기·구토·호흡곤란 등이 없는지 관찰하세요.",
   "후기": "연어·대구 같은 생선류, 새우(갑각류), 견과류(곱게 간 페이스트·가루), 무염 치즈(유제품)가 새로 들어와요. 호주 알레르기학회(ASCIA)는 땅콩·견과류·우유·달걀·밀·대두·참깨·생선·갑각류를 첫돌 전에 접하라고 권고해요. 새로운 종류는 하나씩, 평일 오전에 소량으로 시작해 3일 관찰하세요.",
   "완료기": "게(갑각류)와 일반 우유가 새로 추가돼요. 새우·견과류는 후기에 시작했다면 끊지 말고 주 1번 이상 꾸준히 — 아직이라면 지금이라도 곱게 다지거나 페이스트로 소량부터 시작하세요. 중증 반응 빈도가 비교적 높은 편이라 첫 시도는 평소보다 더 소량으로.",
@@ -3926,7 +3927,7 @@ const START_PLAN = [
    why:"수분이 많고 맛이 연해요. <b>쌀미음을 40g으로 올려 총 70g</b>이 되는 날이에요.",
    tip:"<b>껍질 벗기고 씨는 꼭 파내기.</b> 익혀서 곱게.",
    rec:"알레르기 없음. 응가가 되직해지기 시작함. 70g 중 60g 먹음."},
-  {d0:21, d1:21, rest:true, title:"일요일 — 테스트 쉬는 날", ratio:8, g:70,
+  {d0:21, d1:21, rest:true, title:"쉬는 날 — 새 재료 없이 먹어본 재료로", ratio:8, g:70,
    parts:[["쌀미음",40],["소고기",10],["애호박",10],["청경채",10]],
    why:"새 재료 없이 <b>이미 먹어본 재료</b>로 한 끼. <span class=\"sp-alert\">주말엔 소아과 가기가 어려워서 새 재료를 시작하지 않아요.</span>"},
   {d0:22, d1:24, add:"달걀", make:{how:"15분 이상 삶아 완숙, 노른자·흰자 같이 곱게 으깨기", cube:0, noFreeze:"익힌 달걀은 얼리면 흰자가 질기고 물이 생겨요. 그날그날 삶거나, 냉장 1~2일 안에 쓰세요."}, test:true, title:"달걀 테스트", ratio:8, g:70,
@@ -3941,7 +3942,7 @@ const START_PLAN = [
    how:"밀가루는 푹 익혀야 해서 <b>조리 과정에 미리 넣고 같이 끓여요.</b> 다 끓인 뒤에 날가루를 뿌리지 않아요(날밀가루는 익혀 먹으라는 게 FDA 안내).",
    tip:"테스트 3일은 새 채소를 넣지 않아요.",
    rec:"특별한 반응 없음."},
-  {d0:28, d1:28, rest:true, title:"일요일 — 테스트 쉬는 날", ratio:8, g:80,
+  {d0:28, d1:28, rest:true, title:"쉬는 날 — 새 재료 없이 먹어본 재료로", ratio:8, g:80,
    parts:[["쌀미음",50],["소고기",10],["애호박",10],["브로콜리",10]],
    why:"새 재료 없이 이미 먹어본 재료로 한 끼."},
   {d0:29, d1:31, add:"땅콩버터", test:true, title:"땅콩버터 테스트", ratio:8, g:80,
@@ -3956,7 +3957,7 @@ const START_PLAN = [
    why:"포만감이 좋아요. 이파리채소 다음에 노란·전분 채소로 넘어가는 순서예요.",
    tip:"<b>무르거나, 노랗거나, 녹색이거나, 싹이 난 감자는 무조건 쓰지 않기</b>(솔라닌). 속까지 푹 익혀 으깨요.",
    rec:"고소해서 잘 먹는 듯!"},
-  {d0:35, d1:35, rest:true, title:"일요일 — 테스트 쉬는 날", ratio:8, g:80,
+  {d0:35, d1:35, rest:true, title:"쉬는 날 — 새 재료 없이 먹어본 재료로", ratio:8, g:80,
    parts:[["쌀미음",50],["소고기",10],["오이",10],["달걀",10],["감자",10]],
    why:"새 재료 없이 이미 먹어본 재료로 한 끼. 이렇게 5주를 마치면 중기 준비로 넘어가요."}
 ];
@@ -4011,7 +4012,30 @@ function startWeekdayOf(day){
 function startWeekdays(st){
   return st.d0===st.d1 ? startWeekdayOf(st.d0) : `${startWeekdayOf(st.d0)}~${startWeekdayOf(st.d1)}`;
 }
-const START_LAST_DAY = START_PLAN[START_PLAN.length-1].d1;
+/* 일요일(쉬는 날)에도 새 재료 넣기 — 일요일에 여는 소아과가 가까운 집용. 켜면 쉬는 날을 빼고 뒤 일정을 당겨요 */
+let MB_NOREST = false;
+try { MB_NOREST = localStorage.getItem('mb_norest') === '1'; } catch(e){}
+function mbDropRest(plan){
+  let shift = 0; const out = [];
+  plan.forEach(st=>{ if(st.rest){ shift += st.d1 - st.d0 + 1; return; } st.d0 -= shift; st.d1 -= shift; out.push(st); });
+  plan.length = 0; out.forEach(st=>plan.push(st));
+}
+function mbRestore(plan, orig){ plan.length = 0; orig.forEach(o=>plan.push(Object.assign({}, o))); if(MB_NOREST) mbDropRest(plan); }
+const START_ORIG = START_PLAN.map(o=>Object.assign({}, o));
+if(MB_NOREST) mbDropRest(START_PLAN);
+function startDayOfAdd(n){ const st = START_PLAN.find(x=>x.add===n); return st ? st.d0 : ''; }
+function noRestHtml(id){
+  return `<label class="sp-norest"><input type="checkbox" id="${id}" ${MB_NOREST?'checked':''}><span><b>일요일에도 새 재료 넣기</b><small>일요일에 여는 소아과가 가까우면 켜세요. 쉬는 날이 빠지고 뒤 일정이 당겨져요. 초기·중기·후기에 모두 적용돼요.</small></span></label>`;
+}
+function mbSetNoRest(on){
+  MB_NOREST = !!on;
+  try{ on ? localStorage.setItem('mb_norest','1') : localStorage.removeItem('mb_norest'); }catch(e){}
+  try{ gtag('event','norest_toggle',{on:on?1:0}); }catch(e){}
+  mbRestore(START_PLAN, START_ORIG); START_LAST_DAY = START_PLAN[START_PLAN.length-1].d1;
+  if(typeof MID_ORIG!=='undefined'){ mbRestore(MID_PLAN, MID_ORIG); MID_LAST_DAY = MID_PLAN[MID_PLAN.length-1].d1; }
+  if(typeof LATE_ORIG!=='undefined'){ mbRestore(LATE_PLAN, LATE_ORIG); LATE_LAST_DAY = LATE_PLAN[LATE_PLAN.length-1].d1; }
+}
+let START_LAST_DAY = START_PLAN[START_PLAN.length-1].d1;
 function startAmountHtml(st){                // 목표량 + 배죽을 크게
   return `<div class="sp-amt"><span class="sp-ml">${st.g}<small>g</small></span><span class="sp-ratio${st.ratioUp?' up':''}">${st.ratio}배죽${st.ratioUp?' 시작':''}</span></div>${startBaseHtml(st)}`;
 }
@@ -4216,7 +4240,8 @@ function buildStartPage(container){
       <input type="date" id="spStart" value="${weaningStart||''}">
       ${weaningStart?'<button type="button" id="spClear">지우기</button>':''}
       <span class="sp-hint">넣어두시면 오늘이 며칠째인지, 오늘 뭘 먹일지 바로 보여드려요.</span>
-      ${weaningStart && startWeekdayOf(1)!=='월' ? `<span class="sp-hint" style="color:var(--warn);">시작일이 ${startWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루고 평일 오전에 시작하세요.</span>`:''}
+      ${weaningStart && startWeekdayOf(1)!=='월' && !MB_NOREST ? `<span class="sp-hint" style="color:var(--warn);">시작일이 ${startWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루고 평일 오전에 시작하세요.</span>`:''}
+      ${noRestHtml('spNoRest')}
     </div>
     ${today}
 
@@ -4228,7 +4253,7 @@ function buildStartPage(container){
       두드러기가 얼굴·몸으로 번지거나, 입술·눈이 붓거나, 구토·설사·기침·쌕쌕거림이 같이 오면 즉시 병원으로 가세요(숨쉬기 힘들면 119). <b>입 주변만 살짝 붉고 다른 증상이 없으면</b> 음식이 닿아 생긴 자극일 수 있어요 — 닦아주고 지켜보세요(ASCIA 2026).</div>
 
     <div class="dbox warn"><span class="dbox-label">알레르기 테스트 하는 날</span>
-      달걀(22일차)·밀가루(25일차)·땅콩버터(29일차)는 <b>8대 알레르기 유발식품</b>이라 일부러 첫 5주 안에 넣었어요. 위험이 높은 순서대로 뒤에 둬서, 땅콩버터가 마지막이에요. 늦게 시작한다고 알레르기가 줄지 않고, 오히려 일찍 소량으로 접하는 쪽을 대한소아청소년과학회·AAP·호주 알레르기학회(ASCIA)가 공통으로 권해요.
+      달걀(${startDayOfAdd('달걀')}일차)·밀가루(${startDayOfAdd('밀가루')}일차)·땅콩버터(${startDayOfAdd('땅콩버터')}일차)는 <b>8대 알레르기 유발식품</b>이라 일부러 첫 5주 안에 넣었어요. 위험이 높은 순서대로 뒤에 둬서, 땅콩버터가 마지막이에요. 늦게 시작한다고 알레르기가 줄지 않고, 오히려 일찍 소량으로 접하는 쪽을 대한소아청소년과학회·AAP·호주 알레르기학회(ASCIA)가 공통으로 권해요.
       <ul class="sp-notes" style="margin-top:6px;">
         <li><b>평일 오전에, 처음엔 소량.</b> 먹은 뒤 몇 시간은 아기 곁에서 지켜보세요.</li>
         <li><b>통과하면 끊지 마세요.</b> 먹보 아빠네도 달걀은 밀가루·땅콩 주에 계속 넣었어요. ASCIA는 잘 먹은 알레르기 식품은 <b>적어도 주 1번 이상</b> 식단에 꾸준히 넣으라고 해요.</li>
@@ -4285,6 +4310,8 @@ function buildStartPage(container){
   bindStartDownloads(container);
   const clr = document.getElementById('spClear');
   if(clr) clr.onclick = ()=>{ saveWeaningStart(''); buildStartPage(container); };
+  const nr = document.getElementById('spNoRest');
+  if(nr) nr.onchange = ()=>{ mbSetNoRest(nr.checked); buildStartPage(container); };
 }
 
 
@@ -4317,54 +4344,54 @@ const MID_PLAN = [
   {d0:4, d1:6, add:"단호박", kind:"energy", title:"+ 단호박",
    why:"에너지 재료(먹보 아빠네 모듈의 SPECIAL). 단맛이 있어 잘 먹는 편이에요. 감자와 번갈아 써요.",
    prep:"껍질·씨 빼고 얇게 썰어 찌기 5~6분 → 2~3mm로 으깨기", cube:true},
-  {d0:7, d1:7, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:7, d1:7, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:8, d1:10, add:"당근", kind:"veg", title:"+ 당근",
    why:"<b>오늘부터 한 끼 110g, 토핑 3칸</b>(에너지 · 채소 · 고기). 닭고기도 이제 토핑으로 돌려 써요.",
    prep:"찌기 12분 → 2~3mm로 다지기", cube:true, cap:true},
   {d0:11, d1:13, add:"고구마", kind:"energy", title:"+ 고구마",
    why:"에너지 재료 세 번째. 이제 감자 · 단호박 · 고구마를 돌아가며 써요.",
    prep:"찌기 12~15분 → 2~3mm로 으깨기", cube:true},
-  {d0:14, d1:14, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:14, d1:14, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:15, d1:17, add:"가자미", kind:"allergen", test:true, title:"가자미(흰살생선) 테스트",
    why:"생선은 알레르기 유발식품이에요. 일찍, 소량으로 접하는 게 지금 권고예요. 3일 동안 다른 새 재료는 넣지 않아요.",
    prep:"찌기 6~8분(속까지) → 가시를 손으로 하나하나 확인하며 으깨기", cube:true},
   {d0:18, d1:20, add:"양배추", kind:"veg", title:"+ 양배추", gas:true, cap:true,
    why:"소화 채소(VEG1). 가스가 잘 차는 편이라 처음엔 오전에만, 익숙해져도 <b>저녁 끼니엔 빼요.</b>",
    prep:"심지·두꺼운 잎맥 빼고 삶기 5~7분 → 2~3mm로 다지기", cube:true},
-  {d0:21, d1:21, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:21, d1:21, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:22, d1:24, add:"사과", kind:"fruit", title:"+ 사과",
    why:"<b>오늘부터 한 끼 120g · 6배죽.</b> 첫 과일. 미국 CDC는 7~8개월이면 과일·채소를 다른 음식과 함께 먹을 수 있다고 해요. <b>주스·설탕은 돌 전엔 주지 않아요</b>(AAP).",
    prep:"껍질 벗겨 갈아서 찌기 5분 — 생 조각은 질식 위험이라 안 돼요", cube:true},
   {d0:25, d1:27, add:"시금치", kind:"veg", title:"+ 시금치",
    why:"비타민 채소(VEG2). 철분도 있지만 흡수는 고기가 훨씬 좋아서, 고기 토핑은 계속 가요.",
    prep:"잎만 데치기 20~30초 → 물기 짜고 2~3mm로", cube:true},
-  {d0:28, d1:28, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:28, d1:28, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:29, d1:31, add:"두부", kind:"allergen", test:true, title:"두부(대두) 테스트",
    why:"콩(대두)도 알레르기 유발식품이에요. 3일 동안 다른 새 재료는 넣지 않아요.",
    prep:"끓는 물에 1분 데쳐 으깨기", noFreeze:"얼리면 스펀지처럼 구멍이 생기고 식감이 변해요. 그때그때 데쳐 쓰세요."},
   {d0:32, d1:34, add:"비타민채소", kind:"veg", title:"+ 비타민채소",
    why:"비타민 채소(VEG2). 잎채소는 줄기를 빼고 잎만 써요.",
    prep:"잎만 데치기 20~30초 → 2~3mm로", cube:true},
-  {d0:35, d1:35, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:35, d1:35, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:36, d1:38, add:"플레인 요거트", kind:"allergen", test:true, title:"플레인 요거트(무가당) 테스트",
    why:"유제품도 알레르기 유발식품이에요. 마시는 우유는 돌 이후지만, <b>설탕 없는 요거트·치즈는 돌 전에도</b> 줄 수 있어요(CDC).",
    prep:"무가당 플레인 그대로 10~15g, 끼니에 섞거나 따로 떠 주기 — 가당 제품과 헷갈리지 않기", noFreeze:"요거트는 큐브로 얼리지 않아요. 열어서 냉장 보관한 것만 써요."},
   {d0:39, d1:41, add:"배", kind:"fruit", title:"+ 배",
    why:"두 번째 과일. 과일은 끼니 토핑 한 칸이나 간식으로만 — 양을 늘리기보다 <b>맛을 경험하는</b> 정도면 돼요.",
    prep:"껍질·씨 빼고 갈아서 찌기 5분", cube:true},
-  {d0:42, d1:42, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:42, d1:42, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:43, d1:45, add:"표고버섯", kind:"veg", title:"+ 표고버섯",
    why:"<b>오늘부터 한 끼 130g · 5배죽.</b> 버섯은 감칠맛이 있어 다른 재료 맛을 살려줘요.",
    prep:"기둥 빼고 갓만 → 5분 이상 <b>완전히</b> 익혀 2~3mm로 (덜 익으면 표고 피부염)", cube:true},
   {d0:46, d1:48, add:"무", kind:"veg", title:"+ 무", why:"순한 소화 채소(VEG1). 녹색이 도는 윗부분이 덜 맵고 담백해요.",
    prep:"찌기 12~15분 → 2~3mm로 다지기", cube:true},
-  {d0:49, d1:49, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:49, d1:49, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:50, d1:52, add:"양파", kind:"veg", title:"+ 양파", why:"쪄서 익히면 단맛이 올라와요. 다른 재료 맛을 살려줘서 후기 반찬의 기본이 돼요.",
    prep:"아주 곱게 다져 찌기 6~7분", cube:true},
   {d0:53, d1:55, add:"아보카도", kind:"fruit", title:"+ 아보카도",
    why:"과일이지만 당이 거의 없고 지방이 많아요. 미끄러우니 곱게 으깨서.",
    prep:"잘 익은 것을 으깨서 바로 — 익히지 않아요", noFreeze:"자르면 금방 갈색으로 변해요. 먹을 만큼만 그때그때."},
-  {d0:56, d1:56, rest:true, title:"일요일 — 새 재료 없음"}
+  {d0:56, d1:56, rest:true, title:"쉬는 날 — 새 재료 없음"}
 ];
 MID_PLAN.forEach(st=>{
   const w = Math.ceil(st.d0/7);
@@ -4374,7 +4401,9 @@ MID_PLAN.forEach(st=>{
   st.ratioUp = !!(prev && prev.ratio !== st.ratio);
   st.gUp = !!(prev && prev.g !== st.g);
 });
-const MID_LAST_DAY = MID_PLAN[MID_PLAN.length-1].d1;
+const MID_ORIG = MID_PLAN.map(o=>Object.assign({}, o));
+if(MB_NOREST) mbDropRest(MID_PLAN);
+let MID_LAST_DAY = MID_PLAN[MID_PLAN.length-1].d1;
 /* 끼니 구성 — 소고기미음은 한 끼 양에서 토핑을 뺀 나머지예요 */
 /* 먹보 아빠네 엑셀 '1일 2식 모듈' — 칸마다 실제 재료 이름을 채워요.
    에너지(SPECIAL) · 채소1(소화 — 부드럽고 수분 많은 것) · 채소2(비타민 — 비타민이 높은 것)를 '격일'로, 통과한 재료만 돌려 씁니다. */
@@ -4674,7 +4703,8 @@ function buildMidPage(container){
       <input type="date" id="mpStart" value="${midStart||''}">
       ${midStart?'<button type="button" id="mpClear">지우기</button>':''}
       <span class="sp-hint">넣어두시면 오늘 오전·오후에 뭘 줄지 바로 보여드려요.</span>
-      ${midStart && midWeekdayOf(1)!=='월' ? `<span class="sp-hint" style="color:var(--warn);">시작일이 ${midWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
+      ${midStart && midWeekdayOf(1)!=='월' && !MB_NOREST ? `<span class="sp-hint" style="color:var(--warn);">시작일이 ${midWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
+      ${noRestHtml('mpNoRest')}
     </div>
     ${today}
     <div class="sp-list">${rows}</div>
@@ -4715,6 +4745,8 @@ function buildMidPage(container){
   if(inp) inp.onchange = ()=>{ saveMidStart(inp.value); buildMidPage(container); };
   const clr = document.getElementById('mpClear');
   if(clr) clr.onclick = ()=>{ saveMidStart(''); buildMidPage(container); };
+  const nr = document.getElementById('mpNoRest');
+  if(nr) nr.onchange = ()=>{ mbSetNoRest(nr.checked); buildMidPage(container); };
   bindStartDownloads(container);
 }
 
@@ -4750,7 +4782,7 @@ const LATE_PLAN = [
    why:"하이체어에 앉혀 <b>식판 반찬칸</b>에 손으로 집는 음식을 같이 줘요. 새 재료가 아니라 <b>새 질감</b>이에요 — 이미 먹어본 애호박·브로콜리·당근으로 시작해요.",
    prep:"손가락 길이 막대로 썰어 푹 찌기 — 엄지와 검지로 눌러 으깨질 정도", noFreeze:"원물스틱은 큐브 말고 쪄서 식힌 뒤 유리용기에 따로 냉장 보관했어요(1~2일).",
    rec:"애호박·브로콜리·당근 원물스틱은 바로 적응했어요. 소고기스틱은 지금도 별로 안 좋아해요."},
-  {d0:7, d1:7, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:7, d1:7, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:8, d1:10, add:"새우", kind:"allergen", test:true, title:"새우(갑각류) 테스트",
    why:"갑각류도 첫돌 전에 접하라는 게 지금 권고예요(ASCIA). 중증 반응이 비교적 많은 편이라 <b>평소보다 더 소량</b>으로 시작해요.",
    prep:"껍질·등쪽 내장 빼고 삶기 2~3분(동그랗게 말릴 때까지) → 2~3mm로 다지기 — 통새우 금지", cube:true,
@@ -4759,65 +4791,65 @@ const LATE_PLAN = [
    why:"단맛이 강한 과일이라 간식이나 팬케이크 반죽에 조금씩. <b>동그란 코인 모양은 금지</b> — 세로로 길게.",
    prep:"잘 익은 걸 으깨거나 세로로 길게 — 익히지 않아요", noFreeze:"자르면 금방 갈색이 돼요. 먹을 만큼만.",
    rec:"먹보 아빠네는 과일을 돌 이후로 미뤘는데, 첫 바나나를 오트밀팬케이크 반죽에 1/5만 섞어 구워줬더니 소리 지르며 먹었어요."},
-  {d0:14, d1:14, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:14, d1:14, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:15, d1:17, add:"돼지고기", kind:"protein", title:"+ 돼지고기",
    why:"소고기·닭고기 다음 세 번째 고기. 안심·등심처럼 기름이 적은 부위로.",
    prep:"삶기 10~12분(속까지 완전히) → 3~5mm로 다지기, 보이는 기름기는 떼기", cube:true},
   {d0:18, d1:20, add:"양송이버섯", kind:"veg", title:"+ 양송이버섯", why:"감칠맛이 있어 다른 재료 맛을 살려줘요.",
    prep:"얇게 저며 5분 이상 익혀 5mm로", cube:true},
-  {d0:21, d1:21, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:21, d1:21, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:22, d1:24, add:"무른밥", kind:"base", title:"무른밥으로 넘어가기",
    why:"<b>오늘부터 한 끼 115g · 5배죽</b>. 쌀가루에서 <b>쌀알</b>로 바뀌는 큰 변화라, 거부하면 한 단계 되돌려도 괜찮아요.",
    prep:"불린 쌀을 5배 물로 푹 끓이기 — 입자를 한 번에 바꾸지 말고 섞어서",
    rec:"일반쌀로 바로 바꿨더니 먹뱉을 많이 해서, <b>중기쌀(쌀가루) + 후기쌀 반반</b>으로 섞어 다시 적응기를 가졌어요."},
   {d0:25, d1:27, add:"블루베리", kind:"fruit", title:"+ 블루베리", why:"통째는 둥글어서 질식 위험 — 꼭 으깨거나 반으로.",
    prep:"반으로 자르거나 으깨기 — 익히지 않아요", noFreeze:"생과일은 그때그때 씻어서."},
-  {d0:28, d1:28, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:28, d1:28, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:29, d1:31, add:"무염 치즈", kind:"allergen", test:true, title:"무염 치즈(유제품)",
    why:"요거트 다음 유제품. <b>무염·저염 아기 치즈</b>만, 두꺼운 조각·동그란 모양은 피해요.",
    prep:"잘게 찢어 끼니에 섞거나 손으로 집게", noFreeze:"치즈는 열어서 냉장 보관한 것만.",
    rec:"치즈는 후기에 시작했어요."},
   {d0:32, d1:34, add:"옥수수", kind:"veg", title:"+ 옥수수", why:"통알은 미끄러워 위험해요 — 반드시 가르거나 갈아서.",
    prep:"삶기 10분 → 알을 반으로 가르거나 곱게 갈기", cube:true},
-  {d0:35, d1:35, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:35, d1:35, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:36, d1:38, add:"대구", kind:"protein", title:"+ 대구", why:"담백한 흰살생선. 가자미·연어를 먹었어도 새 생선은 따로 3일.",
    prep:"찌기 6~8분 → 잔가시 확인하며 부수기", cube:true},
   {d0:39, d1:41, add:"새송이버섯", kind:"veg", title:"+ 새송이버섯", why:"대가 단단해서 결 반대로 얇게.",
    prep:"결 반대로 3~5mm로 썰어 5분 이상 익히기", cube:true},
-  {d0:42, d1:42, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:42, d1:42, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:43, d1:45, add:"견과류 페이스트", kind:"allergen", test:true, title:"견과류 페이스트 테스트",
    why:"<b>오늘부터 한 끼 130g · 4배죽 · 토핑 20g</b>. 견과류도 첫돌 전에 접하라는 게 지금 권고예요(ASCIA). 통견과·조각은 만 네 살까지 금지.",
    prep:"무가당 견과 페이스트(또는 곱게 간 가루) 소량을 따뜻한 물에 묽게 풀어 섞기"},
   {d0:46, d1:48, add:"복숭아", kind:"fruit", title:"+ 복숭아", why:"껍질은 벗기고, 단단하면 살짝 쪄서.",
    prep:"껍질 벗겨 7mm로 — 단단하면 찌기 3분", noFreeze:"생과일은 그때그때."},
-  {d0:49, d1:49, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:49, d1:49, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:50, d1:52, add:"검은콩", kind:"protein", title:"+ 검은콩", why:"철분이 있는 식물성 단백질. 껍질이 질기고 둥글어 꼭 으깨요.",
    prep:"불려서 30분 이상 삶아 껍질 벗기고 으깨기", cube:true},
   {d0:53, d1:55, add:"미역", kind:"veg", title:"+ 미역", why:"미끄럽고 길어서 통째로는 위험 — 가위로 아주 잘게.",
    prep:"충분히 불려 아주 잘게 다진 뒤 5분 끓이기", cube:true},
-  {d0:56, d1:56, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:56, d1:56, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:57, d1:59, add:"전복", kind:"protein", title:"+ 전복", why:"연체류라 처음엔 소량. 질겨서 오래 익히고 아주 잘게.",
    prep:"내장·이빨 빼고 10~15분 삶아 아주 잘게", cube:true},
   {d0:60, d1:62, add:"딸기", kind:"fruit", title:"+ 딸기", why:"산도가 있어 입 주변이 붉어질 수 있어요 — 접촉 반응인지 잘 봐요.",
    prep:"꼭지 떼고 으깨거나 5mm로 — 통째·반쪽 금지", noFreeze:"생과일은 그때그때."},
-  {d0:63, d1:63, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:63, d1:63, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:64, d1:66, add:"진밥", kind:"base", title:"진밥으로 넘어가기",
    why:"<b>오늘부터 한 끼 150g · 진밥</b>(권장 범위 위쪽). 아기마다 양 차이가 커서, 덜 먹어도 체중이 잘 늘면 괜찮아요.",
    prep:"지은 밥에 물을 더해 한 번 더 무르게 끓이기",
    rec:"우리 아기는 후기 내내 한 끼 80~120g 정도였어요. 150g 넘게 먹는 아기들이랑 비교 안 하기로 했어요."},
   {d0:67, d1:69, add:"밤", kind:"veg", title:"+ 밤", why:"에너지 재료로도 좋아요. 단단하고 둥글어서 꼭 으깨요.",
    prep:"25~30분 푹 삶아 으깨기 — 통밤·반쪽 금지", cube:true},
-  {d0:70, d1:70, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:70, d1:70, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:71, d1:73, add:"마", kind:"veg", title:"+ 마", why:"끈적여서 미끄러워요. 익히면 입 주변 가려움이 줄어요.",
    prep:"껍질 벗겨(장갑) 갈거나 5mm로 익히기", cube:true},
   {d0:74, d1:76, add:"수박", kind:"fruit", title:"+ 수박", why:"수분이 많아 여름 간식으로 좋아요. 씨는 꼭 빼요.",
    prep:"씨 빼고 7mm로 — 동그란 볼 모양 금지", noFreeze:"생과일은 그때그때."},
-  {d0:77, d1:77, rest:true, title:"일요일 — 새 재료 없음"},
+  {d0:77, d1:77, rest:true, title:"쉬는 날 — 새 재료 없음"},
   {d0:78, d1:80, add:"팽이버섯", kind:"veg", title:"+ 팽이버섯", why:"가닥이 길면 그대로 넘어가요 — 반드시 짧게.",
    prep:"3mm로 짧게 썰어 5분 이상 익히기", cube:true},
   {d0:81, d1:83, add:"참외", kind:"fruit", title:"+ 참외", why:"껍질·씨를 빼고, 덜 익어 단단한 건 피해요.",
    prep:"껍질·씨 빼고 7mm로", noFreeze:"생과일은 그때그때."},
-  {d0:84, d1:84, rest:true, title:"일요일 — 새 재료 없음"}
+  {d0:84, d1:84, rest:true, title:"쉬는 날 — 새 재료 없음"}
 ];
 LATE_PLAN.forEach(st=>{
   const w = Math.ceil(st.d0/7), W = LATE_WEEKS[w];
@@ -4827,7 +4859,9 @@ LATE_PLAN.forEach(st=>{
   st.ratioUp = !!(prev && prev.ratio !== st.ratio);
   st.gUp = !!(prev && prev.g !== st.g);
 });
-const LATE_LAST_DAY = LATE_PLAN[LATE_PLAN.length-1].d1;
+const LATE_ORIG = LATE_PLAN.map(o=>Object.assign({}, o));
+if(MB_NOREST) mbDropRest(LATE_PLAN);
+let LATE_LAST_DAY = LATE_PLAN[LATE_PLAN.length-1].d1;
 function lateMealsOfDay(day, html){
   const st = LATE_PLAN.find(x=>day>=x.d0 && day<=x.d1);
   const D = lateDay(day);
@@ -4950,7 +4984,8 @@ function buildLatePage(container){
       <input type="date" id="lpStart" value="${lateStart||''}">
       ${lateStart?'<button type="button" id="lpClear">지우기</button>':''}
       <span class="sp-hint">넣어두시면 오늘 아침·점심·저녁에 뭘 줄지 바로 보여드려요.</span>
-      ${lateStart && lateWeekdayOf(1)!=='월' ? `<span class="sp-hint" style="color:var(--warn);">시작일이 ${lateWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
+      ${lateStart && lateWeekdayOf(1)!=='월' && !MB_NOREST ? `<span class="sp-hint" style="color:var(--warn);">시작일이 ${lateWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
+      ${noRestHtml('lpNoRest')}
     </div>
     ${today}
     <div class="sp-list">${rows}</div>
@@ -4987,6 +5022,8 @@ function buildLatePage(container){
   if(inp) inp.onchange = ()=>{ saveLateStart(inp.value); buildLatePage(container); };
   const clr = document.getElementById('lpClear');
   if(clr) clr.onclick = ()=>{ saveLateStart(''); buildLatePage(container); };
+  const nr = document.getElementById('lpNoRest');
+  if(nr) nr.onchange = ()=>{ mbSetNoRest(nr.checked); buildLatePage(container); };
   bindStartDownloads(container);
 }
 
