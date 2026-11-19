@@ -605,6 +605,7 @@
 .startpage .sp-row{display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 15px;}
 .startpage .sp-row.now{border-color:var(--moss);box-shadow:0 0 0 1.5px var(--moss) inset;}
 .startpage .sp-row.past{opacity:.5;}
+.sp-dask{grid-column:1/-1;flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;margin-top:6px}.startpage .sp-set .sp-dask button{text-decoration:none;border:1px solid var(--line,#ddd);background:#fff;border-radius:100px;padding:6px 11px;font:inherit;font-size:12.5px;color:inherit}.startpage .sp-set .sp-dask button[data-y]{background:var(--moss,#4d6b55);border-color:var(--moss,#4d6b55);color:#fff}
 .sp-past{margin:0 0 9px}.sp-past>summary{list-style:none;cursor:pointer;padding:11px 14px;border:1px dashed var(--line,#ddd);border-radius:12px;font-size:13.5px;font-weight:600;color:var(--muted,#777);display:flex;justify-content:space-between;align-items:center;gap:8px}.sp-past>summary::-webkit-details-marker{display:none}.sp-past>summary::after{content:'펼치기 ›';font-size:12px;font-weight:500;flex:none}.sp-past[open]>summary::after{content:'접기 ‹'}.sp-past>summary small{font-weight:400;font-size:12px;margin-left:auto}.sp-past[open]>.sp-list{margin-top:9px}
 .startpage .sp-day{flex:0 0 58px;text-align:center;padding-top:2px;}
 .startpage .sp-day b{display:block;font-size:14.5px;font-weight:900;color:var(--moss-deep);line-height:1.2;}
@@ -4226,6 +4227,24 @@ function mbSetNoRest(on){
   if(typeof LATE_ORIG!=='undefined'){ mbRestore(LATE_PLAN, LATE_ORIG); LATE_LAST_DAY = LATE_PLAN[LATE_PLAN.length-1].d1; }
 }
 let START_LAST_DAY = START_PLAN[START_PLAN.length-1].d1;
+/* 아이폰은 빈 날짜칸을 누르기만 해도 오늘 날짜가 들어가요. 비어 있던 칸에 오늘이 들어오면 바로 저장하지 않고 한 번 물어봐요 */
+function mbDateBind(inp, save, rebuild){
+  if(!inp) return;
+  const wasEmpty = !inp.value;
+  inp.onchange = ()=>{
+    const v = inp.value, d = new Date(), t = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const old = inp.parentNode.querySelector('.sp-dask'); if(old) old.remove();
+    if(wasEmpty && v === t){
+      const box = document.createElement('span'); box.className = 'sp-dask';
+      box.innerHTML = `오늘(${d.getMonth()+1}월 ${d.getDate()}일)부터 시작한 게 맞나요? <button type="button" data-y>네, 오늘부터</button><button type="button" data-n>다른 날짜</button>`;
+      inp.insertAdjacentElement('afterend', box);
+      box.querySelector('[data-y]').onclick = ()=>{ save(v); rebuild(); };
+      box.querySelector('[data-n]').onclick = ()=>{ inp.value = ''; box.remove(); try{ inp.showPicker ? inp.showPicker() : inp.focus(); }catch(e){ inp.focus(); } };
+      return;
+    }
+    save(v); rebuild();
+  };
+}
 /* 시작일을 넣은 사람은 지난 칸을 접어두고 오늘 칸부터 보여줘요 */
 function mbListHtml(plan, cur, arr){
   if(cur===null || cur<1) return `<div class="sp-list">${arr.join('')}</div>`;
@@ -4576,7 +4595,7 @@ function buildStartPage(container){
       대한소아청소년과학회·AAP·ESPGHAN 공통 권고예요. 중기 탭에서 도입 시기를 확인하세요.</div>`;
 
   const inp = document.getElementById('spStart');
-  if(inp) inp.onchange = ()=>{ saveWeaningStart(inp.value); buildStartPage(container); };
+  mbDateBind(inp, saveWeaningStart, ()=>buildStartPage(container));
   bindStartDownloads(container);
   const clr = document.getElementById('spClear');
   if(clr) clr.onclick = ()=>{ saveWeaningStart(''); buildStartPage(container); };
@@ -5012,7 +5031,7 @@ function buildMidPage(container){
     <p class="source-note" style="margin-top:10px;">출처 · <a href="https://www.cdc.gov/infant-toddler-nutrition/foods-and-drinks/when-what-and-how-to-introduce-solid-foods.html" target="_blank" rel="noopener noreferrer">CDC — When, What, and How to Introduce Solid Foods</a> · AAP(돌 전 주스 금지) · <a href="https://allergy.org.au/patients/fast-facts/infant-feeding-and-allergy-prevention" target="_blank" rel="noopener noreferrer">ASCIA</a> · 질병관리청 국가건강정보포털 · 재료별 손질은 이 앱 재료표 기준</p>`;
 
   const inp = document.getElementById('mpStart');
-  if(inp) inp.onchange = ()=>{ saveMidStart(inp.value); buildMidPage(container); };
+  mbDateBind(inp, saveMidStart, ()=>buildMidPage(container));
   const clr = document.getElementById('mpClear');
   if(clr) clr.onclick = ()=>{ saveMidStart(''); buildMidPage(container); };
   const nr = document.getElementById('mpNoRest');
@@ -5289,7 +5308,7 @@ function buildLatePage(container){
     <p class="source-note" style="margin-top:10px;">출처 · <a href="https://allergy.org.au/hp/papers/infant-feeding-and-allergy-prevention-clinical-update" target="_blank" rel="noopener noreferrer">ASCIA — Infant feeding and allergy prevention</a> · <a href="https://www.cdc.gov/infant-toddler-nutrition/foods-and-drinks/when-what-and-how-to-introduce-solid-foods.html" target="_blank" rel="noopener noreferrer">CDC</a> · AAP · 질병관리청 국가건강정보포털 · 손질은 이 앱 재료표 기준</p>`;
 
   const inp = document.getElementById('lpStart');
-  if(inp) inp.onchange = ()=>{ saveLateStart(inp.value); buildLatePage(container); };
+  mbDateBind(inp, saveLateStart, ()=>buildLatePage(container));
   const clr = document.getElementById('lpClear');
   if(clr) clr.onclick = ()=>{ saveLateStart(''); buildLatePage(container); };
   const nr = document.getElementById('lpNoRest');
