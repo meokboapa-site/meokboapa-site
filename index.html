@@ -4271,7 +4271,7 @@ function mbPriceNote(url){
 function mbDealsHtml(){
   const d = MB_PRICES && MB_PRICES.deals;
   if(!d || !d.length) return '';
-  return `<div class="shop-deal"><div class="shop-deal-hd"><b>⚡ 오늘의 육아 특가</b><small>오늘 밤 12시까지 · 가격은 쿠팡에서 확인</small></div>
+  return `<div class="shop-deal"><div class="shop-deal-hd"><b>⚡ 오늘의 육아 특가</b><small>오늘 밤 12시까지${MB_PRICES.asof?' · '+MB_PRICES.asof+' 가격':''}</small></div>
     ${d.slice(0,3).map(x=>`<a href="${x.url}" target="_blank" rel="noopener sponsored" onclick="try{gtag('event','shop_deal',{})}catch(e){}"><span>${x.name}</span><b>${mbWon(x.price)}</b><i>보러 가기 ›</i></a>`).join('')}</div>`;
 }
 function openShop(stage, day){
