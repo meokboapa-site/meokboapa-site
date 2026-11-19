@@ -606,6 +606,7 @@
 .startpage .sp-row.now{border-color:var(--moss);box-shadow:0 0 0 1.5px var(--moss) inset;}
 .startpage .sp-row.past{opacity:.5;}
 .sp-dask{grid-column:1/-1;flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;margin-top:6px}.startpage .sp-set .sp-dask button{text-decoration:none;border:1px solid var(--line,#ddd);background:#fff;border-radius:100px;padding:6px 11px;font:inherit;font-size:12.5px;color:inherit}.startpage .sp-set .sp-dask button[data-y]{background:var(--moss,#4d6b55);border-color:var(--moss,#4d6b55);color:#fff}
+.startpage .sp-set input[type=date]{min-width:0;max-width:100%;width:100%;box-sizing:border-box;-webkit-appearance:none;appearance:none;text-align:left}.startpage .sp-set input[type=date]::-webkit-date-and-time-value{text-align:left}
 .sp-past{margin:0 0 9px}.sp-past>summary{list-style:none;cursor:pointer;padding:11px 14px;border:1px dashed var(--line,#ddd);border-radius:12px;font-size:13.5px;font-weight:600;color:var(--muted,#777);display:flex;justify-content:space-between;align-items:center;gap:8px}.sp-past>summary::-webkit-details-marker{display:none}.sp-past>summary::after{content:'펼치기 ›';font-size:12px;font-weight:500;flex:none}.sp-past[open]>summary::after{content:'접기 ‹'}.sp-past>summary small{font-weight:400;font-size:12px;margin-left:auto}.sp-past[open]>.sp-list{margin-top:9px}
 .startpage .sp-day{flex:0 0 58px;text-align:center;padding-top:2px;}
 .startpage .sp-day b{display:block;font-size:14.5px;font-weight:900;color:var(--moss-deep);line-height:1.2;}
@@ -4251,14 +4252,48 @@ function mbListHtml(plan, cur, arr){
   const a = plan[0].d0, b = plan[cur-1].d1;
   return `<details class="sp-past"><summary>지난 ${a===b?a:a+'~'+b}일차 보기</summary><div class="sp-list">${arr.slice(0,cur).join('')}</div></details><div class="sp-list">${arr.slice(cur).join('')}</div>`;
 }
-/* 일요일 설정을 바꿀 때 화면이 통째로 다시 그려지면서 튀지 않게, 높이와 체크박스 위치를 붙잡아 둬요 */
+/* 일요일 설정을 바꿀 때 화면을 통째로 다시 그리면 아이폰에서 깜빡여요.
+   새 화면을 보이지 않는 곳에 만든 뒤, 실제로 바뀐 칸만 갈아끼우고 체크박스·날짜칸은 그대로 둬요. */
+function mbMorph(oldP, newP){
+  const o = [...oldP.childNodes], n = [...newP.childNodes];
+  const same = (x,y)=>x.nodeType===y.nodeType && (x.nodeType!==1 || (x.tagName===y.tagName && x.className===y.className && x.id===y.id));
+  if(o.length !== n.length){             // 개수가 다르면 앞뒤로 같은 칸은 살리고, 가운데만 갈아끼워요
+    let h=0; while(h<o.length && h<n.length && same(o[h],n[h])) h++;
+    let t=0; while(t<o.length-h && t<n.length-h && same(o[o.length-1-t],n[n.length-1-t])) t++;
+    const ref = o[o.length-t] || null;
+    o.slice(h, o.length-t).forEach(x=>x.remove());
+    n.slice(h, n.length-t).forEach(y=>oldP.insertBefore(y, ref));
+    const keepO = o.slice(0,h).concat(o.slice(o.length-t)), keepN = n.slice(0,h).concat(n.slice(n.length-t));
+    keepO.forEach((x,i)=>{ mbMorphPair(oldP, x, keepN[i]); });
+    return;
+  }
+  for(let i=0;i<n.length;i++) mbMorphPair(oldP, o[i], n[i]);
+}
+function mbMorphPair(oldP, a, b){
+  {
+    if(a.nodeType !== b.nodeType){ oldP.replaceChild(b, a); return; }
+    if(a.nodeType === 3){ if(a.nodeValue !== b.nodeValue) a.nodeValue = b.nodeValue; return; }
+    if(a.nodeType !== 1) return;
+    if(a.tagName === 'INPUT') return;            // 누른 체크박스·날짜칸은 손대지 않음
+    if(a.isEqualNode(b)) return;
+    if(a.tagName === b.tagName && a.className === b.className && a.id === b.id && a.tagName!=='DETAILS'){
+      for(const at of [...b.attributes]) if(a.getAttribute(at.name) !== at.value) a.setAttribute(at.name, at.value);
+      for(const at of [...a.attributes]) if(!b.hasAttribute(at.name)) a.removeAttribute(at.name);
+      mbMorph(a, b);
+    } else { if(a.tagName==='DETAILS' && b.tagName==='DETAILS') b.open = a.open; oldP.replaceChild(b, a); }
+  }
+}
 function mbStableRebuild(container, id, build){
   const el = document.getElementById(id), top = el ? el.getBoundingClientRect().top : null;
-  container.style.minHeight = container.offsetHeight + 'px';
-  build(container);
+  const cls = container.className, ph = document.createComment('mb');
+  container.replaceWith(ph);                        // 잠깐 문서에서 빼서, 새로 그릴 때 기존 칸에 이벤트가 다시 붙지 않게
+  const tmp = document.createElement('div'); build(tmp);
+  ph.replaceWith(container); container.className = cls;
+  const fresh = [...tmp.querySelectorAll('input[id],button[id]')];
+  mbMorph(container, tmp);
+  const moved = fresh.filter(e=>container.contains(e)); if(moved.length){ window.__mbMoved = moved.map(e=>e.id); build(container); }   // 이벤트가 붙어야 할 칸이 새로 들어왔으면 그냥 다시 그려요
   const el2 = document.getElementById(id);
   if(el2 && top!==null){ const d = el2.getBoundingClientRect().top - top; if(Math.abs(d)>1) window.scrollBy(0, d); }
-  requestAnimationFrame(()=>{ container.style.minHeight = ''; });
 }
 function startAmountHtml(st){                // 목표량 + 배죽을 크게
   return `<div class="sp-amt"><span class="sp-ml">${st.g}<small>g</small></span><span class="sp-ratio${st.ratioUp?' up':''}">${st.ratio}배죽${st.ratioUp?' 시작':''}</span></div>${startBaseHtml(st)}`;
@@ -4529,7 +4564,7 @@ function buildStartPage(container){
       <input type="date" id="spStart" value="${weaningStart||''}">
       ${weaningStart?'<button type="button" id="spClear">지우기</button>':''}
       <span class="sp-hint">넣어두시면 오늘이 며칠째인지, 오늘 뭘 먹일지 바로 보여드려요.</span>
-      ${weaningStart && startWeekdayOf(1)!=='월' && !MB_NOREST ? `<span class="sp-hint" style="color:var(--warn);">시작일이 ${startWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루고 평일 오전에 시작하세요.</span>`:''}
+      ${weaningStart && startWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${startWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루고 평일 오전에 시작하세요.</span>`:''}
       ${noRestHtml('spNoRest')}
     </div>
     ${today}
@@ -4992,7 +5027,7 @@ function buildMidPage(container){
       <input type="date" id="mpStart" value="${midStart||''}">
       ${midStart?'<button type="button" id="mpClear">지우기</button>':''}
       <span class="sp-hint">넣어두시면 오늘 오전·오후에 뭘 줄지 바로 보여드려요.</span>
-      ${midStart && midWeekdayOf(1)!=='월' && !MB_NOREST ? `<span class="sp-hint" style="color:var(--warn);">시작일이 ${midWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
+      ${midStart && midWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${midWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
       ${noRestHtml('mpNoRest')}
     </div>
     ${today}
@@ -5273,7 +5308,7 @@ function buildLatePage(container){
       <input type="date" id="lpStart" value="${lateStart||''}">
       ${lateStart?'<button type="button" id="lpClear">지우기</button>':''}
       <span class="sp-hint">넣어두시면 오늘 아침·점심·저녁에 뭘 줄지 바로 보여드려요.</span>
-      ${lateStart && lateWeekdayOf(1)!=='월' && !MB_NOREST ? `<span class="sp-hint" style="color:var(--warn);">시작일이 ${lateWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
+      ${lateStart && lateWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${lateWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
       ${noRestHtml('lpNoRest')}
     </div>
     ${today}
