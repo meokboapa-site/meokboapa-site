@@ -4,3 +4,7 @@
 /a2hs.js
   Cache-Control: no-cache
 
+
+/data/*
+  Cache-Control: no-cache
+  Access-Control-Allow-Origin: *

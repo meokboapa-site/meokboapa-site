@@ -6,7 +6,7 @@
    그래서 /재료/소고기/ 같은 별도 페이지를 한 번 열면 앱 본체 캐시가 그 페이지로 바뀌어,
    오프라인에서 앱을 열었을 때 엉뚱한 페이지가 뜨는 문제가 있었습니다.
    이제 앱 본체(루트)만 './index.html'로 저장하고, 나머지 페이지는 각자 주소로 저장합니다. */
-const CACHE_NAME = 'meokbo-cache-v343';
+const CACHE_NAME = 'meokbo-cache-v344';
 /* 일러스트(/dogam/)는 버전이 바뀌어도 지우지 않는 별도 캐시 + "저장본 먼저 보여주고 뒤에서 갱신" 방식
    → 배포할 때마다 이미지를 다시 받지 않아 빠르고 데이터도 아낌 */
 const IMG_CACHE = 'meokbo-img-v1';
@@ -72,6 +72,14 @@ self.addEventListener('fetch', (event) => {
           return res;
         }).catch(() => caches.match(req, { ignoreSearch: true }))
       );
+      return;
+    }
+  } catch (e) {}
+
+  /* 가격 파일(/data/)은 하루 세 번 바뀌므로 네트워크 우선 */
+  try {
+    if (new URL(req.url).pathname.startsWith('/data/')) {
+      event.respondWith(fetch(req).catch(() => caches.match(req, { ignoreSearch: true })));
       return;
     }
   } catch (e) {}

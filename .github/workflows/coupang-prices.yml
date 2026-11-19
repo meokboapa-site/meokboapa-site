@@ -1,0 +1,27 @@
+name: 쿠팡 가격 기록
+on:
+  schedule:
+    - cron: '7 0,6,12 * * *'   # 한국 시간 9시·15시·21시 무렵
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: coupang-prices
+jobs:
+  prices:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: node scripts/coupang_prices.mjs
+        env:
+          COUPANG_ACCESS_KEY: ${{ secrets.COUPANG_ACCESS_KEY }}
+          COUPANG_SECRET_KEY: ${{ secrets.COUPANG_SECRET_KEY }}
+      - name: 가격 파일 저장
+        run: |
+          git config user.name "meokbo-prices-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/prices.json data/price-history.json
+          git diff --cached --quiet && exit 0
+          git commit -m "가격 기록 $(TZ=Asia/Seoul date '+%m/%d %H시')"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done

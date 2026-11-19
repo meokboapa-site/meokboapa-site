@@ -4255,7 +4255,7 @@ let MB_PRICES = null, MB_PRICES_LOADING = false;
 function mbLoadPrices(cb){
   if(MB_PRICES || MB_PRICES_LOADING) return;
   MB_PRICES_LOADING = true;
-  fetch('/data/prices.json', {cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{ MB_PRICES = j||{}; cb&&cb(); }).catch(()=>{ MB_PRICES = {}; });
+  fetch((/(^|\.)meokboapa\.com$/.test(location.hostname)?'':'https://meokboapa.com')+'/data/prices.json', {cache:'no-cache'}).then(r=>r.ok?r.json():null).then(j=>{ MB_PRICES = j||{}; cb&&cb(); }).catch(()=>{ MB_PRICES = {}; });
 }
 function mbWon(n){ return Number(n).toLocaleString('ko-KR')+'원'; }
 function mbPriceBadge(url){
