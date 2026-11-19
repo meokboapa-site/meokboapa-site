@@ -878,6 +878,30 @@
 .menupage .cp-head .tt{min-width:0}
 /* MENUIMG_END css */
 .sp-set .sp-norest{grid-column:1/-1;font-weight:400;color:inherit}.sp-norest{flex:1 1 100%;display:flex;gap:8px;align-items:flex-start;margin-top:10px;padding:10px 12px;border:1px solid var(--line,#e5e5e5);border-radius:10px;cursor:pointer;width:100%;box-sizing:border-box}.sp-norest input{margin-top:3px;width:18px;height:18px;flex:none}.sp-norest b{display:block;font-size:14px}.sp-norest small{display:block;font-size:12px;color:var(--muted,#888);margin-top:2px;line-height:1.45}
+.shop-open{display:flex;align-items:center;gap:6px;width:100%;margin-top:12px;padding:11px 14px;border:0;border-radius:12px;background:rgba(255,255,255,.95);color:var(--moss-deep);font:inherit;font-size:14px;cursor:pointer;text-align:left}
+.shop-open b{font-weight:800}.shop-open span{margin-left:auto;font-size:12.5px;font-weight:700;opacity:.8}
+#shopSheet{position:fixed;inset:0;z-index:9999}#shopSheet .shop-bg{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+#shopSheet .shop-box{position:absolute;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:var(--bg,#fbf8f2);border-radius:20px 20px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+.shop-hd{display:flex;justify-content:space-between;align-items:flex-start}.shop-hd b{font-size:18px;display:block}.shop-hd small{font-size:12.5px;color:var(--ink-soft,#777)}
+.shop-hd button{border:0;background:none;font-size:20px;color:var(--ink-soft,#777);cursor:pointer}
+.shop-tip{font-size:12.5px;color:var(--ink-soft,#777);margin:8px 0 10px}
+.shop-list{list-style:none;margin:0;padding:0}.shop-list li{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line,#eee)}
+.shop-list li.have .shop-info{opacity:.45;text-decoration:line-through}
+.shop-chk input{display:none}.shop-chk span{display:block;width:22px;height:22px;border-radius:7px;border:2px solid var(--line,#ddd)}
+.shop-chk input:checked+span{background:var(--moss,#4f6f52);border-color:var(--moss,#4f6f52);box-shadow:inset 0 0 0 3px #fff}
+.shop-info{flex:1;min-width:0}.shop-info b{display:block;font-size:14.5px}.shop-info small{display:block;font-size:12px;color:var(--ink-soft,#777);line-height:1.45;margin-top:2px}
+.shop-go{flex:none;font-size:12.5px;font-weight:800;padding:8px 11px;border-radius:100px;background:var(--moss,#4f6f52);color:#fff;text-decoration:none}
+.shop-go.ghost{background:none;color:var(--moss-deep,#3c5a40);border:1px solid var(--line,#ddd)}
+.shop-more{margin-top:14px;padding:14px;border-radius:14px;background:#fff;border:1px solid var(--line,#eee)}.shop-more b{font-size:13.5px}
+.shop-more form{display:flex;gap:6px;margin-top:8px}.shop-more input{flex:1;min-width:0;padding:9px 11px;border:1px solid var(--line,#ddd);border-radius:10px;font:inherit;font-size:14px}
+.shop-more button{border:0;border-radius:10px;padding:0 14px;background:var(--ink,#333);color:#fff;font:inherit;font-size:13px}
+.shop-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.shop-chips a{font-size:12px;padding:6px 10px;border-radius:100px;background:var(--bg,#f4efe6);color:inherit;text-decoration:none}
+.shop-tag{font-style:normal;font-size:10.5px;font-weight:800;padding:1px 6px;border-radius:6px;background:var(--line,#eee);margin-right:3px}.shop-tag.new{background:#f6dfcf;color:#a2552c}
+.shop-note{font-size:10.5px;color:var(--ink-soft,#888);text-align:center;margin:12px 0 0}
+.today-strip{display:flex;gap:8px;margin-top:10px}.today-strip .ts-main{flex:1;min-width:0;text-align:left;border:0;border-radius:14px;padding:12px 14px;background:var(--moss,#4f6f52);color:#fff;font:inherit;cursor:pointer}
+.today-strip small{display:block;font-size:11.5px;opacity:.85;font-weight:700}.today-strip .ts-main b{display:block;font-size:15px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.today-strip .ts-shop{flex:none;border:0;border-radius:14px;padding:0 14px;background:#fff;border:1.5px solid var(--moss,#4f6f52);color:var(--moss-deep,#3c5a40);font:inherit;font-size:13px;font-weight:700;cursor:pointer;max-width:46%}
+.today-strip.ts-hint{display:block;width:100%;text-align:left;border:1px dashed var(--line,#ddd);border-radius:14px;padding:11px 14px;background:transparent;font:inherit;color:var(--ink,#333);cursor:pointer}.ts-hint b{font-size:13.5px}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -1216,6 +1240,8 @@ const MB_APP_MODE = (function(){
    키는 재료명 또는 조리도구명(예: "두유제조기")과 정확히 일치해야 표시됩니다.
    비어있으면("") 버튼 자체가 안 뜨니, 만드신 링크부터 하나씩 채우면 됩니다. */
 const COUPANG_LINKS = {
+  "밀가루": [{label:"유기농 밀가루", url:"https://link.coupang.com/a/iN9OPMYrJs"}],
+  "달걀": [{label:"난각1번 무항생제 자연방사 유정란", url:"https://link.coupang.com/a/iN9DDr8500"}],
   "두유제조기": "https://link.coupang.com/a/hfcqQxPvtQ",     // 마이야 두유제조기
   "머핀틀": [
     {label:"플래티넘 실리콘 머핀틀 — 밥머핀·머핀은 물론 찜기로도 활용", url:"https://link.coupang.com/a/hqNFoB705k"}
@@ -1421,24 +1447,24 @@ const COUPANG_LINKS = {
     {label:"오트밀 (초기부터) — 곱게 갈면 팬케이크 가루로도 그대로 써요", url:"https://link.coupang.com/a/hn9QsnGpzM"}
   ],
   "소고기": "https://link.coupang.com/a/hn8lSfyT7Y",
-  "청경채": "",
-  "시금치": "",
-  "비타민채소": "",
+  "청경채": [{label:"유기농 청경채", url:"https://link.coupang.com/a/iN9KLCewDI"}],
+  "시금치": [{label:"유기농 시금치", url:"https://link.coupang.com/a/iN97ZOOygm"}],
+  "비타민채소": [{label:"친환경 비타민잎", url:"https://link.coupang.com/a/iOabBvifmu"}],
   "근대": "",
   "아욱": "",
   "얼갈이배추": "",
   "케일": "",
-  "당근": "",
-  "고구마": "",
-  "감자": "",
-  "단호박": "",
+  "당근": [{label:"유기농 당근", url:"https://link.coupang.com/a/iN9Z4hEqaa"}],
+  "고구마": [{label:"유기농 꿀 고구마", url:"https://link.coupang.com/a/iN92NQ9s1k"}],
+  "감자": [{label:"유기농 감자", url:"https://link.coupang.com/a/iN9SRCdaUu"}],
+  "단호박": [{label:"친환경 미니 단호박", url:"https://link.coupang.com/a/iN9Yhded88"}],
   "파프리카(빨강)": "",
   "파프리카(노랑)": "",
   "파프리카(주황)": "",
-  "애호박": "",
-  "오이": "",
-  "양배추": "",
-  "브로콜리": "",
+  "애호박": [{label:"유기농 애호박", url:"https://link.coupang.com/a/iN9GJxIrQr"}],
+  "오이": [{label:"프리미엄 백오이", url:"https://link.coupang.com/a/iN9I0tbpHE"}],
+  "양배추": [{label:"유기농 양배추", url:"https://link.coupang.com/a/iN96q4GN9E"}],
+  "브로콜리": [{label:"유기농 브로콜리", url:"https://link.coupang.com/a/iN9RJZZfEW"}],
   "콜리플라워": "",
   "완두콩": "",
   "토마토": "",
@@ -1449,16 +1475,16 @@ const COUPANG_LINKS = {
     {label:"유기농 동물파스타 (후기부터) — 동물 모양이라 손으로 집어 먹기 좋아요", url:"https://link.coupang.com/a/iu8bSC2q1A"}
   ],
   "닭고기": [{label:"무항생제 닭안심 (중기부터) — 기름 적고 부드러워 슈렉 소시지·동그랑땡에", url:"https://link.coupang.com/a/iu8gkDs0xE"}, {label:"무항생제 닭다리 북채 (후기부터) — 닭다리 스틱용 · 뼈가 손잡이", url:"https://link.coupang.com/a/iu7BGJ69Zs"}],
-  "두부": "",
+  "두부": [{label:"유기농 두부", url:"https://link.coupang.com/a/iN981KMPbU"}],
   "가자미(흰살생선)": [{label:"순살 가자미 (중기부터) — 가시 발라낸 순살 · 생선전에", url:"https://link.coupang.com/a/iu8o4seace"}],
   "땅콩버터": "https://link.coupang.com/a/hn959YugYS",
-  "달걀(노른자)": "",
+  "달걀(노른자)": [{label:"난각1번 무항생제 자연방사 유정란", url:"https://link.coupang.com/a/iN9DDr8500"}],
   "플레인 요거트(무가당)": "",
   "렌틸콩": "",
   "알배추": "",
-  "무": "",
-  "양파": "",
-  "표고버섯": "",
+  "무": [{label:"유기농 무", url:"https://link.coupang.com/a/iOahsRezkG"}],
+  "양파": [{label:"유기농 양파", url:"https://link.coupang.com/a/iOagkmdHBk"}],
+  "표고버섯": [{label:"친환경 표고버섯", url:"https://link.coupang.com/a/iOaeaeSj1M"}],
   "콩나물": "",
   "가지": "",
   "사과": "",
@@ -1472,23 +1498,23 @@ const COUPANG_LINKS = {
     {label:"상하목장 유기농 아기치즈 (후기부터) — 먹보 아빠네 아기 반응이 제일 좋았던 치즈", url:"https://link.coupang.com/a/iu8ueJvPwa"}
   ],
   "순두부": "",
-  "미역": "",
+  "미역": [{label:"유기농 미역", url:"https://link.coupang.com/a/iOaoo0Agpw"}],
   "양송이버섯": [{label:"친환경 브라운 양송이버섯 (중기부터) — 라구·크림소스 풍미 담당", url:"https://link.coupang.com/a/iu8BtTWBS8"}],
-  "팽이버섯": "",
-  "바나나": "",
+  "팽이버섯": [{label:"친환경 팽이버섯", url:"https://link.coupang.com/a/iOasXzLyyi"}],
+  "바나나": [{label:"유기농 바나나", url:"https://link.coupang.com/a/iOaqUPvSrk"}],
   "복숭아": "",
   "블루베리": "",
   "딸기": "",
   "수박": "",
   "참외": "",
   "일반 우유": [{label:"상하목장 유기농 우유 (돌 이후) — 생우유 전환용, 하루 2컵 안쪽으로", url:"https://link.coupang.com/a/hn9BlaQcoe"}],
-  "새우": "",
+  "새우": [{label:"국내산 무항생제 새우", url:"https://link.coupang.com/a/iOaiXJlq1Y"}],
   "게": "",
   "견과류(페이스트/가루)": "",
   "저염 김치(순화판)": "",
   "무염버터": "",
   "저염버터": "",
-  "들깨가루": "",
+  "들깨가루": [{label:"국산 들깨가루", url:"https://link.coupang.com/a/iOaywPd5fU"}],
   "참기름": [
     {label:"국산 참기름 (돌 이후) — 소량으로 풍미만 더하는 용도", url:"https://link.coupang.com/a/hqNuTVb2wm"}
   ],
@@ -1508,7 +1534,7 @@ const COUPANG_LINKS = {
   "소면": [
     {label:"국산 아기 국수 (중기부터) — 우리아기 첫 시리즈 · 소금 없어 가장 추천", url:"https://link.coupang.com/a/hoaxO5HlZY"}
   ],
-  "달걀(완숙)": "",
+  "달걀(완숙)": [{label:"난각1번 무항생제 자연방사 유정란", url:"https://link.coupang.com/a/iN9DDr8500"}],
   "순한카레가루": "",
   "순한짜장소스": "",
   "된장(저염)": ""
@@ -3273,6 +3299,27 @@ function getAutoMonthAndRatio(stage){
   const ratioIdx = prefIdx>=0 ? prefIdx : autoIdx;
   return { monthOptions, ratioOptions, monthIdx, ratioIdx, custom: prefIdx>=0, hasStd, month:monthOptions[monthIdx], ratio:ratioOptions[ratioIdx] };
 }
+/* 첫 화면 '오늘' 띠 — 시작일을 넣은 단계가 진행 중이면 며칠째·오늘 메뉴·이번 주 장보기를 바로 보여줍니다 */
+function todayStripHtml(){
+  try{
+    const cands = [
+      ['late', typeof lateDayNo==='function'?lateDayNo():null, typeof LATE_PLAN!=='undefined'?LATE_PLAN:null, '후기', typeof LATE_LAST_DAY!=='undefined'?LATE_LAST_DAY:0],
+      ['mid',  typeof midDayNo==='function'?midDayNo():null,   typeof MID_PLAN!=='undefined'?MID_PLAN:null,  '중기', typeof MID_LAST_DAY!=='undefined'?MID_LAST_DAY:0],
+      ['start',typeof startDayNo==='function'?startDayNo():null,typeof START_PLAN!=='undefined'?START_PLAN:null,'초기', typeof START_LAST_DAY!=='undefined'?START_LAST_DAY:0]];
+    for(const [stage, day, plan, label, last] of cands){
+      if(!plan || day==null || day<1 || day>last) continue;
+      const st = plan.find(x=>day>=x.d0 && day<=x.d1); if(!st) continue;
+      const n = shopItemsForWeek(stage, day).length;
+      return `<div class="today-strip"><button type="button" class="ts-main" onclick="mbGoStage('${label}')"><small>오늘 · ${label} ${day}일차</small><b>${st.rest?'쉬는 날 — 먹어본 재료로':st.title}</b></button>
+        ${n?`<button type="button" class="ts-shop" onclick="openShop('${stage}',${day})">🛒 이번 주 장보기 <b>${n}개</b> ›</button>`:''}</div>`;
+    }
+    return `<button type="button" class="today-strip ts-hint" onclick="mbGoStage(getStageForAge(computeAgeMonths(babyProfile.birthday)))"><small>이유식 시작한 날을 넣으면</small><b>오늘 며칠째인지 · 이번 주 장보기가 여기 떠요 ›</b></button>`;
+  }catch(e){ return ''; }
+}
+function mbGoStage(label){
+  const btn = [...document.querySelectorAll('.stab')].find(b=>b.textContent===label);
+  if(btn){ btn.click(); setTimeout(()=>{ const t=document.querySelector('.sp-today'); (t||btn).scrollIntoView({behavior:'smooth',block:'center'}); },350); }
+}
 function renderProfileBar(editing){
   const wrap = document.getElementById('profileBar');
   if(babyProfile && !editing){
@@ -3280,7 +3327,7 @@ function renderProfileBar(editing){
     wrap.innerHTML = `<div class="profile-wrap"><div class="profile-card">
       <div class="p-info"><strong>생후 ${ageMonths}개월</strong></div>
       <button class="profile-edit-btn" id="profileEditBtn">수정</button>
-    </div></div>`;
+    </div>${todayStripHtml()}</div>`;
     document.getElementById('profileEditBtn').onclick=()=>renderProfileBar(true);
   } else {
     const p = babyProfile || {};
@@ -4228,6 +4275,71 @@ function startBaseHtml(st){
   return h;
 }
 /* 단계마다 '이것만 사면 됩니다' 한두 개. only 가 있으면 그 시기용만 골라 보여줍니다. */
+/* ===================== 이번 주 장보기 =====================
+   오늘부터 7일 안에 들어가는 단계의 재료·도구를 모아 쿠팡 상품으로 바로 연결합니다.
+   쿠팡은 장바구니 일괄 담기를 지원하지 않아서, 고르는 수고를 없애는 쪽(미리 골라둔 상품으로 바로 이동)으로 갑니다. */
+function mbPlanOf(stage){ return stage==='mid'?MID_PLAN:(stage==='late'?LATE_PLAN:START_PLAN); }
+function shopItemsForWeek(stage, day){
+  const plan = mbPlanOf(stage), lo = day, hi = day + 6, seen = new Set(), items = [];
+  plan.forEach(st=>{
+    if(st.d1 < lo || st.d0 > hi || st.rest) return;
+    const buys = st.buy ? (Array.isArray(st.buy) ? st.buy : [st.buy]) : [];
+    buys.forEach(b=>{
+      let links = getCoupangLinks(b.key);
+      if(b.only){ const pk = links.filter(l=>String(l.label||'').includes(b.only)); if(pk.length) links = pk; }
+      const l = links.find(x=>x.url); if(!l || seen.has(l.url)) return; seen.add(l.url);
+      const lab = String(l.label || b.label || b.key).replace(/ 보러가기.*/,'');
+      const [name, why] = lab.split(' — ');
+      items.push({url:l.url, name:name.trim(), why:(why||'').trim(), d0:st.d0});
+    });
+    if(st.add && !items.some(i=>i.name.includes(st.add))){
+      const al = getCoupangLinks(st.add).find(x=>x.url);
+      if(al && !seen.has(al.url)){ seen.add(al.url); items.push({url:al.url, name:String(al.label||st.add).split(' — ')[0], why:st.add+' · 이번 주 새 재료', d0:st.d0}); }
+      else items.push({url:null, name:st.add, why:'새 재료 · 마트나 로켓프레시 신선식품으로', d0:st.d0});
+    }
+  });
+  /* 매주 다시 사는 기본 재료 — 새 재료가 없는 주에도 장보기 리스트가 비지 않게 */
+  const STAPLE = {start:[{key:'쌀',only:'초기용'},{key:'소고기',label:'무항생제 한우 다짐육 — 매일 들어가는 소고기, 2등급이 지방 적어 좋아요'}], mid:[{key:'쌀',only:'중기용'},{key:'소고기',label:'무항생제 한우 다짐육 — 매일 들어가는 소고기, 2등급이 지방 적어 좋아요'}], late:[{key:'소고기',label:'무항생제 한우 다짐육 — 매일 들어가는 소고기'}]};
+  const base = [];
+  (STAPLE[stage]||[]).forEach(b=>{
+    let links = getCoupangLinks(b.key);
+    if(b.only){ const pk = links.filter(l=>String(l.label||'').includes(b.only)); if(pk.length) links = pk; }
+    const l = links.find(x=>x.url); if(!l || seen.has(l.url)) return; seen.add(l.url);
+    const [name, why] = String(b.label||l.label||b.key).replace(/ 보러가기.*/,'').split(' — ');
+    base.push({url:l.url, name:name.trim(), why:(why||'').trim(), d0:null, staple:true});
+  });
+  return items.sort((a,b)=>a.d0-b.d0).concat(base);
+}
+function shopHave(){ try{ return JSON.parse(localStorage.getItem('mb_shop_have')||'{}'); }catch(e){ return {}; } }
+function shopBtnHtml(stage, day){
+  if(day==null) return '';
+  const n = shopItemsForWeek(stage, day).length; if(!n) return '';
+  return `<button type="button" class="shop-open" onclick="openShop('${stage}',${day})">🛒 이번 주 장보기 <b>${n}개</b> <span>한 번에 보기 ›</span></button>`;
+}
+function openShop(stage, day){
+  const items = shopItemsForWeek(stage, day), have = shopHave();
+  const stName = stage==='mid'?'중기':(stage==='late'?'후기':'초기');
+  const rows = items.map(it=>{
+    const k = it.url || it.name, on = !!have[k];
+    const btn = it.url ? `<a class="shop-go" href="${it.url}" target="_blank" rel="noopener sponsored" onclick="shopMark('${encodeURIComponent(k)}',this);try{gtag('event','shop_click',{stage:'${stage}'})}catch(e){}">장보러 가기 ›</a>`
+                       : `<a class="shop-go ghost" href="https://www.coupang.com/np/search?q=${encodeURIComponent('이유식 '+it.name)}" target="_blank" rel="noopener sponsored">장보러 가기 ›</a>`;
+    return `<li class="${on?'have':''}"><label class="shop-chk"><input type="checkbox" ${on?'checked':''} onchange="shopToggle('${encodeURIComponent(k)}',this)"><span></span></label>
+      <div class="shop-info"><b>${it.name}</b><small>${it.staple?'<em class="shop-tag">매주</em> ':'<em class="shop-tag new">'+it.d0+'일차 새 재료</em> '}${it.why}</small></div>${btn}</li>`;
+  }).join('');
+  let el = document.getElementById('shopSheet');
+  if(!el){ el = document.createElement('div'); el.id = 'shopSheet'; document.body.appendChild(el); }
+  el.innerHTML = `<div class="shop-bg" onclick="closeShop()"></div><div class="shop-box">
+    <div class="shop-hd"><div><b>🛒 이번 주 장보기</b><small>${stName} ${day}~${day+6}일차 · 먹보 아빠네가 실제로 쓴 것</small></div><button type="button" onclick="closeShop()" aria-label="닫기">✕</button></div>
+    <p class="shop-tip">장보러 가기를 누르면 먹보 아빠네가 고른 상품으로 바로 가요. 다녀오면 ✓ 표시되고, 집에 있는 건 체크해서 빼두세요.</p>
+    <ul class="shop-list">${rows}</ul>
+    <div class="shop-more"><b>다른 육아용품도 찾아보기</b>
+      <div class="shop-chips">${[['기저귀','iObklqX9uC'],['분유','iObtP73xZY'],['물티슈','iObt9wnROn'],['아기 우유','iObus44KES'],['아기 세제','iObuMurWWO'],['육아용품 전체 ›','iObu6jUbkW']].map(([c,id])=>`<a href="https://link.coupang.com/a/${id}" target="_blank" rel="noopener sponsored" onclick="try{gtag('event','shop_more',{q:'${c}'})}catch(e){}">${c}</a>`).join('')}</div></div>
+    <p class="shop-note">${COUPANG_NOTICE}</p></div>`;
+  el.hidden = false; document.body.style.overflow = 'hidden';
+}
+function closeShop(){ const el = document.getElementById('shopSheet'); if(el) el.hidden = true; document.body.style.overflow = ''; }
+function shopToggle(k, cb){ const h = shopHave(); k = decodeURIComponent(k); if(cb.checked) h[k]=1; else delete h[k]; try{ localStorage.setItem('mb_shop_have', JSON.stringify(h)); }catch(e){} cb.closest('li').classList.toggle('have', cb.checked); }
+function shopMark(k, a){ const li = a.closest('li'); const cb = li.querySelector('input'); if(!cb.checked){ cb.checked = true; shopToggle(k, cb); } }
 function startBuyHtml(st){
   if(!st.buy) return '';
   /* 한 단계에 두 가지가 필요할 때가 있습니다 — 4일차는 소고기(재료)와 두유제조기(도구)를 같이 씁니다. */
@@ -4330,7 +4442,7 @@ function buildStartPage(container){
       today = `<div class="sp-today"><div class="sp-k">이유식 ${day}일차 · ${cur+1}단계</div>
         <div class="sp-t">${st.title} · ${st.g}g · ${st.ratio}배죽</div>
         <div class="sp-d">${startMealOf(cur)}</div>
-        ${st.how?`<div class="sp-d" style="margin-top:6px;">${st.how}</div>`:''}</div>`;
+        ${st.how?`<div class="sp-d" style="margin-top:6px;">${st.how}</div>`:''}${shopBtnHtml('start',day)}</div>`;
     }
   }
 
@@ -4798,7 +4910,7 @@ function buildMidPage(container){
       const st = MID_PLAN[cur], m = midMealsOf(st);
       today = `<div class="sp-today"><div class="sp-k">중기 ${day}일차 · ${st.week}주차</div>
         <div class="sp-t">${st.title} · 한 끼 ${st.g}g · ${st.ratio}배죽</div>
-        <div class="sp-d"><b>오전</b> ${midMealsOfDay(day,true).am}</div><div class="sp-d"><b>오후</b> ${midMealsOfDay(day,true).pm}</div></div>`;
+        <div class="sp-d"><b>오전</b> ${midMealsOfDay(day,true).am}</div><div class="sp-d"><b>오후</b> ${midMealsOfDay(day,true).pm}</div>${shopBtnHtml('mid',day)}</div>`;
     }
   }
   const b1 = midBaseBatch(MID_PLAN[0]), b7 = midBaseBatch(MID_PLAN[MID_PLAN.length-1]);
@@ -5084,7 +5196,7 @@ function buildLatePage(container){
       const st = LATE_PLAN[cur], m = lateMealsOf(st);
       today = `<div class="sp-today"><div class="sp-k">후기 ${day}일차 · ${st.week}주차</div>
         <div class="sp-t">${st.title} · 한 끼 ${st.g}g · ${lateRatioLabel(st.ratio)}</div>
-        <div class="sp-d"><b>아침</b> ${lateMealsOfDay(day,true).am}</div><div class="sp-d"><b>점심</b> ${lateMealsOfDay(day,true).noon}</div><div class="sp-d"><b>저녁</b> ${lateMealsOfDay(day,true).pm}</div></div>`;
+        <div class="sp-d"><b>아침</b> ${lateMealsOfDay(day,true).am}</div><div class="sp-d"><b>점심</b> ${lateMealsOfDay(day,true).noon}</div><div class="sp-d"><b>저녁</b> ${lateMealsOfDay(day,true).pm}</div>${shopBtnHtml('late',day)}</div>`;
     }
   }
   const rows = LATE_PLAN.map((st,i)=>lateRowHtml(st,i,cur,day)).join('');
