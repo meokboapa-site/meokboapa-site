@@ -138,6 +138,15 @@
     font-family:inherit; background:#fff; color:var(--ink); min-height:38px;
   }
   .profile-clear-btn{width:100%; background:none; border:0; color:var(--ink-soft); font-size:12px; font-weight:700; padding:8px; margin-top:2px; cursor:pointer;}
+  #settingsRow{display:none !important;}
+  .profile-form .pf-row label{width:96px !important;}
+  .profile-form .pf-row input[type=date]{flex:1; min-width:0;}
+  .pf-x{flex:none; background:none; border:0; color:var(--ink-soft); font-size:12px; font-weight:700; padding:6px 4px; cursor:pointer; text-decoration:underline;}
+  .pf-hint{font-size:12px; color:var(--ink-soft); margin:-2px 0 10px 104px; line-height:1.5;}
+  .profile-form .ratio-btns{display:flex; gap:6px; flex-wrap:wrap;}
+  .er-strip{display:flex; align-items:center; gap:10px; width:100%; margin:10px 0 2px; padding:12px 16px; border-radius:12px; background:#FDECEA; border:1.5px solid #F2B8B0; color:#9B2C1F; font-size:13.5px; font-family:inherit; text-align:left; cursor:pointer;}
+  .er-strip b{font-weight:800; white-space:nowrap;} .er-strip span{flex:1; color:#7a3a30; font-size:12.5px;} .er-strip i{font-style:normal; font-weight:800;}
+  .sp-wd,.sp-new,.mp-why,.mp-memo,.mp-kind,.sp-resttag,.sp-testtag,.sp-upchip,.dbox-label,.cp-when,.mn-meta,.sp-day em,.feedrhythm .fr-slots i{font-size:12.5px !important;}
   .profile-save-btn{width:100%; background:var(--moss); color:#fff; border:none; padding:10px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; margin-top:4px;}
 
   .settings-wrap{max-width:560px; margin:0 auto; padding:0 20px 10px;}
@@ -3329,36 +3338,64 @@ function mbGoStage(label){
   const btn = [...document.querySelectorAll('.stab')].find(b=>b.textContent===label);
   if(btn){ btn.click(); setTimeout(()=>{ const pg=document.querySelector('.subpage.active'); const t=pg&&(pg.querySelector('.sp-set')||pg.querySelector('.sp-today')); if(t){ const stk=[...document.querySelectorAll('.stage-nav,.subnav')].filter(e=>e.offsetParent).reduce((s,e)=>s+e.getBoundingClientRect().height,0); window.scrollTo({top: t.getBoundingClientRect().top + scrollY - stk - 12, behavior:'smooth'}); } else btn.scrollIntoView({behavior:'smooth',block:'center'}); },350); }
 }
+function mbStageLabelNow(){
+  try{
+    const c=[['후기',lateDayNo(),LATE_LAST_DAY],['중기',midDayNo(),MID_LAST_DAY],['초기',startDayNo(),START_LAST_DAY]];
+    for(const [l,d,last] of c){ if(d!=null && d>=1 && d<=last) return `${l} ${d}일차`; }
+  }catch(e){}
+  return '';
+}
+function mbGoCare(){
+  const btn=[...document.querySelectorAll('.stab')].find(b=>b.textContent.indexOf('응급')>=0);
+  if(btn){ btn.click(); setTimeout(()=>{ const n=document.querySelector('.stage-nav'); if(n) window.scrollTo({top:n.getBoundingClientRect().top+scrollY, behavior:'smooth'}); },300); }
+}
 function renderProfileBar(editing){
   const wrap = document.getElementById('profileBar');
-  if(babyProfile && !editing){
-    const ageMonths = computeAgeMonths(babyProfile.birthday);
+  const hasAny = !!((babyProfile && babyProfile.birthday) || weaningStart);
+  const er = `<button type="button" class="er-strip" onclick="mbGoCare()"><b>🚨 급할 때</b><span>목에 걸렸을 때 · 열날 때 병원 신호</span><i>›</i></button>`;
+  if(hasAny && !editing){
+    const parts=[];
+    if(babyProfile && babyProfile.birthday) parts.push(`<strong>생후 ${computeAgeMonths(babyProfile.birthday)}개월</strong>`);
+    const day=mbStageLabelNow(); if(day) parts.push(`<strong>${day}</strong>`);
+    parts.push(`${appSettings.saltPref} · ${appSettings.prepPref}`);
     wrap.innerHTML = `<div class="profile-wrap"><div class="profile-card">
-      <div class="p-info"><strong>생후 ${ageMonths}개월</strong></div>
+      <div class="p-info">${parts.join(' · ')}</div>
       <button class="profile-edit-btn" id="profileEditBtn">수정</button>
-    </div>${todayStripHtml()}</div>`;
+    </div>${todayStripHtml()}${er}</div>`;
     document.getElementById('profileEditBtn').onclick=()=>renderProfileBar(true);
   } else {
     const p = babyProfile || {};
     wrap.innerHTML = `<div class="profile-wrap"><div class="profile-form">
-      <div class="pf-title">우리 아이 생일</div>
-      <div class="pf-row"><label>생일</label><input type="date" id="pfBirthday" value="${p.birthday||''}"></div>
+      <div class="pf-title">우리 아이 설정</div>
+      <div class="pf-row"><label for="pfBirthday">생일</label><input type="date" id="pfBirthday" value="${p.birthday||''}">${p.birthday?'<button type="button" class="pf-x" data-x="pfBirthday">지우기</button>':''}</div>
+      <div class="pf-row"><label for="pfStart">이유식 시작한 날</label><input type="date" id="pfStart" value="${weaningStart||''}">${weaningStart?'<button type="button" class="pf-x" data-x="pfStart">지우기</button>':''}</div>
+      <div class="pf-hint">시작 전이면 비워두세요. 넣으면 오늘 며칠째인지, 오늘 뭘 먹일지 바로 보여드려요.</div>
+      <div class="pf-row"><label>기본 간</label><div class="ratio-btns" id="pfSalt"></div></div>
+      <div class="pf-row"><label>손질 방식</label><div class="ratio-btns" id="pfPrep"></div></div>
       <button class="profile-save-btn" id="pfSaveBtn">저장</button>
-      ${p.birthday?'<button type="button" class="profile-clear-btn" id="pfClearBtn">지우기</button>':''}
-    </div></div>`;
-    document.getElementById('pfSaveBtn').onclick=saveProfile;
-    const pfClr = document.getElementById('pfClearBtn');
-    if(pfClr) pfClr.onclick=clearProfile;
+    </div>${hasAny?'':er}</div>`;
+    const draft = {saltPref:appSettings.saltPref, prepPref:appSettings.prepPref};
+    const tog=(id,key,opts)=>{ const w=document.getElementById(id); const draw=()=>{ w.innerHTML=''; opts.forEach(o=>{ const b=document.createElement('button'); b.type='button'; b.className='ratio-btn'+(draft[key]===o?' active':''); b.textContent=o; b.onclick=()=>{ draft[key]=o; draw(); }; w.appendChild(b); }); }; draw(); };
+    tog('pfSalt','saltPref',["무염","저염"]);
+    tog('pfPrep','prepPref',["직접손질","손질된재료"]);
+    wrap.querySelectorAll('.pf-x').forEach(x=>{ x.onclick=()=>{ document.getElementById(x.dataset.x).value=''; x.remove(); }; });
+    document.getElementById('pfSaveBtn').onclick=()=>saveProfile(draft);
   }
 }
-function saveProfile(){
+function saveProfile(draft){
   const birthday = document.getElementById('pfBirthday').value;
-  if(!birthday){ alert('생일을 입력해주세요.'); return; }
-  babyProfile = { birthday };
-  try { localStorage.setItem('babyProfile', JSON.stringify(babyProfile)); sessionStorage.setItem('babyProfile', JSON.stringify(babyProfile)); } catch(e){}
+  const start = document.getElementById('pfStart').value;
+  if(!birthday && !start){ alert('생일이나 이유식 시작한 날 중 하나는 넣어주세요.'); return; }
+  babyProfile = birthday ? { birthday } : null;
+  try {
+    if(babyProfile){ localStorage.setItem('babyProfile', JSON.stringify(babyProfile)); sessionStorage.setItem('babyProfile', JSON.stringify(babyProfile)); }
+    else { localStorage.removeItem('babyProfile'); sessionStorage.removeItem('babyProfile'); }
+  } catch(e){}
+  if((start||null) !== (weaningStart||null)) saveWeaningStart(start);
+  if(draft){ appSettings.saltPref = draft.saltPref; appSettings.prepPref = draft.prepPref; saveAppSettings(); try{ renderSettingsRow(); }catch(e){} }
   renderProfileBar(false);
   applyProfileHighlight();
-  goToProfileStage();
+  if(!goToProfileStage()){ const a=document.querySelector('.stab.active'); if(a) a.click(); }
 }
 function clearProfile(){
   babyProfile = null;
@@ -4050,6 +4087,7 @@ try { weaningStart = localStorage.getItem('weaningStart') || null; } catch(e){}
 function saveWeaningStart(v){
   weaningStart = v || null;
   try { v ? localStorage.setItem('weaningStart', v) : localStorage.removeItem('weaningStart'); } catch(e){}
+  try { mbRecalcStarts(); } catch(e){}
 }
 function startDayNo(){                      // 시작일 기준 오늘이 며칠째인지 (1부터)
   if(!weaningStart) return null;
@@ -4106,6 +4144,7 @@ function mbSetNoRest(on){
   mbRestore(START_PLAN, START_ORIG); START_LAST_DAY = START_PLAN[START_PLAN.length-1].d1;
   if(typeof MID_ORIG!=='undefined'){ mbRestore(MID_PLAN, MID_ORIG); MID_LAST_DAY = MID_PLAN[MID_PLAN.length-1].d1; }
   if(typeof LATE_ORIG!=='undefined'){ mbRestore(LATE_PLAN, LATE_ORIG); LATE_LAST_DAY = LATE_PLAN[LATE_PLAN.length-1].d1; }
+  try{ mbRecalcStarts(); }catch(e){}
 }
 let START_LAST_DAY = START_PLAN[START_PLAN.length-1].d1;
 /* 아이폰은 빈 날짜칸을 누르기만 해도 오늘 날짜가 들어가요. 비어 있던 칸에 오늘이 들어오면 바로 저장하지 않고 한 번 물어봐요 */
@@ -4815,11 +4854,15 @@ function midBaseBatch(st){
 }
 const MID_NEXT = ["완두콩","콜리플라워","알배추","청경채","근대","아욱","가지","콩나물","느타리버섯","그린빈","연근","렌틸콩","현미","통밀 파스타/면"];
 
-let midStart = null;
-try { midStart = localStorage.getItem('midStart') || null; } catch(e){}
+/* 중기·후기 시작일: 직접 넣은 날이 없으면 초기 시작일에서 자동 계산(초기 끝난 다음 날 → 중기, 중기 끝난 다음 날 → 후기) */
+function mbAddDays(s, n){ const a=new Date(s+'T00:00:00'); if(isNaN(a)) return null; a.setDate(a.getDate()+n); return a.getFullYear()+'-'+String(a.getMonth()+1).padStart(2,'0')+'-'+String(a.getDate()).padStart(2,'0'); }
+let midStartUser = null;
+try { midStartUser = localStorage.getItem('midStart') || null; } catch(e){}
+let midStart = midStartUser || (weaningStart ? mbAddDays(weaningStart, START_LAST_DAY) : null);
 function saveMidStart(v){
-  midStart = v || null;
+  midStartUser = v || null;
   try { v ? localStorage.setItem('midStart', v) : localStorage.removeItem('midStart'); } catch(e){}
+  mbRecalcStarts();
 }
 function midDayNo(){
   if(!midStart) return null;
@@ -4933,7 +4976,8 @@ function buildMidPage(container){
     <div class="sp-set">
       <label for="mpStart">중기 시작한 날</label>
       <input type="date" id="mpStart" value="${midStart||''}">
-      ${midStart?'<button type="button" id="mpClear">지우기</button>':''}
+      ${midStartUser?'<button type="button" id="mpClear">지우기</button>':''}
+      ${midStart && !midStartUser?'<span class="sp-hint">초기 시작일로 자동 계산했어요(초기 끝난 다음 날). 실제와 다르면 바꿔주세요.</span>':''}
       <span class="sp-hint">넣어두시면 오늘 오전·오후에 뭘 줄지 바로 보여드려요.</span>
       ${midStart && midWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${midWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
       ${noRestHtml('mpNoRest')}
@@ -5105,11 +5149,18 @@ function lateMealsOfDay(day, html){
 function lateMealsOf(st){ return lateMealsOfDay(st.d0); }
 const LATE_NEXT = ["순두부","셀러리","멜론","포도","파인애플","렌틸콩","연근","우엉","느타리버섯","콩나물","가지","그린빈","아스파라거스","적채","콜라비","현미","통밀 파스타/면"];
 
-let lateStart = null;
-try { lateStart = localStorage.getItem('lateStart') || null; } catch(e){}
+let lateStartUser = null;
+try { lateStartUser = localStorage.getItem('lateStart') || null; } catch(e){}
+let lateStart = lateStartUser || (midStart ? mbAddDays(midStart, MID_LAST_DAY) : null);
 function saveLateStart(v){
-  lateStart = v || null;
+  lateStartUser = v || null;
   try { v ? localStorage.setItem('lateStart', v) : localStorage.removeItem('lateStart'); } catch(e){}
+  mbRecalcStarts();
+}
+function mbRecalcStarts(){
+  midStart = midStartUser || (weaningStart ? mbAddDays(weaningStart, START_LAST_DAY) : null);
+  lateStart = lateStartUser || (midStart ? mbAddDays(midStart, MID_LAST_DAY) : null);
+  try { if(document.getElementById('profileEditBtn')) renderProfileBar(false); } catch(e){}
 }
 function lateDayNo(){
   if(!lateStart) return null;
@@ -5214,7 +5265,8 @@ function buildLatePage(container){
     <div class="sp-set">
       <label for="lpStart">후기 시작한 날</label>
       <input type="date" id="lpStart" value="${lateStart||''}">
-      ${lateStart?'<button type="button" id="lpClear">지우기</button>':''}
+      ${lateStartUser?'<button type="button" id="lpClear">지우기</button>':''}
+      ${lateStart && !lateStartUser?'<span class="sp-hint">중기 시작일로 자동 계산했어요(중기 끝난 다음 날). 실제와 다르면 바꿔주세요.</span>':''}
       <span class="sp-hint">넣어두시면 오늘 아침·점심·저녁에 뭘 줄지 바로 보여드려요.</span>
       ${lateStart && lateWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${lateWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
       ${noRestHtml('lpNoRest')}
