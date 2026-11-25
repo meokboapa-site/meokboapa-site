@@ -147,6 +147,22 @@
   .er-strip{display:flex; align-items:center; gap:10px; width:100%; margin:10px 0 2px; padding:12px 16px; border-radius:12px; background:#FDECEA; border:1.5px solid #F2B8B0; color:#9B2C1F; font-size:13.5px; font-family:inherit; text-align:left; cursor:pointer;}
   .er-strip b{font-weight:800; white-space:nowrap;} .er-strip span{flex:1; color:#7a3a30; font-size:12.5px;} .er-strip i{font-style:normal; font-weight:800;}
   .sp-wd,.sp-new,.mp-why,.mp-memo,.mp-kind,.sp-resttag,.sp-testtag,.sp-upchip,.dbox-label,.cp-when,.mn-meta,.sp-day em,.feedrhythm .fr-slots i{font-size:12.5px !important;}
+  .fam-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:10px 0 0;padding:12px;border-radius:12px;border:1.5px solid var(--moss);background:var(--panel);color:var(--moss-deep);font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+  .fam-banner{margin:10px 0 0;padding:13px 16px;border-radius:12px;background:#E6F0E9;border:1.5px solid #B9D3C1;color:#1F4D34;font-size:13px;line-height:1.5}
+  .fam-banner b{display:block;font-size:14.5px;margin-bottom:2px}.fam-banner span{display:block}
+  .fam-app{display:block;margin-top:9px;text-align:center;background:#1F4D34;color:#fff;border-radius:10px;padding:10px;font-weight:800;text-decoration:none}
+  .fam-leave{background:none;border:0;color:#4B6B54;font:inherit;font-size:12px;text-decoration:underline;margin-top:6px;padding:4px 0;cursor:pointer}
+  .rx-t{font-size:12.5px;opacity:.88;margin-top:12px}
+  .rx{display:flex;gap:6px;margin:8px 0 4px}.rx button{flex:1;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:inherit;border-radius:12px;padding:8px 0 6px;font:inherit;font-size:12px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+  .rx button b{font-size:20px;line-height:1}.rx button.on{background:#fff;color:#2F4A37;border-color:#fff}
+  .fam-bg{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center}
+  .fam-sh{background:var(--bg);width:100%;max-width:560px;border-radius:22px 22px 0 0;padding:22px 20px calc(24px + env(safe-area-inset-bottom))}
+  .fam-sh h2{font-size:19px;margin:0 0 4px}.fam-sh p{font-size:13px;color:var(--ink-soft);margin:0 0 14px}
+  .fam-o{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;font:inherit;color:inherit;cursor:pointer}
+  .fam-o i{font-style:normal;font-size:26px}.fam-o b{display:block;font-size:15px}.fam-o small{display:block;font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .fam-mng{font-size:12.5px;color:var(--ink-soft);text-align:center;margin:4px 0 6px}.fam-mng button{background:none;border:0;color:var(--moss-deep);font:inherit;font-weight:700;text-decoration:underline;padding:4px;cursor:pointer}
+  .fam-n{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:4px;line-height:1.5}
+  .fam-x{display:block;width:100%;margin-top:12px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font:inherit;font-weight:700;cursor:pointer}
   .profile-save-btn{width:100%; background:var(--moss); color:#fff; border:none; padding:10px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; margin-top:4px;}
 
   .settings-wrap{max-width:560px; margin:0 auto; padding:0 20px 10px;}
@@ -3361,7 +3377,7 @@ function renderProfileBar(editing){
     wrap.innerHTML = `<div class="profile-wrap"><div class="profile-card">
       <div class="p-info">${parts.join(' · ')}</div>
       <button class="profile-edit-btn" id="profileEditBtn">수정</button>
-    </div>${todayStripHtml()}${er}</div>`;
+    </div>${todayStripHtml()}${famBarHtml()}${er}</div>`;
     document.getElementById('profileEditBtn').onclick=()=>renderProfileBar(true);
   } else {
     const p = babyProfile || {};
@@ -3393,6 +3409,7 @@ function saveProfile(draft){
   } catch(e){}
   if((start||null) !== (weaningStart||null)) saveWeaningStart(start);
   if(draft){ appSettings.saltPref = draft.saltPref; appSettings.prepPref = draft.prepPref; saveAppSettings(); try{ renderSettingsRow(); }catch(e){} }
+  try { famPushRoom(); } catch(e){}
   renderProfileBar(false);
   applyProfileHighlight();
   if(!goToProfileStage()){ const a=document.querySelector('.stab.active'); if(a) a.click(); }
@@ -4088,6 +4105,7 @@ function saveWeaningStart(v){
   weaningStart = v || null;
   try { v ? localStorage.setItem('weaningStart', v) : localStorage.removeItem('weaningStart'); } catch(e){}
   try { mbRecalcStarts(); } catch(e){}
+  try { famPushRoom(); } catch(e){}
 }
 function startDayNo(){                      // 시작일 기준 오늘이 며칠째인지 (1부터)
   if(!weaningStart) return null;
@@ -4145,6 +4163,7 @@ function mbSetNoRest(on){
   if(typeof MID_ORIG!=='undefined'){ mbRestore(MID_PLAN, MID_ORIG); MID_LAST_DAY = MID_PLAN[MID_PLAN.length-1].d1; }
   if(typeof LATE_ORIG!=='undefined'){ mbRestore(LATE_PLAN, LATE_ORIG); LATE_LAST_DAY = LATE_PLAN[LATE_PLAN.length-1].d1; }
   try{ mbRecalcStarts(); }catch(e){}
+  try{ famPushRoom(); }catch(e){}
 }
 let START_LAST_DAY = START_PLAN[START_PLAN.length-1].d1;
 /* 아이폰은 빈 날짜칸을 누르기만 해도 오늘 날짜가 들어가요. 비어 있던 칸에 오늘이 들어오면 바로 저장하지 않고 한 번 물어봐요 */
@@ -4458,7 +4477,7 @@ function buildStartPage(container){
       today = `<div class="sp-today"><div class="sp-k">이유식 ${day}일차 · ${cur+1}단계</div>
         <div class="sp-t">${st.title} · ${st.g}g · ${st.ratio}배죽</div>
         <div class="sp-d">${startMealOf(cur)}</div>
-        ${st.how?`<div class="sp-d" style="margin-top:6px;">${st.how}</div>`:''}${shopBtnHtml('start',day)}</div>`;
+        ${st.how?`<div class="sp-d" style="margin-top:6px;">${st.how}</div>`:''}${famRxHtml('start',day)}${shopBtnHtml('start',day)}</div>`;
     }
   }
 
@@ -4930,7 +4949,7 @@ function buildMidPage(container){
       const st = MID_PLAN[cur], m = midMealsOf(st);
       today = `<div class="sp-today"><div class="sp-k">중기 ${day}일차 · ${st.week}주차</div>
         <div class="sp-t">${st.title} · 한 끼 ${st.g}g · ${st.ratio}배죽</div>
-        <div class="sp-d"><b>오전</b> ${midMealsOfDay(day,true).am}</div><div class="sp-d"><b>오후</b> ${midMealsOfDay(day,true).pm}</div>${shopBtnHtml('mid',day)}</div>`;
+        <div class="sp-d"><b>오전</b> ${midMealsOfDay(day,true).am}</div><div class="sp-d"><b>오후</b> ${midMealsOfDay(day,true).pm}</div>${famRxHtml('mid',day)}${shopBtnHtml('mid',day)}</div>`;
     }
   }
   const b1 = midBaseBatch(MID_PLAN[0]), b7 = midBaseBatch(MID_PLAN[MID_PLAN.length-1]);
@@ -5225,7 +5244,7 @@ function buildLatePage(container){
       const st = LATE_PLAN[cur], m = lateMealsOf(st);
       today = `<div class="sp-today"><div class="sp-k">후기 ${day}일차 · ${st.week}주차</div>
         <div class="sp-t">${st.title} · 한 끼 ${st.g}g · ${lateRatioLabel(st.ratio)}</div>
-        <div class="sp-d"><b>아침</b> ${lateMealsOfDay(day,true).am}</div><div class="sp-d"><b>점심</b> ${lateMealsOfDay(day,true).noon}</div><div class="sp-d"><b>저녁</b> ${lateMealsOfDay(day,true).pm}</div>${shopBtnHtml('late',day)}</div>`;
+        <div class="sp-d"><b>아침</b> ${lateMealsOfDay(day,true).am}</div><div class="sp-d"><b>점심</b> ${lateMealsOfDay(day,true).noon}</div><div class="sp-d"><b>저녁</b> ${lateMealsOfDay(day,true).pm}</div>${famRxHtml('late',day)}${shopBtnHtml('late',day)}</div>`;
     }
   }
   const rowArr = LATE_PLAN.map((st,i)=>lateRowHtml(st,i,cur,day)), rows = rowArr.join('');
@@ -6871,7 +6890,7 @@ function openLegalModal(){
     <div class="sec-title" style="font-size:14px;">대상 이용자</div>
     <p class="sec-sub">본 서비스는 아기를 돌보는 성인 보호자를 위해 만들어졌습니다. 아동이 직접 사용하도록 설계되지 않았고, 아동을 대상으로 하는 콘텐츠나 기능을 담고 있지 않습니다.</p>
     <div class="sec-title" style="font-size:14px;">기기에 저장되는 정보</div>
-    <p class="sec-sub">본 서비스는 별도의 회원가입·로그인 기능이 없으며, 운영자의 서버에 이용자 정보를 저장하지 않습니다. 아이 생일, 즐겨찾기·시도함 기록, 반응 기록, 이유식 시작일, 환경설정 등은 이용자의 기기(localStorage)에만 저장되고 외부로 전송되지 않습니다. 브라우저 데이터를 삭제하거나 다른 기기·브라우저로 접속하면 기록은 유지되지 않습니다.</p>
+    <p class="sec-sub">본 서비스는 별도의 회원가입·로그인 기능이 없으며, 아래 가족 공유를 쓰지 않는 한 운영자의 서버에 이용자 정보를 저장하지 않습니다. 아이 생일, 즐겨찾기·시도함 기록, 반응 기록, 이유식 시작일, 환경설정 등은 이용자의 기기(localStorage)에만 저장되고 외부로 전송되지 않습니다. 브라우저 데이터를 삭제하거나 다른 기기·브라우저로 접속하면 기록은 유지되지 않습니다. 단, 이용자가 <b>"가족에게 보내기"</b>로 가족 공유 링크를 만든 경우에만, 그 링크의 무작위 가족 코드와 함께 이유식 시작일, 기본 간·손질 방식, 일요일 설정, 날짜별 반응(잘 먹음·보통·거부·알레르기 의심)이 운영자의 서버(Cloudflare)에 저장되어 같은 링크를 가진 가족끼리 함께 봅니다. 아이 이름·생일·메모·연락처는 저장하지 않으며, 광고 식별자와 연결하지 않습니다. "가족방 지우기"를 누르면 즉시 삭제되고, 180일 동안 아무도 사용하지 않은 가족방은 자동으로 삭제됩니다.</p>
     <div class="sec-title" style="font-size:14px;">방문 분석 도구</div>
     <p class="sec-sub">방문자 수와 어떤 화면이 많이 쓰이는지 파악하기 위해 Google Analytics 4를 사용합니다. 이 과정에서 Google이 접속 IP 주소(대략적인 지역 추정에 사용), 기기·브라우저 종류, 방문한 화면과 클릭 같은 이용 기록을 수집합니다. 위에 적은 아이 생일·기록 등은 이 분석 도구로 전송되지 않습니다. 전체 내용은 <a href="/privacy/" target="_blank" rel="noopener" style="color:var(--moss-deep);">개인정보처리방침 전문</a>에서 보실 수 있어요.</p>
     <div class="sec-title" style="font-size:14px;">제휴 마케팅 고지</div>
@@ -9409,7 +9428,185 @@ function closeDisclaimer(){
   closeModal();
 }
 
+
+/* ===================== 가족 공유 (가족방, 2026-11-25) =====================
+   "가족에게 보내기" 링크에 무작위 가족 코드를 담아, 같은 코드끼리 시작일·설정·날짜별 반응을 함께 봅니다.
+   서버에는 코드·시작일·기본 간·손질 방식·일요일 설정·날짜별 반응(잘 먹음/보통/거부/알레르기 의심)만 저장. 이름·생일·메모 없음.
+   180일 동안 아무도 안 쓰면 서버에서 자동 삭제. */
+const FAM_API = (function(){ try{ const d = localStorage.getItem('mb_api_dev'); if(d && /^http:\/\/localhost:\d+$/.test(d)) return d; }catch(e){} return 'https://meokboapa-api.sentimetal12.workers.dev'; })();
+const MB_IS_NATIVE = (function(){ try{ return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); }catch(e){ return false; } })();
+const FAM_RX = [['good','😋','잘 먹음'],['ok','😐','보통'],['no','🙅','거부'],['allergy','⚠️','알레르기 의심']];
+const FAM_APPSTORE = 'https://apps.apple.com/kr/app/id6834141266';
+let famCode = null, famRole = null, famRx = {};
+try { famCode = localStorage.getItem('mb_fam') || null; famRole = localStorage.getItem('mb_fam_role') || null; famRx = JSON.parse(localStorage.getItem('mb_rx') || '{}') || {}; } catch(e){ famRx = {}; }
+function famSaveRx(){ try{ localStorage.setItem('mb_rx', JSON.stringify(famRx)); }catch(e){} }
+function famNewCode(){ const a = new Uint8Array(18); crypto.getRandomValues(a); return btoa(String.fromCharCode.apply(null, a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function famSetCode(c, role){
+  famCode = c || null; famRole = c ? role : null;
+  try{ if(c){ localStorage.setItem('mb_fam', c); localStorage.setItem('mb_fam_role', role); } else { localStorage.removeItem('mb_fam'); localStorage.removeItem('mb_fam_role'); } }catch(e){}
+}
+function famLink(){ return 'https://meokboapa.com/app/?fam=' + famCode; }
+async function famPushRoom(){
+  if(!famCode || famRole !== 'owner') return false;
+  try{
+    const r = await fetch(FAM_API + '/v1/fam/room', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({code:famCode, start:weaningStart||null, salt:appSettings.saltPref, prep:appSettings.prepPref, norest:!!MB_NOREST})});
+    return r.ok;
+  }catch(e){ return false; }
+}
+async function famPull(){
+  if(!famCode) return null;
+  try{
+    const r = await fetch(FAM_API + '/v1/fam/' + famCode, {cache:'no-store'});
+    if(r.status === 404){ if(famRole === 'member'){ famSetCode(null); famRefreshUi(); } return null; }
+    if(!r.ok) return null;
+    const d = await r.json(); famRx = d.reacts || {}; famSaveRx(); return d;
+  }catch(e){ return null; }
+}
+function famReact(stage, day, value){
+  famRx[stage] = famRx[stage] || {};
+  if(value) famRx[stage][day] = value; else delete famRx[stage][day];
+  famSaveRx();
+  try{ gtag('event','fam_react',{v:value||'clear', shared:famCode?1:0}); }catch(e){}
+  if(famCode) fetch(FAM_API + '/v1/fam/' + famCode + '/react', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({stage, day, value:value||null})}).catch(()=>{});
+}
+function famRxHtml(stage, day){
+  const cur = (famRx[stage] || {})[day];
+  return `<div class="rx-t">오늘 어땠어요? ${famCode?'누르면 가족도 같이 봐요':'한 번 눌러두면 날짜별로 기록이 쌓여요'}</div>
+    <div class="rx" data-stage="${stage}" data-day="${day}">${FAM_RX.map(([v,e,l])=>`<button type="button" data-v="${v}" class="${cur===v?'on':''}"><b>${e}</b>${l}</button>`).join('')}</div>`;
+}
+document.addEventListener('click', (ev)=>{
+  const b = ev.target.closest ? ev.target.closest('.rx button[data-v]') : null; if(!b) return;
+  const box = b.parentElement, stage = box.dataset.stage, day = +box.dataset.day;
+  const v = b.classList.contains('on') ? null : b.dataset.v;
+  famReact(stage, day, v);
+  box.querySelectorAll('button').forEach(x=>x.classList.toggle('on', x.dataset.v === v));
+});
+function famRefreshRxDom(){
+  document.querySelectorAll('.rx[data-stage]').forEach(box=>{
+    const cur = (famRx[box.dataset.stage] || {})[box.dataset.day];
+    box.querySelectorAll('button').forEach(x=>x.classList.toggle('on', x.dataset.v === cur));
+  });
+}
+/* 오늘 정보(카드·문자 공유용) */
+function famToday(){
+  try{
+    const c = [['late', lateDayNo(), LATE_PLAN, '후기', LATE_LAST_DAY], ['mid', midDayNo(), MID_PLAN, '중기', MID_LAST_DAY], ['start', startDayNo(), START_PLAN, '초기', START_LAST_DAY]];
+    for(const [stage, day, plan, label, last] of c){
+      if(day == null || day < 1 || day > last) continue;
+      const i = plan.findIndex(x=>day>=x.d0 && day<=x.d1); if(i < 0) continue;
+      const st = plan[i]; let meals = [], times = '';
+      if(stage === 'start'){ meals = [['오전', startMealOf(i)]]; times = '두 번째 수유 30분 전 → 끝나면 바로 수유'; }
+      else if(stage === 'mid'){ const m = midMealsOfDay(day, false); meals = [['오전', m.am], ['오후', m.pm]]; times = '수유 → 이유식 → 수유 → 이유식 → 수유'; }
+      else { const m = lateMealsOfDay(day, false); meals = [['아침', m.am], ['점심', m.noon], ['저녁', m.pm]]; times = '하루 3끼 + 간식'; }
+      const ratio = stage === 'late' ? lateRatioLabel(st.ratio) : st.ratio + '배죽';
+      return {stage, day, label, title: st.rest ? '쉬는 날 — 먹어본 재료로' : st.title, g: st.g, ratio, meals, times};
+    }
+  }catch(e){}
+  return null;
+}
+function famTodayText(t){
+  if(!t) return '';
+  return `[오늘 이렇게 먹여주세요] ${t.label} ${t.day}일차\n${t.title} · 한 끼 ${t.g}g · ${t.ratio}\n` + t.meals.map(([k,v])=>`${k}: ${v}`).join('\n') + `\n얼린 큐브는 중탕으로, 데운 건 한 번만 · 남기면 버려요`;
+}
+function famCardBlob(t){
+  return new Promise((resolve)=>{
+    try{
+      const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+      const x = cv.getContext('2d'), F = (w,s)=>`${w} ${s}px -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif`;
+      const wrap = (txt, maxW, font)=>{ x.font = font; const out = []; let line = ''; for(const ch of String(txt)){ const tryL = line + ch; if(x.measureText(tryL).width > maxW && line){ out.push(line); line = ch; } else line = tryL; } if(line) out.push(line); return out; };
+      x.fillStyle = '#F8F4EE'; x.fillRect(0,0,W,H); x.fillStyle = '#4B6B54'; x.fillRect(0,0,22,H);
+      x.fillStyle = '#4B6B54'; x.font = F(600,34); x.fillText('먹보 아빠의 이유식노트', 90, 120);
+      const d = new Date(); x.fillStyle = '#6B6558'; x.font = F(400,32); x.fillText(`${d.getMonth()+1}월 ${d.getDate()}일 (${'일월화수목금토'[d.getDay()]})`, 90, 172);
+      x.fillStyle = '#2E2B24'; x.font = F(500,82); x.fillText('오늘 이렇게', 90, 290); x.fillStyle = '#B5542F'; x.fillText('먹여주세요', 90, 390);
+      let y = 450; x.fillStyle = '#4B6B54'; const boxH = 60 + 70 + t.meals.length * 52 + 40;
+      x.beginPath(); x.roundRect ? x.roundRect(90, y, W-180, boxH, 32) : x.rect(90, y, W-180, boxH); x.fill();
+      x.fillStyle = 'rgba(255,255,255,.85)'; x.font = F(500,30); x.fillText(`${t.label} ${t.day}일차`, 130, y+60);
+      x.fillStyle = '#fff'; x.font = F(700,52); x.fillText(`${t.title} · ${t.g}g`, 130, y+130);
+      let yy = y + 190; x.font = F(400,30); x.fillStyle = 'rgba(255,255,255,.92)';
+      for(const [k,v] of t.meals){ const ls = wrap(`${k}  ${v}`, W-260, F(400,30)); x.fillText(ls[0] + (ls.length>1?'…':''), 130, yy); yy += 52; }
+      y = y + boxH + 50;
+      const rows = [['배죽', t.ratio], ['순서', t.times], ['데우기', '얼린 큐브는 중탕, 데운 건 한 번만'], ['남기면', '아깝지만 버려요 (다시 데우지 않기)']];
+      x.fillStyle = '#fff'; x.strokeStyle = '#E6DDD0'; x.lineWidth = 3; const rh = 84, bh = rows.length * rh + 20;
+      x.beginPath(); x.roundRect ? x.roundRect(90, y, W-180, bh, 28) : x.rect(90, y, W-180, bh); x.fill(); x.stroke();
+      rows.forEach(([k,v],i)=>{ const ry = y + 62 + i*rh; x.fillStyle = '#4B6B54'; x.font = F(700,30); x.fillText(k, 130, ry); x.fillStyle = '#2E2B24'; x.font = F(400,30); const ls = wrap(v, W-440, F(400,30)); x.fillText(ls[0] + (ls.length>1?'…':''), 300, ry); });
+      x.fillStyle = '#4B6B54'; x.font = F(700,30); x.fillText('meokboapa.com', 90, H-70); x.fillStyle = '#6B6558'; x.font = F(400,28); x.fillText('· 앱스토어에서 \'먹보아빠\' 검색', 330, H-70);
+      cv.toBlob(b=>resolve(b), 'image/png');
+    }catch(e){ resolve(null); }
+  });
+}
+async function famShareLink(){
+  if(!famCode){ famSetCode(famNewCode(), 'owner'); }
+  const ok = await famPushRoom();
+  if(!ok && famRole === 'owner'){ showShareToast('인터넷 연결을 확인하고 다시 눌러주세요'); return; }
+  const t = famToday();
+  const data = {title:'우리 아이 이유식 식단표', text:(t?`오늘은 ${t.label} ${t.day}일차 — ${t.title}\n`:'') + '링크로 오늘 메뉴를 같이 보고, 먹고 나서 반응을 눌러주세요 👇', url: famLink()};
+  try{ gtag('event','fam_share',{type:'link'}); }catch(e){}
+  if(navigator.share){ try{ await navigator.share(data); }catch(e){} return; }
+  try{ await navigator.clipboard.writeText(data.url); showShareToast('링크가 복사됐어요! 카톡에 붙여넣어보세요'); }catch(e){ showShareToast('링크: ' + data.url); }
+}
+async function famShareCard(){
+  const t = famToday(); if(!t){ showShareToast('이유식 시작한 날을 먼저 넣어주세요'); return; }
+  try{ gtag('event','fam_share',{type:'card'}); }catch(e){}
+  const blob = await famCardBlob(t);
+  const text = famTodayText(t) + (famCode ? `\n같이 보기: ${famLink()}` : '');
+  try{
+    if(blob && navigator.canShare){ const file = new File([blob], '오늘_이유식.png', {type:'image/png'}); if(navigator.canShare({files:[file]})){ await navigator.share({files:[file], text}); return; } }
+  }catch(e){ if(e && e.name === 'AbortError') return; }
+  if(navigator.share){ try{ await navigator.share({text}); }catch(e){} return; }
+  try{ await navigator.clipboard.writeText(text); showShareToast('오늘 식단이 복사됐어요! 카톡에 붙여넣어보세요'); }catch(e){ showShareToast('공유를 지원하지 않는 브라우저예요'); }
+}
+function famCloseSheet(){ const s = document.getElementById('famSheet'); if(s) s.remove(); }
+function famOpenSheet(){
+  famCloseSheet();
+  const bg = document.createElement('div'); bg.id = 'famSheet'; bg.className = 'fam-bg';
+  bg.innerHTML = `<div class="fam-sh" role="dialog" aria-label="가족에게 보내기"><h2>가족에게 보내기</h2><p>할머니·아빠가 앱이 없어도 링크로 바로 볼 수 있어요.</p>
+    <button type="button" class="fam-o" id="famLinkBtn"><i>📅</i><span><b>식단표 링크 보내기</b><small>받은 사람도 오늘 며칠째인지·메뉴를 그대로 보고, 반응을 누르면 서로 같이 봐요</small></span></button>
+    <button type="button" class="fam-o" id="famCardBtn"><i>🖼️</i><span><b>오늘 카드 보내기</b><small>"오늘 이렇게 먹여주세요" — 카톡에 사진처럼</small></span></button>
+    ${famCode && famRole==='owner' ? `<div class="fam-mng">가족방 연결됨 · <button type="button" id="famRenew">링크 새로 만들기</button> · <button type="button" id="famDel">가족방 지우기</button></div>` : ''}
+    <div class="fam-n">아이 이름·생일은 보내지 않아요. 시작일·설정·반응만 담기고, 180일 동안 안 쓰면 자동으로 지워져요.</div>
+    <button type="button" class="fam-x" id="famClose">닫기</button></div>`;
+  document.body.appendChild(bg);
+  bg.addEventListener('click', e=>{ if(e.target === bg) famCloseSheet(); });
+  bg.querySelector('#famClose').onclick = famCloseSheet;
+  bg.querySelector('#famLinkBtn').onclick = ()=>{ famCloseSheet(); famShareLink(); };
+  bg.querySelector('#famCardBtn').onclick = ()=>{ famCloseSheet(); famShareCard(); };
+  const rn = bg.querySelector('#famRenew'); if(rn) rn.onclick = async ()=>{ const old = famCode; famSetCode(famNewCode(), 'owner'); await famPushRoom(); try{ const rx = famRx; for(const st in rx) for(const d in rx[st]) fetch(FAM_API+'/v1/fam/'+famCode+'/react',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({stage:st,day:+d,value:rx[st][d]})}).catch(()=>{}); }catch(e){} fetch(FAM_API+'/v1/fam/'+old+'/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).catch(()=>{}); famCloseSheet(); showShareToast('새 링크를 만들었어요. 이전 링크는 이제 열리지 않아요'); famShareLink(); };
+  const dl = bg.querySelector('#famDel'); if(dl) dl.onclick = ()=>{ const old = famCode; famSetCode(null); fetch(FAM_API+'/v1/fam/'+old+'/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).catch(()=>{}); famCloseSheet(); showShareToast('가족방을 지웠어요. 반응 기록은 이 기기에만 남아요'); famRefreshUi(); };
+}
+function famBarHtml(){
+  if(famCode && famRole === 'member'){
+    return `<div class="fam-banner"><b>👨‍👩‍👧 가족이 보낸 이유식 식단표예요</b><span>먹고 나서 오늘 칸의 반응을 누르면 보낸 사람도 같이 봐요.</span>${MB_IS_NATIVE?'':`<a href="${FAM_APPSTORE}" target="_blank" rel="noopener" class="fam-app">📲 앱으로 같이 보기 (무료)</a>`}<button type="button" class="fam-leave" onclick="famLeave()">가족방 나가기</button></div>`;
+  }
+  if(weaningStart) return `<button type="button" class="fam-btn" onclick="famOpenSheet()">👨‍👩‍👧 가족에게 오늘 식단 보내기</button>`;
+  return '';
+}
+function famLeave(){ famSetCode(null); famRefreshUi(); showShareToast('가족방에서 나왔어요'); }
+function famRefreshUi(){ try{ renderProfileBar(false); }catch(e){} const a = document.querySelector('.stab.active'); if(a) a.click(); }
+/* 받은 링크로 들어왔을 때 (?fam=코드) */
+async function famBoot(){
+  let incoming = null;
+  try{ const q = new URLSearchParams(location.search); incoming = q.get('fam'); }catch(e){}
+  if(incoming && /^[A-Za-z0-9_-]{20,40}$/.test(incoming)){
+    try{ history.replaceState(null, '', location.pathname + location.hash); }catch(e){}
+    if(!(famCode === incoming && famRole === 'owner')) famSetCode(incoming, 'member');
+    try{ gtag('event','fam_open',{}); }catch(e){}
+  }
+  if(!famCode) return;
+  const d = await famPull();
+  if(d && famRole === 'member'){
+    if((d.start||null) !== (weaningStart||null)) saveWeaningStart(d.start || '');
+    if(d.salt) appSettings.saltPref = d.salt; if(d.prep) appSettings.prepPref = d.prep; saveAppSettings();
+    if(!!d.norest !== !!MB_NOREST){ try{ mbSetNoRest(d.norest); }catch(e){} }
+    famRefreshUi();
+  } else famRefreshRxDom();
+}
+let famLastPull = 0;
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible' && famCode && Date.now() - famLastPull > 20000){ famLastPull = Date.now(); famPull().then(famRefreshRxDom); } });
+setInterval(()=>{ if(document.visibilityState === 'visible' && famCode){ famLastPull = Date.now(); famPull().then(famRefreshRxDom); } }, 60000);
+
 renderProfileBar(false);
+famBoot();
 renderSettingsRow();
 applyProfileHighlight();
 if(!goToProfileStage()) renderStageBody();
