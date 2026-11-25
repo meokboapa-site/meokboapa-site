@@ -3327,7 +3327,7 @@ function todayStripHtml(){
 }
 function mbGoStage(label){
   const btn = [...document.querySelectorAll('.stab')].find(b=>b.textContent===label);
-  if(btn){ btn.click(); setTimeout(()=>{ const pg=document.querySelector('.subpage.active'); const t=pg&&(pg.querySelector('.sp-set')||pg.querySelector('.sp-today')); if(t){ window.scrollTo({top: t.getBoundingClientRect().top + scrollY - 70, behavior:'smooth'}); } else btn.scrollIntoView({behavior:'smooth',block:'center'}); },350); }
+  if(btn){ btn.click(); setTimeout(()=>{ const pg=document.querySelector('.subpage.active'); const t=pg&&(pg.querySelector('.sp-set')||pg.querySelector('.sp-today')); if(t){ const stk=[...document.querySelectorAll('.stage-nav,.subnav')].filter(e=>e.offsetParent).reduce((s,e)=>s+e.getBoundingClientRect().height,0); window.scrollTo({top: t.getBoundingClientRect().top + scrollY - stk - 12, behavior:'smooth'}); } else btn.scrollIntoView({behavior:'smooth',block:'center'}); },350); }
 }
 function renderProfileBar(editing){
   const wrap = document.getElementById('profileBar');
