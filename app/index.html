@@ -138,6 +138,7 @@
     flex:1; border:1.5px solid var(--line); border-radius:8px; padding:8px 10px; font-size:13px;
     font-family:inherit; background:#fff; color:var(--ink); min-height:38px;
   }
+  .profile-clear-btn{width:100%; background:none; border:0; color:var(--ink-soft); font-size:12px; font-weight:700; padding:8px; margin-top:2px; cursor:pointer;}
   .profile-save-btn{width:100%; background:var(--moss); color:#fff; border:none; padding:10px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; margin-top:4px;}
 
   .settings-wrap{max-width:560px; margin:0 auto; padding:0 20px 10px;}
@@ -3350,8 +3351,11 @@ function renderProfileBar(editing){
       <div class="pf-title">우리 아이 생일</div>
       <div class="pf-row"><label>생일</label><input type="date" id="pfBirthday" value="${p.birthday||''}"></div>
       <button class="profile-save-btn" id="pfSaveBtn">저장</button>
+      ${p.birthday?'<button type="button" class="profile-clear-btn" id="pfClearBtn">지우기</button>':''}
     </div></div>`;
     document.getElementById('pfSaveBtn').onclick=saveProfile;
+    const pfClr = document.getElementById('pfClearBtn');
+    if(pfClr) pfClr.onclick=clearProfile;
   }
 }
 function saveProfile(){
@@ -3362,6 +3366,12 @@ function saveProfile(){
   renderProfileBar(false);
   applyProfileHighlight();
   goToProfileStage();
+}
+function clearProfile(){
+  babyProfile = null;
+  try { localStorage.removeItem('babyProfile'); sessionStorage.removeItem('babyProfile'); } catch(e){}
+  renderProfileBar(false);
+  applyProfileHighlight();
 }
 /* 생일이 있으면 그 개월 수에 맞는 시기 탭을 바로 엽니다 */
 function goToProfileStage(){
