@@ -4332,6 +4332,7 @@ const BLOG_POSTS = {
   reheat:   {title:"얼린 이유식 큐브, 우리 집은 중탕으로 데워요", url:"https://blog.naver.com/sentimetal12/224434380131"},
   refuse:   {title:"이유식 초기 5주, 잘 먹은 재료 vs 안 먹은 재료", url:"https://blog.naver.com/sentimetal12/224437253388"},
   mid8w:    {title:"이유식 중기 식단표 8주, 하루 2끼 이렇게 먹였어요", url:"https://blog.naver.com/sentimetal12/224438071266"},
+  midamt:   {title:"이유식 중기 한 끼 양, 8주 동안 100g에서 130g까지", url:"https://blog.naver.com/sentimetal12/224491314835"},
   late12w:  {title:"이유식 후기 식단표 12주, 하루 3끼 이렇게", url:"https://blog.naver.com/sentimetal12/224438851560"},
   choke:    {title:"돌 전 아기 목에 걸렸을 때, 등 5번 + 가슴 5번", url:"https://blog.naver.com/sentimetal12/224443539488"},
   ribs:     {title:"아기 등갈비찜, 압력밥솥 45분이면 뼈에서 살이 으스러져요", url:"https://blog.naver.com/sentimetal12/224440102166"},
@@ -5045,6 +5046,7 @@ function buildMidPage(container){
     ${(new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season_mid'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
     <div class="sp-alert sp-note">양과 재료는 기준일 뿐이에요 — <b>덜 먹어도, 다른 재료로 바꿔도 괜찮아요.</b> 순서와 한 가지씩만 지키면 충분해요.</div>
     <a class="sp-blog" href="${BLOG_POSTS.mid8w.url}" target="_blank" rel="noopener">📝 이 8주를 실제 기록으로 풀어 쓴 블로그 글 — ${BLOG_POSTS.mid8w.title} <span>›</span></a>
+    <a class="sp-blog" href="${BLOG_POSTS.midamt.url}" target="_blank" rel="noopener">📝 한 끼 몇 g? 우리 집 시작 양과 기준 비교 — ${BLOG_POSTS.midamt.title} <span>›</span></a>
     <div class="dbox tip"><span class="dbox-label">먹보 아빠네 1일 2식 모듈</span>
       매 끼니를 <b>칸 채우기</b>로 짜요. 메뉴를 고민할 필요가 없어져요.
       <div class="mp-module">
