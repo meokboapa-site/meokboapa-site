@@ -1063,6 +1063,9 @@
 .nbx.ing,.tc i.nb.ing{background:#EAF0E7;color:#34493B}.tc i.nb.ing{background:#E4ECE0}
 .tp-prev{display:inline-flex;flex:0 0 auto}.tp-prev:empty{display:none}.tp-prev .tp-ic{width:34px;height:34px}.tp-prev img{width:100%;height:100%;object-fit:contain}
 .subpage.startpage .sp-set:not(:has(*)),.startpage div.sp-set:not(:has(*)){display:none!important}
+.ql-row{display:flex;gap:8px;overflow-x:auto;margin:2px 0 12px;padding:2px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}.ql-row::-webkit-scrollbar{display:none}
+.ql{flex:0 0 auto;font-size:13px;font-weight:800;padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--moss-deep,#34493B);text-decoration:none;white-space:nowrap}.ql.kk{background:#FEE500;border-color:#FEE500;color:#3A2A00}
+.sp-guide .sp-kakao:not(.sp-abroad),.sp-guide .sp-prep,.sp-guide .sp-blog{display:none!important}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -4012,7 +4015,7 @@ function renderStageBody(){
   body.innerHTML=`
     <div class="subnav"><div class="subtabs" id="subtabs"></div></div>
     <div class="stagebody">
-      ${feedRhythmHtml(currentStage)}${ironDailyHtml(currentStage) ? `<details class="sp-guide"><summary>🩸 ${currentStage} 철분 기준</summary>${ironDailyHtml(currentStage)}</details>` : ''}
+      ${feedRhythmHtml(currentStage)}${ironDailyHtml(currentStage) || ''}
       <div class="subpage" id="sub-재료"></div>
       <div class="subpage" id="sub-레시피"></div>
       <div class="subpage" id="sub-시작"></div>
@@ -4674,6 +4677,7 @@ function buildStartPage(container){
   });
 
   container.innerHTML = `
+    ${mbQuickLinksHtml('start')}
     <div class="sp-set">
       ${weaningStart && startWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${startWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루고 평일 오전에 시작하세요.</span>`:''}
     </div>
@@ -5123,6 +5127,7 @@ function buildMidPage(container){
   const b1 = midBaseBatch(MID_PLAN[0]), b7 = midBaseBatch(MID_PLAN[MID_PLAN.length-1]);
   const rowArr = MID_PLAN.map((st,i)=>midRowHtml(st,i,cur,day)), rows = rowArr.join('');
   container.innerHTML = `
+    ${mbQuickLinksHtml('mid')}
     <div class="sp-set">
       <label for="mpStart">중기 시작한 날</label>
       <input type="date" id="mpStart" value="${midStart||''}">
@@ -5418,6 +5423,7 @@ function buildLatePage(container){
   }
   const rowArr = LATE_PLAN.map((st,i)=>lateRowHtml(st,i,cur,day)), rows = rowArr.join('');
   container.innerHTML = `
+    ${mbQuickLinksHtml('late')}
     <div class="sp-set">
       <label for="lpStart">후기 시작한 날</label>
       <input type="date" id="lpStart" value="${lateStart||''}">
@@ -9934,6 +9940,16 @@ function mbTopMake(enc){
   const i = document.getElementById('tpName'); if(i){ i.value = n; mbTopChk(); mbTopMlPick(mbTopDefaultMl(n)); mbTopSuggest(); }
 }
 function mbTopEat(id){ const t = mbTopLoad().find(x=>x.id===id); if(t) mbTopUse(encodeURIComponent(t.name)); }
+function mbQuickLinksHtml(stage){
+  const k = stage==='start'?'start5w':(stage==='mid'?'mid8w':'late12w'), bp = (typeof BLOG_POSTS!=='undefined' && BLOG_POSTS[k]) || null;
+  const season = !(MB_APP_MODE || new Date()>=new Date('2027-03-01'));
+  const L = [];
+  L.push(`<a class="ql kk" href="https://pf.kakao.com/_LxoWxiX/friend" target="_blank" rel="noopener" onclick="try{gtag('event','kakao_add',{where:'plan_top'})}catch(e){}">💬 카톡 알림 받기</a>`);
+  if(stage==='start' && !MB_APP_MODE) L.push(`<a class="ql" href="/%EA%B0%80%EC%9D%B4%EB%93%9C/%EC%9D%B4%EC%9C%A0%EC%8B%9D-%EC%A4%80%EB%B9%84%EB%AC%BC/" onclick="try{gtag('event','guide_open',{id:'prep',where:'start_top'})}catch(e){}">🛒 시작 전 준비물</a>`);
+  if(season) L.push(`<a class="ql" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'${stage}_top'})}catch(e){}">🌬️ 겨울 아기방</a>`);
+  if(bp) L.push(`<a class="ql" href="${bp.url}" target="_blank" rel="noopener">📝 블로그 후기</a>`);
+  return `<div class="ql-row">${L.join('')}</div>`;
+}
 function mbNewLabel(st, day){
   if(!st || !st.add || st.rest) return '';
   if(day != null && day > st.d0 && st.d1 > st.d0) return '관찰 ' + (day - st.d0 + 1) + '/' + (st.d1 - st.d0 + 1);
