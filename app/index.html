@@ -1029,6 +1029,20 @@
 .tc small{font-size:11px;opacity:.9;font-weight:700}.tc.on{background:#fff;color:#34493B;border-color:#fff}
 .tc.warn{border-color:#F2B79A}.tc.nf{opacity:.65;border-style:dashed}
 .tc.new{background:#fff;color:#34493B;border-color:#fff}.tc.new i{font-style:normal;font-size:9.5px;font-weight:800;background:#B5542F;color:#fff;border-radius:999px;padding:1px 6px}
+.sp-guide{margin:18px 0 8px}.sp-guide>summary{list-style:none;cursor:pointer;font-weight:700;font-size:14px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--moss-deep);display:flex;justify-content:space-between;align-items:center}
+.sp-guide>summary::-webkit-details-marker{display:none}.sp-guide>summary::after{content:'+';font-size:18px;font-weight:500;color:var(--ink-soft)}.sp-guide[open]>summary::after{content:'−'}.sp-guide[open]>summary{margin-bottom:12px}
+.trust-strip.tail{margin:22px auto 8px}
+
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.home-grid .today-strip:not(.ts-hint){display:contents}
+.home-grid .today-strip.ts-hint{grid-column:1/-1;margin:0}
+.home-grid .hg-wide,.home-grid .fam-banner{grid-column:1/-1}
+.home-grid .ts-main,.home-grid .ts-shop,.home-grid .fam-btn{min-height:76px;margin:0;padding:12px 14px;border-radius:14px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:2px;text-align:left;width:100%;max-width:none;min-width:0;box-sizing:border-box;font-size:14px}
+.home-grid .ts-main:only-child{grid-column:1/-1}
+.home-grid .ts-shop,.home-grid .fam-btn{background:#fff;border:1.5px solid var(--moss);color:var(--moss-deep);font-weight:800;cursor:pointer}
+.home-grid .ts-main small,.home-grid .ts-shop small,.home-grid .fam-btn small{font-size:11.5px;font-weight:700;opacity:.8;display:block}
+.home-grid .ts-main b,.home-grid .ts-shop b,.home-grid .fam-btn b{font-size:15px;font-weight:800;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.home-grid .ts-sub{font-size:11.5px;font-weight:600;color:var(--ink-soft)}.home-grid .ts-sub.warn{color:#B5542F;font-weight:700}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -1176,7 +1190,13 @@ document.addEventListener('DOMContentLoaded',function(){fix(document);new Mutati
   <button class="share-btn" id="shareAppBtn" type="button">🔗 친구에게 공유하기</button>
 </header>
 
-<div class="trust-strip"><div class="trust-inner">
+
+<div id="profileBar"></div>
+<div id="settingsRow"></div>
+
+<div class="stage-nav"><div class="stage-nav-rail" id="stageNavWrap"><button class="navarrow left" id="navLeft" type="button" aria-label="이전 탭 보기">‹</button><div class="stage-nav-inner" id="stageNav"></div><button class="navarrow right" id="navRight" type="button" aria-label="다음 탭 보기">›</button></div></div>
+<div id="stageBody"></div>
+<div class="trust-strip tail"><div class="trust-inner">
   <div class="trust-badges">
     <span class="trust-badge">3개 기관 교차검증</span>
     <span class="trust-badge">현직 아빠가 직접 정리</span>
@@ -1184,12 +1204,6 @@ document.addEventListener('DOMContentLoaded',function(){fix(document);new Mutati
   </div>
   <button class="trust-link" type="button" onclick="openAboutModal()">왜 만들었냐면 →</button>
 </div></div>
-
-<div id="profileBar"></div>
-<div id="settingsRow"></div>
-
-<div class="stage-nav"><div class="stage-nav-rail" id="stageNavWrap"><button class="navarrow left" id="navLeft" type="button" aria-label="이전 탭 보기">‹</button><div class="stage-nav-inner" id="stageNav"></div><button class="navarrow right" id="navRight" type="button" aria-label="다음 탭 보기">›</button></div></div>
-<div id="stageBody"></div>
 <div id="coupangDisclosure"></div>
 
 <div class="modal-overlay" id="modalOverlay"><div class="modal-box" id="modalBox"></div></div>
@@ -3444,7 +3458,7 @@ function todayStripHtml(){
       const st = plan.find(x=>day>=x.d0 && day<=x.d1); if(!st) continue;
       const n = shopItemsForWeek(stage, day).length;
       return `<div class="today-strip"><button type="button" class="ts-main" onclick="mbGoStage('${label}')"><small>오늘 · ${label} ${day}일차</small><b>${st.rest?'쉬는 날 — 먹어본 재료로':st.title}</b></button>
-        ${n?`<button type="button" class="ts-shop" onclick="openShop('${stage}',${day})">🛒 이번 주 장보기 <b>${n}개</b> ›</button>`:''}</div>`;
+        ${n?`<button type="button" class="ts-shop" onclick="openShop('${stage}',${day})"><small>이번 주 장보기</small><b>🛒 ${n}개 ›</b>${(()=>{ const k = mbTopTodoCount(stage, day); return k ? `<span class="ts-sub">새로 만들 토핑 ${k}종</span>` : ''; })()}</button>`:''}</div>`;
     }
     return `<button type="button" class="today-strip ts-hint" onclick="mbGoStage(getStageForAge(computeAgeMonths(babyProfile.birthday)))"><small>이유식 시작한 날을 넣으면</small><b>오늘 며칠째인지 · 이번 주 장보기가 여기 떠요 ›</b></button>`;
   }catch(e){ return ''; }
@@ -3476,7 +3490,7 @@ function renderProfileBar(editing){
     wrap.innerHTML = `<div class="profile-wrap"><div class="profile-card">
       <div class="p-info">${parts.join(' · ')}</div>
       <button class="profile-edit-btn" id="profileEditBtn">수정</button>
-    </div>${todayStripHtml()}${mbActionRowHtml()}${mbMonthBtnHtml()}${er}</div>`;
+    </div><div class="home-grid">${todayStripHtml()}${mbActionRowHtml()}</div>${mbMonthBtnHtml()}${er}</div>`;
     document.getElementById('profileEditBtn').onclick=()=>renderProfileBar(true);
   } else {
     const p = babyProfile || {};
@@ -4109,8 +4123,7 @@ function renderStageBody(){
   body.innerHTML=`
     <div class="subnav"><div class="subtabs" id="subtabs"></div></div>
     <div class="stagebody">
-      ${feedRhythmHtml(currentStage)}
-      ${ironDailyHtml(currentStage)}
+      ${(feedRhythmHtml(currentStage)+ironDailyHtml(currentStage)) ? `<details class="sp-guide"><summary>🕙 ${currentStage} 하루 일정 · 철분 기준</summary>${feedRhythmHtml(currentStage)}${ironDailyHtml(currentStage)}</details>` : ''}
       <div class="subpage" id="sub-재료"></div>
       <div class="subpage" id="sub-레시피"></div>
       <div class="subpage" id="sub-시작"></div>
@@ -4765,32 +4778,10 @@ function buildStartPage(container){
   });
 
   container.innerHTML = `
-    <p class="sec-sub">먹보 아빠네가 <b>실제로 한 5주</b>예요 — 양, 배죽, 알레르기 테스트 날짜, 그때 적어둔 반응 메모까지 그대로 옮겼어요.
-      원칙은 <b>한 번에 한 가지씩, 3일 이상</b>. 3일을 보는 건 알레르기 반응이 늦게 나오는 경우까지 확인하기 위해서예요.</p>
-    <div class="sp-order"><span>쌀<small>오트밀</small></span><span>소고기<small class="r">철분</small></span><span>연한 채소<small>이파리</small></span><span class="al">달걀·밀·땅콩<small class="r">알레르기</small></span><span>노란 채소<small>감자 등</small></span></div>
-    <div class="sp-dl">
-      <a href="/files/early-weaning-5weeks.pdf" download="이유식_초기_식단표_먹보아빠.pdf" target="_blank" rel="noopener" data-dl="pdf"><b>🖨 인쇄용 PDF</b><span>냉장고에 붙이는 5주 달력 + 주의사항</span></a>
-      <a href="/files/early-weaning-5weeks-template.xlsx" download="이유식_초기_식단표_템플릿.xlsx" data-dl="xlsx"><b>📊 엑셀·구글시트</b><span>이름·시작일 넣으면 날짜 자동</span></a>
-    </div>
-    <a class="sp-kakao" href="https://pf.kakao.com/_LxoWxiX/friend" target="_blank" rel="noopener" onclick="try{gtag('event','kakao_add',{where:'plan'})}catch(e){}"><b>💬 카카오톡 채널 추가 <span class="hot">알림 받기</span></b><span>다음 단계 식단표가 나오면 카톡으로 알려드려요<br>궁금한 건 1:1로 물어보세요</span></a>
-    ${window.MB_ABROAD?`<a class="sp-kakao sp-abroad" href="https://meokbodad.etsy.com/listing/4603252073" target="_blank" rel="noopener" onclick="try{gtag('event','etsy_click',{edition:'ko',where:'app_abroad'})}catch(e){}"><b>🌏 해외에 계세요? <span class="hot">해외 맘 필수</span></b><span>미국·캐나다·영국 마트 재료로 바꾼 한국식 이유식 첫 5주 · 한국어 PDF</span></a>`:''}
-    ${MB_APP_MODE ? (Object.keys(COUPANG_LINKS).length ? `<a class="sp-prep" href="/s/prep/?app=1" onclick="try{gtag('event','guide_open',{id:'prep',where:'start30_app'})}catch(e){}"><b>🛒 시작 전 준비물 <span class="hot">초보 필수</span></b><small>초기에 쓰는 식사·손질·조리도구 모아보기</small></a>` : '') : `<a class="sp-prep" href="/%EA%B0%80%EC%9D%B4%EB%93%9C/%EC%9D%B4%EC%9C%A0%EC%8B%9D-%EC%A4%80%EB%B9%84%EB%AC%BC/" onclick="try{gtag('event','guide_open',{id:'prep',where:'start30'})}catch(e){}"><b>🛒 시작 전 준비물 <span class="hot">초보 필수</span></b><small>초기에 살 것만 체크리스트로 · 조리도구·보관용기·식재료</small></a>`}
-    ${(new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
-    <a class="sp-blog" href="${BLOG_POSTS.start5w.url}" target="_blank" rel="noopener">📝 이 5주를 일기로 풀어 쓴 블로그 글 — ${BLOG_POSTS.start5w.title} <span>›</span></a>
-    <div class="dbox tip"><span class="dbox-label">시작 전에 이것만</span>
-      <ul class="sp-notes" style="margin-top:4px;">
-        <li><b>월요일에 시작해요.</b> 새 재료가 늘 평일에 들어가요.</li>
-        <li><b>처음엔 소량.</b> 첫날은 한두 숟갈이면 충분해요.</li>
-        <li><b>오전에 줘요.</b> 알레르기 반응이 나오면 바로 소아과에 갈 수 있어야 해요.</li>
-        <li><b>양에 너무 집착하지 마세요.</b> 아래 g·ml은 기준일 뿐, 조금 달라도 충분해요. 중요한 건 <b>순서와 한 가지씩</b>이에요.</li>
-      </ul>
-      <a class="sp-blog" style="margin:8px 0 0;" href="${BLOG_POSTS.start.url}" target="_blank" rel="noopener">📝 언제 시작했는지, 숟가락 거부 없이 시작한 방법 — 블로그 글 <span>›</span></a></div>
-
     <div class="sp-set">
       ${weaningStart && startWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${startWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루고 평일 오전에 시작하세요.</span>`:''}
     </div>
     ${today}
-
     ${mbListHtml(START_PLAN, cur, rows)}
     ${/coupang-link/.test(rows.join('')) ? coupangNoticeHtml() : ''}
 
@@ -4849,7 +4840,30 @@ function buildStartPage(container){
     <button type="button" class="sp-gomid" onclick="goMidPlan()">다음 단계 · 중기 8주 식단표 보기 ›</button>
     <div class="dbox note"><span class="dbox-label">중기로 넘어갈 때</span>
       달걀·땅콩·생선 같은 알레르기 유발식품은 <b>늦출수록 오히려 위험이 커진다</b>는 게
-      대한소아청소년과학회·AAP·ESPGHAN 공통 권고예요. 중기 탭에서 도입 시기를 확인하세요.</div>`;
+      대한소아청소년과학회·AAP·ESPGHAN 공통 권고예요. 중기 탭에서 도입 시기를 확인하세요.</div>
+    <details class="sp-guide"><summary>📖 이 시기 기준·다운로드·준비 방법 보기</summary>
+    <p class="sec-sub">먹보 아빠네가 <b>실제로 한 5주</b>예요 — 양, 배죽, 알레르기 테스트 날짜, 그때 적어둔 반응 메모까지 그대로 옮겼어요.
+      원칙은 <b>한 번에 한 가지씩, 3일 이상</b>. 3일을 보는 건 알레르기 반응이 늦게 나오는 경우까지 확인하기 위해서예요.</p>
+    <div class="sp-order"><span>쌀<small>오트밀</small></span><span>소고기<small class="r">철분</small></span><span>연한 채소<small>이파리</small></span><span class="al">달걀·밀·땅콩<small class="r">알레르기</small></span><span>노란 채소<small>감자 등</small></span></div>
+    <div class="sp-dl">
+      <a href="/files/early-weaning-5weeks.pdf" download="이유식_초기_식단표_먹보아빠.pdf" target="_blank" rel="noopener" data-dl="pdf"><b>🖨 인쇄용 PDF</b><span>냉장고에 붙이는 5주 달력 + 주의사항</span></a>
+      <a href="/files/early-weaning-5weeks-template.xlsx" download="이유식_초기_식단표_템플릿.xlsx" data-dl="xlsx"><b>📊 엑셀·구글시트</b><span>이름·시작일 넣으면 날짜 자동</span></a>
+    </div>
+    <a class="sp-kakao" href="https://pf.kakao.com/_LxoWxiX/friend" target="_blank" rel="noopener" onclick="try{gtag('event','kakao_add',{where:'plan'})}catch(e){}"><b>💬 카카오톡 채널 추가 <span class="hot">알림 받기</span></b><span>다음 단계 식단표가 나오면 카톡으로 알려드려요<br>궁금한 건 1:1로 물어보세요</span></a>
+    ${window.MB_ABROAD?`<a class="sp-kakao sp-abroad" href="https://meokbodad.etsy.com/listing/4603252073" target="_blank" rel="noopener" onclick="try{gtag('event','etsy_click',{edition:'ko',where:'app_abroad'})}catch(e){}"><b>🌏 해외에 계세요? <span class="hot">해외 맘 필수</span></b><span>미국·캐나다·영국 마트 재료로 바꾼 한국식 이유식 첫 5주 · 한국어 PDF</span></a>`:''}
+    ${MB_APP_MODE ? (Object.keys(COUPANG_LINKS).length ? `<a class="sp-prep" href="/s/prep/?app=1" onclick="try{gtag('event','guide_open',{id:'prep',where:'start30_app'})}catch(e){}"><b>🛒 시작 전 준비물 <span class="hot">초보 필수</span></b><small>초기에 쓰는 식사·손질·조리도구 모아보기</small></a>` : '') : `<a class="sp-prep" href="/%EA%B0%80%EC%9D%B4%EB%93%9C/%EC%9D%B4%EC%9C%A0%EC%8B%9D-%EC%A4%80%EB%B9%84%EB%AC%BC/" onclick="try{gtag('event','guide_open',{id:'prep',where:'start30'})}catch(e){}"><b>🛒 시작 전 준비물 <span class="hot">초보 필수</span></b><small>초기에 살 것만 체크리스트로 · 조리도구·보관용기·식재료</small></a>`}
+    ${(new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
+    <a class="sp-blog" href="${BLOG_POSTS.start5w.url}" target="_blank" rel="noopener">📝 이 5주를 일기로 풀어 쓴 블로그 글 — ${BLOG_POSTS.start5w.title} <span>›</span></a>
+    <div class="dbox tip"><span class="dbox-label">시작 전에 이것만</span>
+      <ul class="sp-notes" style="margin-top:4px;">
+        <li><b>월요일에 시작해요.</b> 새 재료가 늘 평일에 들어가요.</li>
+        <li><b>처음엔 소량.</b> 첫날은 한두 숟갈이면 충분해요.</li>
+        <li><b>오전에 줘요.</b> 알레르기 반응이 나오면 바로 소아과에 갈 수 있어야 해요.</li>
+        <li><b>양에 너무 집착하지 마세요.</b> 아래 g·ml은 기준일 뿐, 조금 달라도 충분해요. 중요한 건 <b>순서와 한 가지씩</b>이에요.</li>
+      </ul>
+      <a class="sp-blog" style="margin:8px 0 0;" href="${BLOG_POSTS.start.url}" target="_blank" rel="noopener">📝 언제 시작했는지, 숟가락 거부 없이 시작한 방법 — 블로그 글 <span>›</span></a></div>
+    </details>
+  `;
 
   const inp = document.getElementById('spStart');
   mbDateBind(inp, saveWeaningStart, ()=>buildStartPage(container));
@@ -5212,43 +5226,6 @@ function buildMidPage(container){
   const b1 = midBaseBatch(MID_PLAN[0]), b7 = midBaseBatch(MID_PLAN[MID_PLAN.length-1]);
   const rowArr = MID_PLAN.map((st,i)=>midRowHtml(st,i,cur,day)), rows = rowArr.join('');
   container.innerHTML = `
-    <p class="sec-sub">초기 5주 다음 <b>8주(대략 생후 7~8개월)</b>예요. 재료 순서·간격·양은 <b>한국(질병관리청·대한소아청소년과학회)·미국(CDC·AAP) 권고</b>에 맞췄고,
-      끼니 짜는 법은 먹보 아빠네 엑셀의 <b>'1일 2식 모듈'</b>을 그대로 옮겼어요.</p>
-    <div class="sp-dl">
-      <a href="/files/mid-weaning-8weeks.pdf" download="이유식_중기_식단표_먹보아빠.pdf" target="_blank" rel="noopener" data-dl="pdf_mid"><b>🖨 인쇄용 PDF</b><span>냉장고에 붙이는 8주 달력 + 모듈표</span></a>
-      <a href="/files/mid-weaning-8weeks-template.xlsx" download="이유식_중기_식단표_템플릿.xlsx" data-dl="xlsx_mid"><b>📊 엑셀·구글시트</b><span>시작일 넣으면 날짜 자동 · 반응 메모 칸</span></a>
-    </div>
-    <a class="sp-kakao" href="https://pf.kakao.com/_LxoWxiX/friend" target="_blank" rel="noopener" onclick="try{gtag('event','kakao_add',{where:'plan'})}catch(e){}"><b>💬 카카오톡 채널 추가 <span class="hot">알림 받기</span></b><span>다음 단계 식단표가 나오면 카톡으로 알려드려요<br>궁금한 건 1:1로 물어보세요</span></a>
-    ${window.MB_ABROAD?`<a class="sp-kakao sp-abroad" href="https://meokbodad.etsy.com/listing/4603252073" target="_blank" rel="noopener" onclick="try{gtag('event','etsy_click',{edition:'ko',where:'app_abroad'})}catch(e){}"><b>🌏 해외에 계세요? <span class="hot">해외 맘 필수</span></b><span>미국·캐나다·영국 마트 재료로 바꾼 한국식 이유식 첫 5주 · 한국어 PDF</span></a>`:''}
-    ${(new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season_mid'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
-    <div class="sp-alert sp-note">양과 재료는 기준일 뿐이에요 — <b>덜 먹어도, 다른 재료로 바꿔도 괜찮아요.</b> 순서와 한 가지씩만 지키면 충분해요.</div>
-    <a class="sp-blog" href="${BLOG_POSTS.mid8w.url}" target="_blank" rel="noopener">📝 이 8주를 실제 기록으로 풀어 쓴 블로그 글 — ${BLOG_POSTS.mid8w.title} <span>›</span></a>
-    <a class="sp-blog" href="${BLOG_POSTS.midamt.url}" target="_blank" rel="noopener">📝 한 끼 몇 g? 우리 집 시작 양과 기준 비교 — ${BLOG_POSTS.midamt.title} <span>›</span></a>
-    <div class="dbox tip"><span class="dbox-label">먹보 아빠네 1일 2식 모듈</span>
-      매 끼니를 <b>칸 채우기</b>로 짜요. 메뉴를 고민할 필요가 없어져요.
-      <div class="mp-module">
-        <div><b>BASE (고정)</b><span>쌀미음 + 소고기 토핑 15g — 토핑식이 아니면 같이 끓여 소고기미음으로 줘도 돼요</span></div>
-        <div><b>에너지 15g</b><span>든든한 탄수화물 채소 — 감자 · 단호박 · 고구마 중 1</span></div>
-        <div><b>채소 15g · 격일</b><span><em style="font-style:normal;font-weight:700;color:#B5542F">소화(VEG1)</em> 부드럽고 속 편한 — 애호박 · 청경채 · 양배추 · 무<br><em style="font-style:normal;font-weight:700;color:#B5542F">비타민(VEG2)</em> 색 진하고 영양 많은 — 브로콜리 · 오이 · 당근 · 시금치 · 비타민채소 · 표고버섯 · 양파</span></div>
-        <div><b>고기·생선 15g</b><span>2주차부터 — 닭고기 · 가자미 · 두부</span></div>
-        <div style="font-size:12px;color:#6B6558">★ 표의 새 재료는 3일 통과한 뒤부터 칸에 넣어요</div>
-      </div>
-      <ul class="sp-notes" style="margin-top:6px;">
-        <li>쌀미음·소고기 외 <b>토핑은 최소 2개</b>, 2주차부터 3개(에너지 · 채소 · 고기·생선)예요.</li>
-        <li>아래 표에 <b>날마다 오전·오후 메뉴를 다 정해 뒀어요.</b> 새 재료(★)는 오전에만, 한 가지씩 3일.</li>
-        <li>소고기는 매 끼니 들어가니까 <b>쌀미음에 소고기 토핑 15g</b>을 기본으로 더해요. 토핑식이 아니라면 소고기를 같이 끓여 소고기미음으로 만들어도 돼요. 끓이는 비율은 초기와 같아요.</li>
-        <li><b>쌀가루는 고운입자 → 중간입자</b>. 입자가 굵어진 만큼 7배죽부터 시작해요(권장 범위 8~6배죽, 아기가 잘 먹는 농도가 우선).</li>
-      </ul></div>
-
-    <div class="dbox"><span class="dbox-label">소고기미음 만들기</span>
-      <b>쌀가루(중간입자) 1포 ${MID_PACK_G}g + 물 ${MID_PACK_G*7}ml(7배죽) + 소고기 ${b1.beef}g</b>으로 끓여요.
-      6배죽은 물 <b>${MID_PACK_G*6}ml</b>, 5배죽은 <b>${MID_PACK_G*5}ml</b> — 물 = 쌀가루 × 배죽.
-      표에 적힌 <b>쌀미음 g만큼 한 끼분씩</b> 나눠 얼리고(소고기를 같이 끓였다면 쌀미음+소고기 합계만큼), 토핑은 재료마다 15g씩 소분해요. 녹인 건 24시간 안에, 데우는 건 한 번만.
-      물 대신 <b>채수</b>도 괜찮아요 — 먹보 아빠네는 채수로 끓였어요.
-      <span class="source-note" style="display:block;margin-top:4px;">소고기 양은 앱 계산 기준(한 끼 15g)이에요.</span>
-      ${startBuyHtml({buy:[{key:"쌀",only:"중기용"},{key:"실사용템_식재료",only:"유기농 채수"},{key:"큐브_50ml"},{key:"큐브이동용 유리용기", fold:"큐브 옮겨 담는 유리용기"}]})}</div>
-
-
     <div class="sp-set">
       <label for="mpStart">중기 시작한 날</label>
       <input type="date" id="mpStart" value="${midStart||''}">
@@ -5290,7 +5267,44 @@ function buildMidPage(container){
     <p class="sec-sub">8주를 마치면 아래 재료를 같은 방식(오전에 한 가지씩, 3일)으로 이어가요. 그다음은 <b>하루 3끼 후기</b>예요.</p>
     <div class="sp-chips">${MID_NEXT.map(n=>`<span>${n}</span>`).join('')}</div>
     <button type="button" class="sp-gomid" onclick="goLatePlan()">다음 단계 · 후기 12주 식단표 보기 ›</button>
-    <p class="source-note" style="margin-top:10px;">출처 · <a href="https://www.cdc.gov/infant-toddler-nutrition/foods-and-drinks/when-what-and-how-to-introduce-solid-foods.html" target="_blank" rel="noopener noreferrer">CDC — When, What, and How to Introduce Solid Foods</a> · AAP(돌 전 주스 금지) · <a href="https://allergy.org.au/patients/fast-facts/infant-feeding-and-allergy-prevention" target="_blank" rel="noopener noreferrer">ASCIA</a> · 질병관리청 국가건강정보포털 · 재료별 손질은 이 앱 재료표 기준</p>`;
+    <p class="source-note" style="margin-top:10px;">출처 · <a href="https://www.cdc.gov/infant-toddler-nutrition/foods-and-drinks/when-what-and-how-to-introduce-solid-foods.html" target="_blank" rel="noopener noreferrer">CDC — When, What, and How to Introduce Solid Foods</a> · AAP(돌 전 주스 금지) · <a href="https://allergy.org.au/patients/fast-facts/infant-feeding-and-allergy-prevention" target="_blank" rel="noopener noreferrer">ASCIA</a> · 질병관리청 국가건강정보포털 · 재료별 손질은 이 앱 재료표 기준</p>
+    <details class="sp-guide"><summary>📖 이 시기 기준·다운로드·준비 방법 보기</summary>
+    <p class="sec-sub">초기 5주 다음 <b>8주(대략 생후 7~8개월)</b>예요. 재료 순서·간격·양은 <b>한국(질병관리청·대한소아청소년과학회)·미국(CDC·AAP) 권고</b>에 맞췄고,
+      끼니 짜는 법은 먹보 아빠네 엑셀의 <b>'1일 2식 모듈'</b>을 그대로 옮겼어요.</p>
+    <div class="sp-dl">
+      <a href="/files/mid-weaning-8weeks.pdf" download="이유식_중기_식단표_먹보아빠.pdf" target="_blank" rel="noopener" data-dl="pdf_mid"><b>🖨 인쇄용 PDF</b><span>냉장고에 붙이는 8주 달력 + 모듈표</span></a>
+      <a href="/files/mid-weaning-8weeks-template.xlsx" download="이유식_중기_식단표_템플릿.xlsx" data-dl="xlsx_mid"><b>📊 엑셀·구글시트</b><span>시작일 넣으면 날짜 자동 · 반응 메모 칸</span></a>
+    </div>
+    <a class="sp-kakao" href="https://pf.kakao.com/_LxoWxiX/friend" target="_blank" rel="noopener" onclick="try{gtag('event','kakao_add',{where:'plan'})}catch(e){}"><b>💬 카카오톡 채널 추가 <span class="hot">알림 받기</span></b><span>다음 단계 식단표가 나오면 카톡으로 알려드려요<br>궁금한 건 1:1로 물어보세요</span></a>
+    ${window.MB_ABROAD?`<a class="sp-kakao sp-abroad" href="https://meokbodad.etsy.com/listing/4603252073" target="_blank" rel="noopener" onclick="try{gtag('event','etsy_click',{edition:'ko',where:'app_abroad'})}catch(e){}"><b>🌏 해외에 계세요? <span class="hot">해외 맘 필수</span></b><span>미국·캐나다·영국 마트 재료로 바꾼 한국식 이유식 첫 5주 · 한국어 PDF</span></a>`:''}
+    ${(new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season_mid'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
+    <div class="sp-alert sp-note">양과 재료는 기준일 뿐이에요 — <b>덜 먹어도, 다른 재료로 바꿔도 괜찮아요.</b> 순서와 한 가지씩만 지키면 충분해요.</div>
+    <a class="sp-blog" href="${BLOG_POSTS.mid8w.url}" target="_blank" rel="noopener">📝 이 8주를 실제 기록으로 풀어 쓴 블로그 글 — ${BLOG_POSTS.mid8w.title} <span>›</span></a>
+    <a class="sp-blog" href="${BLOG_POSTS.midamt.url}" target="_blank" rel="noopener">📝 한 끼 몇 g? 우리 집 시작 양과 기준 비교 — ${BLOG_POSTS.midamt.title} <span>›</span></a>
+    <div class="dbox tip"><span class="dbox-label">먹보 아빠네 1일 2식 모듈</span>
+      매 끼니를 <b>칸 채우기</b>로 짜요. 메뉴를 고민할 필요가 없어져요.
+      <div class="mp-module">
+        <div><b>BASE (고정)</b><span>쌀미음 + 소고기 토핑 15g — 토핑식이 아니면 같이 끓여 소고기미음으로 줘도 돼요</span></div>
+        <div><b>에너지 15g</b><span>든든한 탄수화물 채소 — 감자 · 단호박 · 고구마 중 1</span></div>
+        <div><b>채소 15g · 격일</b><span><em style="font-style:normal;font-weight:700;color:#B5542F">소화(VEG1)</em> 부드럽고 속 편한 — 애호박 · 청경채 · 양배추 · 무<br><em style="font-style:normal;font-weight:700;color:#B5542F">비타민(VEG2)</em> 색 진하고 영양 많은 — 브로콜리 · 오이 · 당근 · 시금치 · 비타민채소 · 표고버섯 · 양파</span></div>
+        <div><b>고기·생선 15g</b><span>2주차부터 — 닭고기 · 가자미 · 두부</span></div>
+        <div style="font-size:12px;color:#6B6558">★ 표의 새 재료는 3일 통과한 뒤부터 칸에 넣어요</div>
+      </div>
+      <ul class="sp-notes" style="margin-top:6px;">
+        <li>쌀미음·소고기 외 <b>토핑은 최소 2개</b>, 2주차부터 3개(에너지 · 채소 · 고기·생선)예요.</li>
+        <li>아래 표에 <b>날마다 오전·오후 메뉴를 다 정해 뒀어요.</b> 새 재료(★)는 오전에만, 한 가지씩 3일.</li>
+        <li>소고기는 매 끼니 들어가니까 <b>쌀미음에 소고기 토핑 15g</b>을 기본으로 더해요. 토핑식이 아니라면 소고기를 같이 끓여 소고기미음으로 만들어도 돼요. 끓이는 비율은 초기와 같아요.</li>
+        <li><b>쌀가루는 고운입자 → 중간입자</b>. 입자가 굵어진 만큼 7배죽부터 시작해요(권장 범위 8~6배죽, 아기가 잘 먹는 농도가 우선).</li>
+      </ul></div>
+
+    <div class="dbox"><span class="dbox-label">쌀미음 만들기</span>
+      <b>쌀가루(중간입자) 1포 ${MID_PACK_G}g + 물 ${MID_PACK_G*7}ml(7배죽)</b>으로 끓여요.
+      6배죽은 물 <b>${MID_PACK_G*6}ml</b>, 5배죽은 <b>${MID_PACK_G*5}ml</b> — 물 = 쌀가루 × 배죽.
+      표에 적힌 <b>쌀미음 g만큼 한 끼분씩</b> 나눠 얼리고, 토핑은 재료마다 15g씩 소분해요. 녹인 건 24시간 안에, 데우는 건 한 번만.
+      물 대신 <b>채수</b>도 괜찮아요 — 먹보 아빠네는 채수로 끓였어요.
+      ${startBuyHtml({buy:[{key:"쌀",only:"중기용"},{key:"실사용템_식재료",only:"유기농 채수"},{key:"큐브_50ml"},{key:"큐브이동용 유리용기", fold:"큐브 옮겨 담는 유리용기"}]})}</div>
+    </details>
+  `;
 
   const inp = document.getElementById('mpStart');
   mbDateBind(inp, saveMidStart, ()=>buildMidPage(container));
@@ -5505,38 +5519,6 @@ function buildLatePage(container){
   }
   const rowArr = LATE_PLAN.map((st,i)=>lateRowHtml(st,i,cur,day)), rows = rowArr.join('');
   container.innerHTML = `
-    <p class="sec-sub">중기 8주 다음 <b>12주(대략 생후 9~11개월)</b>예요. 양과 횟수는 <b>권장량</b>(한 끼 100~150g, 하루 3끼)으로, 알레르기 식품은 <b>ASCIA</b> 권고(첫돌 전에 생선·갑각류·견과류까지)로 짰고,
-      끼니 짜는 법과 자기주도 방식은 먹보 아빠네가 실제로 한 대로 옮겼어요.</p>
-    <div class="sp-dl">
-      <a href="/files/late-weaning-12weeks.pdf" download="이유식_후기_식단표_먹보아빠.pdf" target="_blank" rel="noopener" data-dl="pdf_late"><b>🖨 인쇄용 PDF</b><span>냉장고에 붙이는 12주 달력 + 자기주도표</span></a>
-      <a href="/files/late-weaning-12weeks-template.xlsx" download="이유식_후기_식단표_템플릿.xlsx" data-dl="xlsx_late"><b>📊 엑셀·구글시트</b><span>시작일 넣으면 날짜 자동 · 반응 메모 칸</span></a>
-    </div>
-    <a class="sp-kakao" href="https://pf.kakao.com/_LxoWxiX/friend" target="_blank" rel="noopener" onclick="try{gtag('event','kakao_add',{where:'plan'})}catch(e){}"><b>💬 카카오톡 채널 추가 <span class="hot">알림 받기</span></b><span>다음 단계 식단표가 나오면 카톡으로 알려드려요<br>궁금한 건 1:1로 물어보세요</span></a>
-    ${window.MB_ABROAD?`<a class="sp-kakao sp-abroad" href="https://meokbodad.etsy.com/listing/4603252073" target="_blank" rel="noopener" onclick="try{gtag('event','etsy_click',{edition:'ko',where:'app_abroad'})}catch(e){}"><b>🌏 해외에 계세요? <span class="hot">해외 맘 필수</span></b><span>미국·캐나다·영국 마트 재료로 바꾼 한국식 이유식 첫 5주 · 한국어 PDF</span></a>`:''}
-    ${(new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season_late'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
-    <div class="sp-alert sp-note">양과 재료는 기준일 뿐이에요 — <b>덜 먹어도, 다른 재료로 바꿔도 괜찮아요.</b> 순서와 한 가지씩만 지키면 충분해요.</div>
-    <a class="sp-blog" href="${BLOG_POSTS.late12w.url}" target="_blank" rel="noopener">📝 이 12주를 풀어 쓴 블로그 글 — ${BLOG_POSTS.late12w.title} <span>›</span></a>
-    <div class="dbox tip"><span class="dbox-label">후기 한 끼 = 식판 한 판</span>
-      <div class="mp-module">
-        <div><b>메인 칸 · BASE</b><span>소고기죽 → 무른밥(4주차) → 진밥(10주차)</span></div>
-        <div><b>토핑 3칸</b><span>각 1~6주 15g, 7주차부터 20g</span></div>
-        <div><b>· 에너지</b><span>감자 · 단호박 · 고구마 · 밤</span></div>
-        <div><b>· 채소</b><span><em style="font-style:normal;font-weight:700;color:#B5542F">소화(VEG1)</em> 애호박 · 청경채 · 양배추 · 무 · 미역<br><em style="font-style:normal;font-weight:700;color:#B5542F">비타민(VEG2)</em> 브로콜리 · 당근 · 시금치 · 비타민채소 · 양파 · 표고 · 양송이 · 새송이 · 팽이 · 옥수수 · 마</span></div>
-        <div><b>· 고기·생선</b><span>닭고기 · 돼지고기 · 가자미 · 연어 · 대구 · 새우 · 전복 · 두부 · 검은콩</span></div>
-        <div><b>반찬칸 · 자기주도</b><span>원물스틱(애호박·브로콜리·당근) → 생선·두부 구이</span></div>
-        <div style="font-size:12px;color:#6B6558">★ 표의 새 재료는 3일 통과한 뒤부터 칸에 넣어요</div>
-      </div>
-      <ul class="sp-notes" style="margin-top:6px;">
-        <li>아래 표에 <b>날마다 아침·점심·저녁 메뉴를 다 정해 뒀어요.</b> 새 재료(★)는 아침에만, 한 가지씩 3일.</li>
-        <li><b>저녁엔 가스 차는 재료(양배추·브로콜리)를 빼요.</b> 이앓이가 시작되는 시기라 밤잠을 지켜요.</li>
-        <li>원물스틱은 큐브 말고 <b>쪄서 식힌 뒤 유리용기</b>에 따로 냉장 보관.</li>
-      </ul></div>
-
-    <div class="dbox"><span class="dbox-label">양 — 권장량과 우리 아기</span>
-      권장은 <b>한 끼 100~150g, 하루 3끼</b>예요. 표는 권장 범위 안에서 늘려가요.
-      <div class="sp-rec" style="margin-top:6px;"><b>먹보 아빠네 실제</b>우리 아기는 한 끼 80~120g이었어요. 수유를 끼니에 바로 붙였더니 밥을 덜 먹어서, 가이드대로 수유와 끼니 사이를 벌렸어요.</div>
-      <span class="source-note" style="display:block;margin-top:4px;">덜 먹어도 체중이 잘 늘고 기운이 좋으면 괜찮아요. 걱정되면 영유아 건강검진 때 성장곡선으로 확인하세요.</span></div>
-
     <div class="sp-set">
       <label for="lpStart">후기 시작한 날</label>
       <input type="date" id="lpStart" value="${lateStart||''}">
@@ -5574,7 +5556,41 @@ function buildLatePage(container){
     <div class="sec-title" style="font-size:14px;margin-top:22px;">그다음은</div>
     <p class="sec-sub">12주를 마치면 아래 재료를 같은 방식으로 이어가고, 돌이 지나면 <b>완료기</b>예요.</p>
     <div class="sp-chips">${LATE_NEXT.map(n=>`<span>${n}</span>`).join('')}</div>
-    <p class="source-note" style="margin-top:10px;">출처 · <a href="https://allergy.org.au/hp/papers/infant-feeding-and-allergy-prevention-clinical-update" target="_blank" rel="noopener noreferrer">ASCIA — Infant feeding and allergy prevention</a> · <a href="https://www.cdc.gov/infant-toddler-nutrition/foods-and-drinks/when-what-and-how-to-introduce-solid-foods.html" target="_blank" rel="noopener noreferrer">CDC</a> · AAP · 질병관리청 국가건강정보포털 · 손질은 이 앱 재료표 기준</p>`;
+    <p class="source-note" style="margin-top:10px;">출처 · <a href="https://allergy.org.au/hp/papers/infant-feeding-and-allergy-prevention-clinical-update" target="_blank" rel="noopener noreferrer">ASCIA — Infant feeding and allergy prevention</a> · <a href="https://www.cdc.gov/infant-toddler-nutrition/foods-and-drinks/when-what-and-how-to-introduce-solid-foods.html" target="_blank" rel="noopener noreferrer">CDC</a> · AAP · 질병관리청 국가건강정보포털 · 손질은 이 앱 재료표 기준</p>
+    <details class="sp-guide"><summary>📖 이 시기 기준·다운로드·준비 방법 보기</summary>
+    <p class="sec-sub">중기 8주 다음 <b>12주(대략 생후 9~11개월)</b>예요. 양과 횟수는 <b>권장량</b>(한 끼 100~150g, 하루 3끼)으로, 알레르기 식품은 <b>ASCIA</b> 권고(첫돌 전에 생선·갑각류·견과류까지)로 짰고,
+      끼니 짜는 법과 자기주도 방식은 먹보 아빠네가 실제로 한 대로 옮겼어요.</p>
+    <div class="sp-dl">
+      <a href="/files/late-weaning-12weeks.pdf" download="이유식_후기_식단표_먹보아빠.pdf" target="_blank" rel="noopener" data-dl="pdf_late"><b>🖨 인쇄용 PDF</b><span>냉장고에 붙이는 12주 달력 + 자기주도표</span></a>
+      <a href="/files/late-weaning-12weeks-template.xlsx" download="이유식_후기_식단표_템플릿.xlsx" data-dl="xlsx_late"><b>📊 엑셀·구글시트</b><span>시작일 넣으면 날짜 자동 · 반응 메모 칸</span></a>
+    </div>
+    <a class="sp-kakao" href="https://pf.kakao.com/_LxoWxiX/friend" target="_blank" rel="noopener" onclick="try{gtag('event','kakao_add',{where:'plan'})}catch(e){}"><b>💬 카카오톡 채널 추가 <span class="hot">알림 받기</span></b><span>다음 단계 식단표가 나오면 카톡으로 알려드려요<br>궁금한 건 1:1로 물어보세요</span></a>
+    ${window.MB_ABROAD?`<a class="sp-kakao sp-abroad" href="https://meokbodad.etsy.com/listing/4603252073" target="_blank" rel="noopener" onclick="try{gtag('event','etsy_click',{edition:'ko',where:'app_abroad'})}catch(e){}"><b>🌏 해외에 계세요? <span class="hot">해외 맘 필수</span></b><span>미국·캐나다·영국 마트 재료로 바꾼 한국식 이유식 첫 5주 · 한국어 PDF</span></a>`:''}
+    ${(new Date()>=new Date('2027-03-01')) ? '' : `<a class="sp-prep sp-season" href="/s/humid/" onclick="try{gtag('event','guide_open',{id:'humid',where:'start_season_late'})}catch(e){}"><b>🌬️ 겨울 아기방 온습도·공기질 <span class="hot">지금 챙기기</span></b><small>신생아부터 맞춘 온도·습도 기준 · 가습기 고르는 법</small></a>`}
+    <div class="sp-alert sp-note">양과 재료는 기준일 뿐이에요 — <b>덜 먹어도, 다른 재료로 바꿔도 괜찮아요.</b> 순서와 한 가지씩만 지키면 충분해요.</div>
+    <a class="sp-blog" href="${BLOG_POSTS.late12w.url}" target="_blank" rel="noopener">📝 이 12주를 풀어 쓴 블로그 글 — ${BLOG_POSTS.late12w.title} <span>›</span></a>
+    <div class="dbox tip"><span class="dbox-label">후기 한 끼 = 식판 한 판</span>
+      <div class="mp-module">
+        <div><b>메인 칸 · BASE</b><span>소고기죽 → 무른밥(4주차) → 진밥(10주차)</span></div>
+        <div><b>토핑 3칸</b><span>각 1~6주 15g, 7주차부터 20g</span></div>
+        <div><b>· 에너지</b><span>감자 · 단호박 · 고구마 · 밤</span></div>
+        <div><b>· 채소</b><span><em style="font-style:normal;font-weight:700;color:#B5542F">소화(VEG1)</em> 애호박 · 청경채 · 양배추 · 무 · 미역<br><em style="font-style:normal;font-weight:700;color:#B5542F">비타민(VEG2)</em> 브로콜리 · 당근 · 시금치 · 비타민채소 · 양파 · 표고 · 양송이 · 새송이 · 팽이 · 옥수수 · 마</span></div>
+        <div><b>· 고기·생선</b><span>닭고기 · 돼지고기 · 가자미 · 연어 · 대구 · 새우 · 전복 · 두부 · 검은콩</span></div>
+        <div><b>반찬칸 · 자기주도</b><span>원물스틱(애호박·브로콜리·당근) → 생선·두부 구이</span></div>
+        <div style="font-size:12px;color:#6B6558">★ 표의 새 재료는 3일 통과한 뒤부터 칸에 넣어요</div>
+      </div>
+      <ul class="sp-notes" style="margin-top:6px;">
+        <li>아래 표에 <b>날마다 아침·점심·저녁 메뉴를 다 정해 뒀어요.</b> 새 재료(★)는 아침에만, 한 가지씩 3일.</li>
+        <li><b>저녁엔 가스 차는 재료(양배추·브로콜리)를 빼요.</b> 이앓이가 시작되는 시기라 밤잠을 지켜요.</li>
+        <li>원물스틱은 큐브 말고 <b>쪄서 식힌 뒤 유리용기</b>에 따로 냉장 보관.</li>
+      </ul></div>
+
+    <div class="dbox"><span class="dbox-label">양 — 권장량과 우리 아기</span>
+      권장은 <b>한 끼 100~150g, 하루 3끼</b>예요. 표는 권장 범위 안에서 늘려가요.
+      <div class="sp-rec" style="margin-top:6px;"><b>먹보 아빠네 실제</b>우리 아기는 한 끼 80~120g이었어요. 수유를 끼니에 바로 붙였더니 밥을 덜 먹어서, 가이드대로 수유와 끼니 사이를 벌렸어요.</div>
+      <span class="source-note" style="display:block;margin-top:4px;">덜 먹어도 체중이 잘 늘고 기운이 좋으면 괜찮아요. 걱정되면 영유아 건강검진 때 성장곡선으로 확인하세요.</span></div>
+    </details>
+  `;
 
   const inp = document.getElementById('lpStart');
   mbDateBind(inp, saveLateStart, ()=>buildLatePage(container));
@@ -9872,7 +9888,7 @@ function mbTopCardBadge(name){ const c = mbTopCount(name); return c ? `<span cla
 function mbTopBtnHtml(){
   const a = mbTopLoad().map(t=>({t, i: mbTopInfo(t)})).filter(x=>!x.i.done);
   const w = a.filter(x=>x.i.warn || x.i.late).length;
-  return `<button type="button" class="fam-btn tp-open" onclick="mbTopOpen()">🧊 토핑 보관실 <small style="font-weight:600;opacity:.8">${a.length ? a.length + '종' + (w ? ' · ⏰' + w : '') : '기록'}</small></button>`;
+  return `<button type="button" class="fam-btn tp-open" onclick="mbTopOpen()"><small>토핑 보관실</small><b>🧊 ${a.length ? a.length + '종' : '기록하기'} ›</b>${w ? `<span class="ts-sub warn">⏰ 기한 임박 ${w}</span>` : (a.length ? '<span class="ts-sub">재고·소비기한</span>' : '<span class="ts-sub">만든 큐브 담기</span>')}</button>`;
 }
 function mbTopShopHtml(stage, day){
   const plan = mbPlanOf(stage), names = [];
@@ -9924,7 +9940,7 @@ function mbTopFindLive(name){
 }
 function mbTopChipsRefresh(){
   document.querySelectorAll('.tp-today').forEach(el=>{ el.outerHTML = mbTodayChipsHtml(el.dataset.stage, +el.dataset.day); });
-  try{ const b = document.querySelector('.fam-row .tp-open'); if(b) b.outerHTML = mbTopBtnHtml(); }catch(e){}
+  try{ const b = document.querySelector('.home-grid .tp-open'); if(b) b.outerHTML = mbTopBtnHtml(); }catch(e){}
 }
 function mbTopUse(enc){
   const name = decodeURIComponent(enc), a = mbTopLoad(), t0 = mbTopFindLive(name);
@@ -9971,8 +9987,20 @@ function mbTodayChipsHtml(stage, day){
 }
 function mbActionRowHtml(){
   const f = famBarHtml(), t = mbTopBtnHtml();
-  if(f.indexOf('<button') === 0) return `<div class="fam-row">${f.replace('가족에게 오늘 식단 보내기','가족에게 식단 보내기')}${t}</div>`;
-  return f + t;
+  if(f.indexOf('<button') === 0) return `<button type="button" class="fam-btn" onclick="famOpenSheet()"><small>가족</small><b>👨‍👩‍👧 식단 보내기 ›</b><span class="ts-sub">오늘 식단 공유</span></button>${t}`;
+  return `<div class="hg-wide">${f}</div>${t}`;
+}
+function mbTopTodoCount(stage, day){
+  try{
+    const plan = mbPlanOf(stage), names = [];
+    plan.forEach(st=>{
+      if(st.rest || !st.add || st.d1 < day || st.d0 > day + 6) return;
+      if(/^(쌀|쌀미음|미음|쌀가루)/.test(st.add) || names.indexOf(st.add) >= 0 || !mbTopFreezable(st)) return;
+      names.push(st.add);
+    });
+    const have = mbTopLoad().filter(t=>!mbTopInfo(t).done).map(t=>t.name);
+    return names.filter(n=>!have.some(h=>h.indexOf(n) >= 0 || n.indexOf(h) >= 0)).length;
+  }catch(e){ return 0; }
 }
 function mbTopAdj(id, d){ mbTopSet(id, t=>{ t.adj = (t.adj||0) + d; }); }
 function mbTopPer(id){ mbTopSet(id, t=>{ t.per = ((t.per||1) % 3) + 1; }); }
