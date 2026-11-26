@@ -1044,6 +1044,7 @@
 .tp-tile .tp-bar{height:3px!important;width:64%;margin:0 auto}.tp-td{font-size:10px!important;margin-top:3px!important}
 .tp-sugs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}.tp-sugs button{font:inherit;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:5px;padding:4px 10px 4px 5px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
 .tp-sugs img{width:22px;height:22px;object-fit:contain}.tp-sugs i{font-style:normal;width:22px;text-align:center}.tp-nohit{color:var(--ink-soft);font-size:11.5px}
+.tp-lifenote{padding:0 18px 8px;font-size:12px;color:var(--ink-soft)}.tp-lifenote small{font-size:11px;opacity:.85}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -9714,6 +9715,16 @@ function famOpenSheet(){
 
 /* ===== 보관실 — 큐브를 몇 개 만들었고, 하루 몇 개 쓰고, 몇 개 남았는지, 소비기한(2주) 임박까지 ===== */
 const MB_TOP_LIFE = 14, MB_TOP_WARN = 3;
+/* 보관 기간: 초기·중기 2주, 후기 이후 3주(먹보 아빠네 기준). 시작일·생일을 넣은 경우 그 시기로 자동, 아무것도 없으면 2주 */
+function mbTopLifeDays(){
+  try{
+    let st = ''; const lb = mbStageLabelNow();
+    if(lb) st = lb.split(' ')[0];
+    else if(weaningStart && lateStart && mbIsoToday() >= lateStart) st = '후기';
+    else if(babyProfile && babyProfile.birthday) st = getStageForAge(computeAgeMonths(babyProfile.birthday));
+    return ['후기','완료기','일반식'].indexOf(st) >= 0 ? 21 : 14;
+  }catch(e){ return 14; }
+}
 function mbTopLoad(){ try{ const a = JSON.parse(localStorage.getItem('mb_tops')||'[]'); return Array.isArray(a) ? a : []; }catch(e){ return []; } }
 function mbTopSave(a){ try{ localStorage.setItem('mb_tops', JSON.stringify(a)); }catch(e){} }
 function mbTopEsc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -9721,13 +9732,13 @@ function mbTopDiff(a, b){ return Math.round((new Date(b+'T00:00:00') - new Date(
 function mbTopInfo(t){
   const el = Math.max(0, mbTopDiff(t.date, mbIsoToday()));          /* 소비기한은 날짜로, 개수는 '눌러서 쓴 만큼'만 차감 */
   const left = Math.max(0, t.made - (t.per||1) * ((t.used||[]).length) + (t.adj||0));
-  const dleft = MB_TOP_LIFE - el;
-  return {left, dleft, exp: mbAddDays(t.date, MB_TOP_LIFE), done: left <= 0, late: dleft < 0, warn: left > 0 && dleft >= 0 && dleft <= MB_TOP_WARN};
+  const life = t.life || mbTopLifeDays(), dleft = life - el;
+  return {left, dleft, exp: mbAddDays(t.date, life), done: left <= 0, late: dleft < 0, warn: left > 0 && dleft >= 0 && dleft <= MB_TOP_WARN};
 }
 function mbTopAdd(name, made, date, per){
   name = String(name||'').trim().slice(0, 20); made = Math.max(1, Math.min(60, parseInt(made,10) || 0));
   if(!name || !made) return false;
-  const a = mbTopLoad(); a.push({id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), name, made, date: date || mbIsoToday(), per: per || 1, adj: 0});
+  const a = mbTopLoad(); a.push({id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), name, made, date: date || mbIsoToday(), per: per || 1, adj: 0, life: mbTopLifeDays()});
   mbTopSave(a); try{ gtag('event','topping_add',{n:made}); }catch(e){} return true;
 }
 /* 얼려 쓰는 토핑인지 — 밀가루·땅콩버터·두부·달걀 같은 알레르기 테스트 재료와 물이 빠지는 재료는 그날 소량만 */
@@ -9794,7 +9805,7 @@ function mbTopShopHtml(stage, day){
     ${todo.map(n=>`<div class="mk-row tp-new"><span class="tp-nm">${mbTopIcon(n.name)}<span>${mbTopEsc(n.name)} <small>${n.d0}일차 새 재료</small></span></span><span class="tp-q"><input type="number" inputmode="numeric" min="1" max="60" value="12" aria-label="만든 큐브 개수">개 <button type="button" onclick="mbTopQuick(this,'${encodeURIComponent(n.name)}')">만들었어요</button></span></div>`).join('')}
     ${liveAll.length ? '<div class="mk-row" style="display:block"><span>지금 보관실에 있는 것 ' + liveAll.length + '종</span><div class="tp-have">' + liveAll.map(x=>`<span class="${x.i.warn || x.i.late ? 'warn' : ''}">${mbTopIcon(x.t.name)}${mbTopEsc(x.t.name)} 🧊${x.i.left}</span>`).join('') + '</div></div>' : ''}
     ${skip.length ? '<div class="mk-note">🥄 <b>' + skip.map(mbTopEsc).join('·') + '</b>은 얼리지 않아요 — 테스트하는 날 그날 먹을 만큼만 준비해요.</div>' : ''}
-    ${todo.length ? '<small>새 재료는 미리 토핑으로 만들어 큐브로 얼려두면 2주 정도 쓸 수 있어요. 만든 개수를 적어두면 보관실에서 남은 개수와 소비기한을 챙겨드려요. ' + cube + '</small>' : ''}</div>`;
+    ${todo.length ? '<small>새 재료는 미리 토핑으로 만들어 큐브로 얼려두면 ' + (mbTopLifeDays()/7) + '주 정도 쓸 수 있어요. 만든 개수를 적어두면 보관실에서 남은 개수와 소비기한을 챙겨드려요. ' + cube + '</small>' : ''}</div>`;
 }
 function mbTopQuick(btn, enc){
   const inp = btn.parentNode.querySelector('input'), name = decodeURIComponent(enc);
@@ -9932,7 +9943,7 @@ function mbTopOpen(){
   const bg = document.createElement('div'); bg.id = 'topSheet'; bg.className = 'fam-bg';
   bg.innerHTML = `<div class="fam-sh" role="dialog" aria-label="보관실">
     <div class="tp-hd"><b>🧊 보관실</b><button type="button" id="tpX" aria-label="닫기">✕</button></div>
-    <div class="tp-sumln" id="topSum"></div><div class="tp-chips" id="topChips"></div>
+    <div class="tp-sumln" id="topSum"></div><div class="tp-lifenote">보관 기간은 지금 시기 기준 <b>${mbTopLifeDays()/7}주</b>로 계산해요 <small>(먹보 아빠네 기준 · 초기·중기 2주, 후기 이후 3주)</small></div><div class="tp-chips" id="topChips"></div>
     <div class="tp-body" id="topBody"></div><div class="tp-detail" id="topDetail" hidden></div>
     <div class="tp-foot">
       <button type="button" class="tp-addbtn" id="tpAddBtn">＋ 새로 담기</button>
