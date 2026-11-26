@@ -1050,6 +1050,9 @@
 .tp-use{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:#fff}.tp-use input{width:54px;font:inherit;font-size:13px;border:0;border-bottom:1px solid var(--line);text-align:center;background:transparent;padding:2px 0}
 .tp-auto{font-size:11.5px;color:var(--ink-soft);margin-top:8px}.tp-auto.on{color:#34493B;font-weight:800}
 .tp-more{margin-top:8px}.tp-more summary{font-size:12px;color:var(--ink-soft);cursor:pointer;padding:4px 0}.tp-more[open] summary{margin-bottom:6px}
+.nbx{display:inline-block;font-size:10.5px;font-weight:900;border-radius:99px;padding:2px 8px;margin-right:4px;background:#B5542F;color:#fff;vertical-align:1px}.nbx.t{background:#C98A1B}
+.tc i.nb{font-style:normal;font-size:9.5px;font-weight:800;background:#B5542F;color:#fff;border-radius:999px;padding:1px 6px;margin-left:4px}.tc i.nb.t{background:#C98A1B}
+.fam-sh input,.fam-sh select,.fam-sh textarea,.tp-form input{font-size:16px!important}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -4419,12 +4422,12 @@ function shopItemsForWeek(stage, day){
       const l = links.find(x=>x.url); if(!l || seen.has(l.url)) return; seen.add(l.url);
       const lab = String(l.label || b.label || b.key).replace(/ 보러가기.*/,'');
       const [name, why] = lab.split(' — ');
-      items.push({url:l.url, name:name.trim(), why:(why||'').trim(), d0:st.d0});
+      items.push({url:l.url, name:name.trim(), why:(why||'').trim(), d0:st.d0, ing:b.key});
     });
     if(st.add && !items.some(i=>i.name.includes(st.add))){
       const al = getCoupangLinks(st.add).find(x=>x.url);
-      if(al && !seen.has(al.url)){ seen.add(al.url); items.push({url:al.url, name:String(al.label||st.add).split(' — ')[0], why:st.add+' · 이번 주 새 재료', d0:st.d0}); }
-      else items.push({url:null, name:st.add, why:'새 재료 · 마트나 로켓프레시 신선식품으로', d0:st.d0});
+      if(al && !seen.has(al.url)){ seen.add(al.url); items.push({url:al.url, name:String(al.label||st.add).split(' — ')[0], why:st.add+' · 이번 주 새 재료', d0:st.d0, ing:st.add}); }
+      else items.push({url:null, name:st.add, why:'새 재료 · 마트나 로켓프레시 신선식품으로', d0:st.d0, ing:st.add});
     }
   });
   /* 매주 다시 사는 기본 재료 — 새 재료가 없는 주에도 장보기 리스트가 비지 않게 */
@@ -4435,9 +4438,16 @@ function shopItemsForWeek(stage, day){
     if(b.only){ const pk = links.filter(l=>String(l.label||'').includes(b.only)); if(pk.length) links = pk; }
     const l = links.find(x=>x.url); if(!l || seen.has(l.url)) return; seen.add(l.url);
     const [name, why] = String(b.label||l.label||b.key).replace(/ 보러가기.*/,'').split(' — ');
-    base.push({url:l.url, name:name.trim(), why:(why||'').trim(), d0:null, staple:true});
+    base.push({url:l.url, name:name.trim(), why:(why||'').trim(), d0:null, staple:true, ing:b.key});
   });
-  return items.sort((a,b)=>a.d0-b.d0).concat(base);
+  /* 보관실에 충분히 있는 재료는 장보기에서 뺌 — 남은 게 2개 이하이거나 기한 임박이면 다시 올림 */
+  const keep = it=>{ try{
+    if(!it.ing) return true;
+    const t = mbTopFindLive(it.ing==='쌀' ? '쌀미음' : it.ing); if(!t) return true;
+    const i = mbTopInfo(t); if(i.left <= 2 || i.warn || i.late){ it.why = '보관 ' + i.left + '개 남음 · ' + it.why; return true; }
+    return false;
+  }catch(e){ return true; } };
+  return items.sort((a,b)=>a.d0-b.d0).concat(base).filter(keep);
 }
 
 /* ===== 이번 주 만들 양 (장보기 시트) — 식단표 데이터로 계산. 아이마다 먹는 양은 다르니 기준일 뿐 ===== */
@@ -4635,7 +4645,7 @@ function buildStartPage(container){
       <div class="sp-day"><b>${d0===d1?d0:`${d0}~${d1}`}</b><i>일차</i><i class="sp-wd">${startWeekdays(st)}</i>${weaningStart?`<em>${startStepDates(i)}</em>`:''}</div>
       <div class="sp-body">
         <div class="sp-name">${st.title}${isNow?'<span class="sp-badge">오늘</span>':''}</div>
-        <div class="sp-new">${st.rest?`<span class="sp-resttag">쉬는 날</span> 새 재료 없음`:st.test?`<span class="sp-testtag">알레르기 테스트</span> 새 재료 <b>${st.add}</b> · 새 채소는 쉬어요`:`새 재료 <b>${st.add}</b>${st.keep?` · ${st.keep}와 같이`:''}`}</div>
+        <div class="sp-new">${st.rest?`<span class="sp-resttag">쉬는 날</span> 새 재료 없음`:st.test?`<span class="sp-testtag">알레르기 테스트</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b> · 새 채소는 쉬어요`:`${mbNewBadge(st)}새 재료 <b>${st.add}</b>${st.keep?` · ${st.keep}와 같이`:''}`}</div>
         ${startAmountHtml(st)}
         ${st.parts.length>1?`<div class="sp-meal">${startMealOf(i)}</div>`:''}
         <div class="sp-why">${st.why}</div>
@@ -5054,8 +5064,8 @@ function midRowHtml(st, i, cur, day){
   const wd = st.d0===st.d1 ? midWeekdayOf(st.d0) : `${midWeekdayOf(st.d0)}~${midWeekdayOf(st.d1)}`;
   const m = midMealsOf(st);
   const tag = st.rest ? `<span class="sp-resttag">쉬는 날</span> 새 재료 없음 — 먹어본 재료로만`
-    : st.test ? `<span class="sp-testtag">알레르기 테스트</span> 새 재료 <b>${st.add}</b> · 3일 동안 다른 새 재료 X`
-    : `<span class="mp-kind k-${st.kind}">${MID_KIND[st.kind]}</span> 새 재료 <b>${st.add}</b>`;
+    : st.test ? `<span class="sp-testtag">알레르기 테스트</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b> · 3일 동안 다른 새 재료 X`
+    : `<span class="mp-kind k-${st.kind}">${MID_KIND[st.kind]}</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b>`;
   const flags = [
     st.gas ? `<span class="mp-flag">🌙 가스 유발 — 저녁 끼니엔 빼기</span>` : '',
     st.cap ? `<span class="mp-flag">10~15g 유지</span>` : ''
@@ -5351,10 +5361,10 @@ function lateRowHtml(st, i, cur, day){
   const wd = st.d0===st.d1 ? lateWeekdayOf(st.d0) : `${lateWeekdayOf(st.d0)}~${lateWeekdayOf(st.d1)}`;
   const m = lateMealsOf(st);
   const tag = st.rest ? `<span class="sp-resttag">쉬는 날</span> 새 재료 없음 — 먹어본 재료로만`
-    : st.test ? `<span class="sp-testtag">알레르기 테스트</span> 새 재료 <b>${st.add}</b> · 3일 동안 다른 새 재료 X`
+    : st.test ? `<span class="sp-testtag">알레르기 테스트</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b> · 3일 동안 다른 새 재료 X`
     : st.kind==='finger' ? `<span class="mp-kind k-fruit">자기주도</span> 새 재료 없음 · <b>새 질감</b>`
     : st.kind==='base' ? `<span class="mp-kind k-energy">밥 단계</span> <b>${st.add}</b> — 새 재료 없이 질감만 바꿔요`
-    : `<span class="mp-kind k-${st.kind}">${LATE_KIND[st.kind]}</span> 새 재료 <b>${st.add}</b>`;
+    : `<span class="mp-kind k-${st.kind}">${LATE_KIND[st.kind]}</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b>`;
   return `<div class="sp-row${isNow?' now':''}${past?' past':''}${st.test?' test':''}${st.rest?' rest':''}">
     <div class="sp-day"><b>${st.d0===st.d1?st.d0:`${st.d0}~${st.d1}`}</b><i>일차</i><i class="sp-wd">${wd}</i>${lateStart?`<em>${lateStepDates(st)}</em>`:''}</div>
     <div class="sp-body">
@@ -9906,6 +9916,8 @@ function mbTopMake(enc){
   const i = document.getElementById('tpName'); if(i){ i.value = n; mbTopChk(); mbTopMlPick(mbTopDefaultMl(n)); }
 }
 function mbTopEat(id){ const t = mbTopLoad().find(x=>x.id===id); if(t) mbTopUse(encodeURIComponent(t.name)); }
+function mbNewLabel(st){ return st && st.add && !st.rest ? (st.test ? 'TEST' : 'NEW') : ''; }
+function mbNewBadge(st){ const l = mbNewLabel(st); return l ? `<span class="nbx ${l==='TEST'?'t':''}">${l}</span> ` : ''; }
 function mbTodayChipsHtml(stage, day){
   try{
     const st = mbPlanOf(stage).find(x=>day>=x.d0 && day<=x.d1); if(!st || st.rest) return '';
@@ -9916,11 +9928,12 @@ function mbTodayChipsHtml(stage, day){
     const today = mbIsoToday();
     const chips = names.map(n=>{
       const e = encodeURIComponent(n), nf = MB_NOFREEZE_RE.test(n) || (n===st.add && !mbTopFreezable(st));
-      if(nf) return `<button type="button" class="tc nf" onclick="mbTopFeedOnly('${e}')">${mbTopEsc(n)}</button>`;
+      const bd = n===st.add && mbNewLabel(st) ? `<i class="nb ${st.test?'t':''}">${mbNewLabel(st)}</i>` : '';
+      if(nf) return `<button type="button" class="tc nf" onclick="mbTopFeedOnly('${e}')">${mbTopEsc(n)}${bd}</button>`;
       const t = mbTopFindLive(n);
-      if(!t) return `<button type="button" class="tc new" onclick="mbTopMake('${e}')">${mbTopEsc(n)}<i>${n===st.add?'NEW':'없음'}</i></button>`;
+      if(!t) return `<button type="button" class="tc new" onclick="mbTopMake('${e}')">${mbTopEsc(n)}<i class="nb ${n===st.add&&st.test?'t':''}">${n===st.add?mbNewLabel(st):'없음'}</i></button>`;
       const used = (t.used||[]).indexOf(today) >= 0, i = mbTopInfo(t);
-      return `<button type="button" class="tc ${used?'on':''} ${i.warn||i.late?'warn':''}" onclick="mbTopUse('${e}')">${used?'✓ ':''}${mbTopEsc(n)}<small>🧊${i.left}</small></button>`;
+      return `<button type="button" class="tc ${used?'on':''} ${i.warn||i.late?'warn':''}" onclick="mbTopUse('${e}')">${used?'✓ ':''}${mbTopEsc(n)}${bd}<small>🧊${i.left}</small></button>`;
     }).join('');
     return `<div class="tp-today" data-stage="${stage}" data-day="${day}"><div class="tp-tt">오늘 쓸 토핑 <small>${mbTopGramLine()}눌러서 차감 · 없으면 만들기</small></div><div class="tc-row">${chips}</div></div>`;
   }catch(e){ return ''; }
