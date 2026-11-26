@@ -1054,6 +1054,7 @@
 .tp-lifenote{padding:0 18px 8px;font-size:12px;color:var(--ink-soft)}.tp-lifenote small{font-size:11px;opacity:.85}
 .tp-ml{display:flex;align-items:center;gap:6px;margin:4px 0 6px}.tp-ml span{font-size:12px;color:var(--ink-soft);margin-right:2px}.tp-ml button{font:inherit;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}.tp-ml button.on{background:#EEF3EF;border:1.5px solid #4B6B54;color:#34493B}
 .fam-sh.adding .tp-detail,.fam-sh.adding .tp-lifenote{display:none!important}
+.tp-use{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:#fff}.tp-use input{width:54px;font:inherit;font-size:13px;border:0;border-bottom:1px solid var(--line);text-align:center;background:transparent;padding:2px 0}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -9903,7 +9904,7 @@ function mbTopGramNow(name){
 }
 function mbTopGramLine(){ const a = mbTopGramNow('쌀미음'), b = mbTopGramNow('당근'); return (a && b) ? '쌀미음 ' + a + 'g · 토핑 ' + b + 'g씩 · ' : ''; }
 function mbTopPerNow(t){
-  if(t.ml > 0 && t.perAuto !== false){ const g = mbTopGramNow(t.name); if(g) return Math.max(1, Math.min(4, Math.ceil(g / t.ml - 0.15))); }
+  if(t.ml > 0){ const g = t.useG || (t.perAuto !== false ? mbTopGramNow(t.name) : 0); if(g) return Math.max(1, Math.min(6, Math.ceil(g / t.ml - 0.15))); }
   return t.per || 1;
 }
 function mbTopDefaultMl(name){
@@ -9923,10 +9924,10 @@ function mbTopMlPick(ml, keepCnt){
   document.querySelectorAll('#tpMl button').forEach(b=>b.classList.toggle('on', +b.dataset.ml === ml));
   const c = document.getElementById('tpCnt'); if(c && !keepCnt) c.value = mbTopMlDefCnt(ml);
 }
-function mbTopAdd(name, made, date, per, ml){
+function mbTopAdd(name, made, date, per, ml, useG){
   name = String(name||'').trim().slice(0, 20); made = Math.max(1, Math.min(60, parseInt(made,10) || 0));
   if(!name || !made) return false;
-  const a = mbTopLoad(); a.push({id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), name, made, date: date || mbIsoToday(), per: per || 1, adj: 0, life: mbTopLifeDays(), ml: ml == null ? 0 : ml, perAuto: true});
+  const a = mbTopLoad(); a.push({id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), name, made, date: date || mbIsoToday(), per: per || 1, adj: 0, life: mbTopLifeDays(), ml: ml == null ? 0 : ml, perAuto: true, useG: useG > 0 ? Math.min(300, useG) : 0});
   mbTopSave(a); try{ gtag('event','topping_add',{n:made}); }catch(e){} return true;
 }
 /* 얼려 쓰는 토핑인지 — 밀가루·땅콩버터·두부·달걀 같은 알레르기 테스트 재료와 물이 빠지는 재료는 그날 소량만 */
@@ -10086,6 +10087,7 @@ function mbTopTodoCount(stage, day){
 }
 function mbTopAdj(id, d){ mbTopSet(id, t=>{ t.adj = (t.adj||0) + d; }); }
 function mbTopPer(id){ mbTopSet(id, t=>{ if(t.ml > 0 && t.perAuto !== false){ t.perAuto = false; t.per = 1; } else if((t.per||1) >= 3 || !(t.ml > 0)){ if(t.ml > 0){ t.perAuto = true; } else { t.per = ((t.per||1) % 3) + 1; } } else { t.per = (t.per||1) + 1; } }); }
+function mbTopUseG(id, v){ mbTopSet(id, t=>{ const n = parseInt(v, 10); if(n > 0) t.useG = Math.min(300, n); else delete t.useG; }); }
 function mbTopMl(id){ mbTopSet(id, t=>{ const o = [20,30,50,0], k = o.indexOf(t.ml||0); t.ml = o[(k+1) % o.length]; if(t.ml === 0) t.perAuto = false; else if(t.perAuto === undefined) t.perAuto = true; }); }
 function mbTopDel(id){ mbTopSet(id, (t,a)=>{ a.splice(a.indexOf(t), 1); }); }
 let mbTopFilter = 'all', mbTopSel = null, mbTopFresh = null;
@@ -10098,7 +10100,7 @@ function mbTopChk(){
 function mbTopForm(){
   const n = document.getElementById('tpName'), c = document.getElementById('tpCnt'), d = document.getElementById('tpDate');
   const name = n.value.trim(), cnt = parseInt(c.value,10) || 0;
-  if(!mbTopAdd(name, cnt, d.value, 1, mbTopMlSel)){ showShareToast('재료 이름과 개수를 적어주세요'); return; }
+  if(!mbTopAdd(name, cnt, d.value, 1, mbTopMlSel, parseInt((document.getElementById('tpUse')||{}).value, 10) || 0)){ showShareToast('재료 이름과 개수를 적어주세요'); return; }
   const a = mbTopLoad(); mbTopFresh = a[a.length-1].id; mbTopFilter = 'all'; mbTopSel = null;
   n.value = ''; mbTopChk();
   const sv = document.getElementById('tpSaved'); sv.textContent = '✓ ' + name + ' ' + Math.min(60, cnt) + '개 저장됐어요! 위 목록에 NEW로 표시돼요'; sv.classList.add('show');
@@ -10124,8 +10126,8 @@ function mbTopRender(){
   const t = mbTopLoad().find(x=>x.id === mbTopSel), dt = document.getElementById('topDetail');
   if(!t){ dt.hidden = true; dt.innerHTML = ''; return; }
   const i = mbTopInfo(t); dt.hidden = false;
-  dt.innerHTML = `<div class="tp-dt">${mbTopIcon(t.name)}<div><b>${mbTopEsc(t.name)}</b><div class="tp-ds">남은 ${i.left}개 / ${t.made}개 · ${t.ml ? t.ml + 'ml 큐브' : '개·팩 단위'} · 한 번에 ${mbTopPerNow(t)}개${t.ml > 0 && t.perAuto !== false && mbTopGramNow(t.name) ? '(오늘 ' + mbTopGramNow(t.name) + 'g 기준)' : ''} · ${t.date.slice(5).replace('-','/')} 만듦 · ${i.exp.slice(5).replace('-','/')}까지</div></div></div>
-    <div class="tp-b"><button type="button" class="tp-eat" onclick="mbTopEat('${t.id}')">🍽 오늘 썼어요 (차감 · 도감 기록)</button><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><button type="button" onclick="mbTopMl('${t.id}')">크기 ${t.ml ? t.ml + 'ml' : '개·팩'} ↻</button><button type="button" onclick="mbTopPer('${t.id}')">한 번에 ${t.ml > 0 && t.perAuto !== false ? '자동' : (t.per||1) + '개'} ↻</button><button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div>`;
+  dt.innerHTML = `<div class="tp-dt">${mbTopIcon(t.name)}<div><b>${mbTopEsc(t.name)}</b><div class="tp-ds">남은 ${i.left}개 / ${t.made}개 · ${t.ml ? t.ml + 'ml 큐브' : '개·팩 단위'} · 한 번에 ${mbTopPerNow(t)}개${t.ml > 0 ? (t.useG ? '(내가 정한 ' + t.useG + 'g 기준)' : (mbTopGramNow(t.name) ? '(오늘 식단표 ' + mbTopGramNow(t.name) + 'g 기준)' : '')) : ''} · ${t.date.slice(5).replace('-','/')} 만듦 · ${i.exp.slice(5).replace('-','/')}까지</div></div></div>
+    <div class="tp-b"><button type="button" class="tp-eat" onclick="mbTopEat('${t.id}')">🍽 오늘 썼어요 (차감 · 도감 기록)</button><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><button type="button" onclick="mbTopMl('${t.id}')">크기 ${t.ml ? t.ml + 'ml' : '개·팩'} ↻</button>${t.ml > 0 ? `<label class="tp-use">1회 <input type="number" inputmode="numeric" min="5" max="300" value="${t.useG||''}" placeholder="${mbTopGramNow(t.name)||'자동'}" onchange="mbTopUseG('${t.id}',this.value)">g</label>` : `<button type="button" onclick="mbTopPer('${t.id}')">한 번에 ${t.per||1}개 ↻</button>`}<button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div>`;
 }
 function mbTopOpen(){
   mbTopClose(); mbTopSel = null; mbTopFilter = 'all'; try{ gtag('event','topping_open'); }catch(e){}
@@ -10143,6 +10145,7 @@ function mbTopOpen(){
         <div class="tp-nr"><input id="tpName" placeholder="재료·소스 검색 (예: 쌀미음, 라구)" maxlength="20" autocomplete="off" oninput="mbTopChk();mbTopSuggest()"><button type="button" class="tp-cancel" id="tpCancel">접기</button></div><div class="tp-sugs" id="tpSugs"></div>
         <div class="tp-ml" id="tpMl"><span>크기</span><button type="button" data-ml="20" onclick="mbTopMlPick(20)">20ml</button><button type="button" data-ml="30" onclick="mbTopMlPick(30)">30ml</button><button type="button" data-ml="50" onclick="mbTopMlPick(50)">50ml</button><button type="button" data-ml="0" onclick="mbTopMlPick(0)">개·팩</button></div>
         <div class="tp-fr"><label>개수<input id="tpCnt" type="number" inputmode="numeric" min="1" max="60" value="12"></label><label>만든 날<input id="tpDate" type="date" value="${mbIsoToday()}"></label></div>
+        <div class="tp-fr"><label>1회 사용량 (g·ml)<input id="tpUse" type="number" inputmode="numeric" min="5" max="300" placeholder="비우면 식단표 기준"></label></div>
         <button type="button" class="tp-save" id="tpSave" disabled onclick="mbTopForm()">🧊 만들었어요 (눌러야 저장돼요)</button>
       </div></div></div>`;
   document.body.appendChild(bg);
