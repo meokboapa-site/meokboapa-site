@@ -1049,6 +1049,7 @@
 .fam-sh.adding .tp-detail,.fam-sh.adding .tp-lifenote{display:none!important}
 .tp-use{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:#fff}.tp-use input{width:54px;font:inherit;font-size:13px;border:0;border-bottom:1px solid var(--line);text-align:center;background:transparent;padding:2px 0}
 .tp-auto{font-size:11.5px;color:var(--ink-soft);margin-top:8px}.tp-auto.on{color:#34493B;font-weight:800}
+.tp-more{margin-top:8px}.tp-more summary{font-size:12px;color:var(--ink-soft);cursor:pointer;padding:4px 0}.tp-more[open] summary{margin-bottom:6px}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -9986,7 +9987,8 @@ function mbTopRender(){
   if(!t){ dt.hidden = true; dt.innerHTML = ''; return; }
   const i = mbTopInfo(t); dt.hidden = false;
   dt.innerHTML = `<div class="tp-dt">${mbTopIcon(t.name)}<div><b>${mbTopEsc(t.name)}</b><div class="tp-ds">남은 ${i.left}개 / ${t.made}개 · ${t.ml ? t.ml + 'ml 큐브' : '개·팩 단위'} · 한 번에 ${mbTopPerNow(t)}개${t.ml > 0 ? (t.useG ? '(내가 정한 ' + t.useG + 'g 기준)' : (mbTopGramNow(t.name) ? '(오늘 식단표 ' + mbTopGramNow(t.name) + 'g 기준)' : '')) : ''} · ${t.date.slice(5).replace('-','/')} 만듦 · ${i.exp.slice(5).replace('-','/')}까지</div></div></div>
-    <div class="tp-b"><button type="button" class="tp-eat" onclick="mbTopEat('${t.id}')">🍽 오늘 썼어요 (차감 · 도감 기록)</button><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><button type="button" onclick="mbTopMl('${t.id}')">크기 ${t.ml ? t.ml + 'ml' : '개·팩'} ↻</button>${t.ml > 0 ? `<label class="tp-use">1회 <input type="number" inputmode="numeric" min="5" max="300" value="${t.useG||''}" placeholder="${mbTopGramNow(t.name)||'자동'}" onchange="mbTopUseG('${t.id}',this.value)">g</label>` : `<button type="button" onclick="mbTopPer('${t.id}')">한 번에 ${t.per||1}개 ↻</button>`}<label class="tp-use">만든 날 <input type="date" value="${t.date}" max="${new Date().toISOString().slice(0,10)}" onchange="mbTopDate('${t.id}',this.value)" style="width:auto"></label><button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div>
+    <div class="tp-b"><button type="button" class="tp-eat" onclick="mbTopEat('${t.id}')">🍽 오늘 썼어요 (차감 · 도감 기록)</button><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><label class="tp-use">만든 날 <input type="date" value="${t.date}" max="${new Date().toISOString().slice(0,10)}" onchange="mbTopDate('${t.id}',this.value)" style="width:auto"></label><button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div>
+    <details class="tp-more"><summary>자세히 설정 (크기·1회 용량)</summary><div class="tp-b"><button type="button" onclick="mbTopMl('${t.id}')">크기 ${t.ml ? t.ml + 'ml' : '개·팩'} ↻</button>${t.ml > 0 ? `<label class="tp-use">1회 <input type="number" inputmode="numeric" min="5" max="300" value="${t.useG||''}" placeholder="${mbTopGramNow(t.name)||'자동'}" onchange="mbTopUseG('${t.id}',this.value)">g</label>` : `<button type="button" onclick="mbTopPer('${t.id}')">한 번에 ${t.per||1}개 ↻</button>`}</div></details>
     <div class="tp-auto ${mbTopJustSaved ? 'on' : ''}">${mbTopJustSaved ? '✓ 저장됐어요' : '바뀐 내용은 바로 자동 저장돼요'}</div>`;
 }
 function mbTopOpen(){
@@ -10003,7 +10005,7 @@ function mbTopOpen(){
         <div class="tp-saved" id="tpSaved"></div>
         <div class="tp-unsaved" id="tpUnsaved">⚠️ 아직 저장 전! <u>‘만들었어요’</u>를 눌러야 담겨요</div>
         <div class="tp-nr"><input id="tpName" placeholder="재료·소스 검색 (예: 쌀미음, 라구)" maxlength="20" autocomplete="off" oninput="mbTopChk();mbTopSuggest()"><button type="button" class="tp-cancel" id="tpCancel">접기</button></div><div class="tp-sugs" id="tpSugs"></div>
-        <div class="tp-ml" id="tpMl"><span>크기</span><button type="button" data-ml="20" onclick="mbTopMlPick(20)">20ml</button><button type="button" data-ml="30" onclick="mbTopMlPick(30)">30ml</button><button type="button" data-ml="50" onclick="mbTopMlPick(50)">50ml</button><button type="button" data-ml="0" onclick="mbTopMlPick(0)">개·팩</button></div>
+        <details class="tp-more"><summary>자세히 설정 (크기)</summary><div class="tp-ml" id="tpMl"><span>크기</span><button type="button" data-ml="20" onclick="mbTopMlPick(20)">20ml</button><button type="button" data-ml="30" onclick="mbTopMlPick(30)">30ml</button><button type="button" data-ml="50" onclick="mbTopMlPick(50)">50ml</button><button type="button" data-ml="0" onclick="mbTopMlPick(0)">개·팩</button></div></details>
         <div class="tp-fr"><label>개수<input id="tpCnt" type="number" inputmode="numeric" min="1" max="60" value="12"></label><label>만든 날<input id="tpDate" type="date" value="${mbIsoToday()}"></label></div>
         <div class="tp-fr"><label>1회 사용량 (g·ml)<input id="tpUse" type="number" inputmode="numeric" min="5" max="300" placeholder="비우면 식단표 기준"></label></div>
         <button type="button" class="tp-save" id="tpSave" disabled onclick="mbTopForm()">🧊 만들었어요 (눌러야 저장돼요)</button>
