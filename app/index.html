@@ -1076,6 +1076,14 @@
 @media(max-width:370px){.ql{font-size:11.5px;padding:8px 5px}.ql-row{gap:5px}}
 .mbi{width:1.2em;height:1.2em;vertical-align:-.22em;flex:none;display:inline-block}.fam-btn b .mbi{width:22px;height:22px;vertical-align:-5px;margin-right:2px;color:var(--moss-deep,#34493B)}.er-strip b .mbi{color:#B5542F;width:20px;height:20px}
 .mbi-img{object-fit:contain;width:1.5em;height:1.5em;vertical-align:-.4em}.fam-btn b .mbi-img{width:34px;height:34px;vertical-align:-10px;margin-right:2px}
+.stagebody.ns{display:flex;flex-direction:column}
+.stagebody.ns>*{order:20}
+.stagebody.ns>.subpage.startpage.active{display:contents}
+.stagebody.ns>.subpage.startpage.active>*{order:20}
+.stagebody.ns>.subpage.startpage.active>.sp-order{order:1}
+.stagebody.ns>.subpage.startpage.active>.sp-dl{order:2}
+.stagebody.ns>.subpage.startpage.active>.sp-list,.stagebody.ns>.subpage.startpage.active>.sp-past{order:3}
+.stagebody.ns>.feedrhythm{order:10}.stagebody.ns>.sp-guide{order:11}.stagebody.ns>.subpage.startpage.active>.ql-row{order:12}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -4780,6 +4788,7 @@ function bindStartDownloads(container){
 }
 function buildStartPage(container){
   container.className = 'subpage active startpage';
+  try{ container.parentElement.classList.toggle('ns', !weaningStart); }catch(e){}
   const day = startDayNo();
   const cur = startStepIndex(day);
 
@@ -5254,6 +5263,7 @@ function midRowHtml(st, i, cur, day){
 }
 function buildMidPage(container){
   container.className = 'subpage active startpage midpage';
+  try{ container.parentElement.classList.toggle('ns', !midStart); }catch(e){}
   const day = midDayNo();
   const cur = midStepIndex(day);
   let today = '';
@@ -5551,6 +5561,7 @@ function lateRowHtml(st, i, cur, day){
 }
 function buildLatePage(container){
   container.className = 'subpage active startpage midpage';
+  try{ container.parentElement.classList.toggle('ns', !lateStart); }catch(e){}
   const day = lateDayNo();
   const cur = lateStepIndex(day);
   let today = '';
