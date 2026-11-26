@@ -168,6 +168,7 @@
   .mo-g{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:8px}
   .mo-g b{display:block;font-size:13.5px;margin-bottom:3px}.mo-g span{font-size:15px;line-height:1.55}
 
+  .tp-nm{display:flex;align-items:center;gap:8px;min-width:0}.tp-ic{flex:none;width:36px;height:36px;display:block}.tp-ic .ing-thumb{width:36px;height:36px}
   .tp-sum{font-size:14px;margin:0 0 8px}
   .tp-empty{font-size:14px;color:var(--ink-soft);margin:6px 0 10px}
   .tp-i{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:8px}
@@ -4359,7 +4360,7 @@ function shopMakePlan(stage, day){
   for(let d = day; d <= day + 6; d++){
     const st = plan.find(x=>d>=x.d0 && d<=x.d1); if(!st || !st.g) continue;
     days++; portions += meals; total += st.g * meals; gmin = Math.min(gmin, st.g); gmax = Math.max(gmax, st.g);
-    if(st.noFreeze && !st.rest && noFreeze.indexOf(st.add) < 0) noFreeze.push(st.add);
+    if(!st.rest && st.add && !mbTopFreezable(st) && !/^(쌀|쌀미음|미음|쌀가루)/.test(st.add) && noFreeze.indexOf(st.add) < 0) noFreeze.push(st.add);
     if(stage==='start' && st.parts) st.parts.forEach(([k,g])=>{ parts[k] = (parts[k]||0) + g; });
   }
   if(!days) return null;
@@ -4369,7 +4370,7 @@ function shopMakeHtml(stage, day){
   const m = shopMakePlan(stage, day); if(!m) return '';
   const unit = m.gmin===m.gmax ? m.gmin+'g' : m.gmin+'~'+m.gmax+'g';
   const partsTxt = Object.keys(m.parts).length ? `<div class="mk-row"><span>재료별 총량</span><b>${Object.keys(m.parts).map(k=>k+' '+m.parts[k]+'g').join(' · ')}</b></div>` : '';
-  const nf = m.noFreeze.length ? `<div class="mk-note">❄️ <b>${m.noFreeze.join('·')}</b>은 큐브로 얼리지 않아요 — 그날 먹을 만큼만 따로 준비해요.</div>` : '';
+  const nf = false && m.noFreeze.length ? `<div class="mk-note">❄️ <b>${m.noFreeze.join('·')}</b>은 큐브로 얼리지 않아요 — 그날 먹을 만큼만 따로 준비해요.</div>` : '';
   return `<div class="shop-make"><b>🧊 이번 주 만들 양</b>
     <div class="mk-row"><span>하루 ${m.meals}끼 × ${m.days}일</span><b>한 끼 분량 소분 ${m.portions}개</b></div>
     <div class="mk-row"><span>한 끼 ${unit} 기준</span><b>총 약 ${m.total}g</b></div>${partsTxt}${nf}
@@ -9645,6 +9646,10 @@ function mbTopAdd(name, made, date, per){
   const a = mbTopLoad(); a.push({id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), name, made, date: date || mbIsoToday(), per: per || 1, adj: 0});
   mbTopSave(a); try{ gtag('event','topping_add',{n:made}); }catch(e){} return true;
 }
+/* 얼려 쓰는 토핑인지 — 밀가루·땅콩버터·두부·달걀 같은 알레르기 테스트 재료와 물이 빠지는 재료는 그날 소량만 */
+const MB_NOFREEZE_RE = /밀가루|땅콩|두부|대두|콩|달걀|계란|우유|치즈|요거트|요구르트|오트밀|새우|생선|메밀|견과|참깨|들깨|빵|국수|파스타|면$|바나나|오이/;
+function mbTopFreezable(st){ return !!(st && st.add && !st.rest && !(st.noFreeze || (st.make && (st.make.noFreeze || st.make.cube === 0))) && !MB_NOFREEZE_RE.test(st.add) && !/^(쌀|쌀미음|미음|쌀가루)/.test(st.add)); }
+function mbTopIcon(name){ try{ const h = dgThumb(name); return h ? '<span class="tp-ic">' + h + '</span>' : ''; }catch(e){ return ''; } }
 function mbTopBtnHtml(){
   const a = mbTopLoad().map(t=>({t, i: mbTopInfo(t)})).filter(x=>!x.i.done);
   const w = a.filter(x=>x.i.warn || x.i.late).length;
@@ -9652,19 +9657,22 @@ function mbTopBtnHtml(){
 }
 function mbTopShopHtml(stage, day){
   const plan = mbPlanOf(stage), names = [];
+  const skip = [];
   plan.forEach(st=>{
-    if(st.rest || !st.add || st.noFreeze || st.d1 < day || st.d0 > day + 6) return;
-    if(/^(쌀|쌀미음|미음|쌀가루)/.test(st.add) || names.some(n=>n.name === st.add)) return;
+    if(st.rest || !st.add || st.d1 < day || st.d0 > day + 6) return;
+    if(/^(쌀|쌀미음|미음|쌀가루)/.test(st.add) || names.some(n=>n.name === st.add) || skip.indexOf(st.add) >= 0) return;
+    if(!mbTopFreezable(st)){ skip.push(st.add); return; }
     names.push({name: st.add, d0: st.d0});
   });
   const have = mbTopLoad().filter(t=>!mbTopInfo(t).done).map(t=>t.name);
   const todo = names.filter(n=>!have.some(h=>h.indexOf(n.name) >= 0 || n.name.indexOf(h) >= 0));
   const warn = mbTopLoad().map(t=>({t, i: mbTopInfo(t)})).filter(x=>!x.i.done && (x.i.warn || x.i.late));
   let cube = ''; try{ const l = getCoupangLinks('큐브_20ml').find(x=>x.url); if(l) cube = `<a class="tp-cube" href="${l.url}" target="_blank" rel="noopener sponsored">20ml 12구 큐브 보러가기 ›</a>`; }catch(e){}
-  if(!todo.length && !warn.length) return '';
+  if(!todo.length && !warn.length && !skip.length) return '';
   return `<div class="shop-make tp-shop"><b>🧊 이번 주 토핑</b>
     ${warn.map(x=>`<div class="mk-note">⏰ <b>${mbTopEsc(x.t.name)}</b> ${x.i.late ? '소비기한이 지났어요' : '소비기한 D-' + x.i.dleft} · 남은 ${x.i.left}개</div>`).join('')}
-    ${todo.map(n=>`<div class="mk-row tp-new"><span>${mbTopEsc(n.name)} <small>${n.d0}일차 새 재료</small></span><span class="tp-q"><input type="number" inputmode="numeric" min="1" max="60" value="12" aria-label="만든 큐브 개수">개 <button type="button" onclick="mbTopQuick(this,'${encodeURIComponent(n.name)}')">냉동했어요</button></span></div>`).join('')}
+    ${todo.map(n=>`<div class="mk-row tp-new"><span class="tp-nm">${mbTopIcon(n.name)}<span>${mbTopEsc(n.name)} <small>${n.d0}일차 새 재료</small></span></span><span class="tp-q"><input type="number" inputmode="numeric" min="1" max="60" value="12" aria-label="만든 큐브 개수">개 <button type="button" onclick="mbTopQuick(this,'${encodeURIComponent(n.name)}')">냉동했어요</button></span></div>`).join('')}
+    ${skip.length ? '<div class="mk-note">🥄 <b>' + skip.map(mbTopEsc).join('·') + '</b>은 얼리지 않아요 — 테스트하는 날 그날 먹을 만큼만 준비해요.</div>' : ''}
     ${todo.length ? '<small>새 재료는 미리 토핑으로 만들어 큐브로 얼려두면 2주 정도 쓸 수 있어요. 만든 개수를 적어두면 냉동실에서 남은 개수와 소비기한을 챙겨드려요. ' + cube + '</small>' : ''}</div>`;
 }
 function mbTopQuick(btn, enc){
@@ -9689,7 +9697,7 @@ function mbTopRender(){
   const card = ({t, i})=>{
     const pct = Math.round(100 * i.left / Math.max(1, t.made));
     const badge = i.done ? '<span class="tp-d ok">다 썼어요</span>' : (i.late ? '<span class="tp-d bad">기한 지남</span>' : `<span class="tp-d ${i.warn ? 'bad' : ''}">${i.warn ? '⏰ ' : ''}D-${i.dleft} · ${i.exp.slice(5).replace('-','/')}까지</span>`);
-    return `<div class="tp-i ${i.warn || i.late ? 'warn' : ''} ${i.done ? 'done' : ''}"><div class="tp-h"><b>${mbTopEsc(t.name)}</b>${badge}</div>
+    return `<div class="tp-i ${i.warn || i.late ? 'warn' : ''} ${i.done ? 'done' : ''}"><div class="tp-h"><span class="tp-nm">${mbTopIcon(t.name)}<b>${mbTopEsc(t.name)}</b></span>${badge}</div>
       <div class="tp-bar"><i style="width:${pct}%"></i></div>
       <div class="tp-r"><span>남은 <b>${i.left}개</b> / ${t.made}개 · 하루 ${t.per||1}개씩 · ${t.date.slice(5).replace('-','/')} 냉동</span></div>
       <div class="tp-b"><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><button type="button" onclick="mbTopPer('${t.id}')">하루 ${t.per||1}개 ↻</button><button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div></div>`;
@@ -9698,7 +9706,7 @@ function mbTopRender(){
 }
 function mbTopOpen(){
   mbTopClose(); try{ gtag('event','topping_open'); }catch(e){}
-  const names = []; [START_PLAN, MID_PLAN, LATE_PLAN].forEach(p=>p.forEach(st=>{ if(st.add && !st.rest && !st.noFreeze && names.indexOf(st.add) < 0) names.push(st.add); }));
+  const names = []; [START_PLAN, MID_PLAN, LATE_PLAN].forEach(p=>p.forEach(st=>{ if(mbTopFreezable(st) && names.indexOf(st.add) < 0) names.push(st.add); }));
   const bg = document.createElement('div'); bg.id = 'topSheet'; bg.className = 'fam-bg';
   bg.innerHTML = `<div class="fam-sh" role="dialog" aria-label="토핑 냉동실"><h2>🧊 토핑 냉동실</h2>
     <p>만든 큐브 개수를 적어두면 다음 날부터 하루 쓰는 만큼 줄어들고, 소비기한(만든 날부터 2주) 3일 전부터 알려드려요. 이 기록은 이 기기에만 저장돼요.</p>
