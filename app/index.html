@@ -9887,19 +9887,30 @@ function mbTopInfo(t){
   const life = t.life || mbTopLifeDays(), dleft = life - el;
   return {left, dleft, exp: mbAddDays(t.date, life), done: left <= 0, late: dleft < 0, warn: left > 0 && dleft >= 0 && dleft <= MB_TOP_WARN};
 }
-function mbTopGramNow(){
-  try{ const lb = mbStageLabelNow(); if(lb.indexOf('중기')===0) return MID_TOP_G;
-    if(lb.indexOf('후기')===0){ const d = lateDayNo(), st = LATE_PLAN.find(x=>d>=x.d0 && d<=x.d1); return st && st.top ? st.top : null; } }catch(e){} return null;
+function mbTopStageDay(){ try{ const m = /^(초기|중기|후기) (\d+)일차/.exec(mbStageLabelNow()); return m ? {stage: m[1], day: +m[2]} : null; }catch(e){ return null; } }
+/* 오늘 이 재료를 한 끼에 몇 g 쓰는지 — 식단표 기준(초기 쌀미음 30→40→50, 중기 50~70, 후기 55~90 / 토핑 10→15→20) */
+function mbTopGramNow(name){
+  try{
+    const sd = mbTopStageDay(); if(!sd) return null;
+    const base = /^(쌀미음|미음|진밥|무른밥|죽|오트밀미음)/.test(mbNorm(name || ''));
+    if(sd.stage === '초기'){ const st = START_PLAN.find(x=>sd.day>=x.d0 && sd.day<=x.d1); if(!st || st.rest) return null;
+      const p = (st.parts||[]).find(x=>name && mbNorm(x[0]) === mbNorm(name)); if(p) return p[1];
+      if(base){ const r = (st.parts||[]).find(x=>/미음/.test(x[0])); return r ? r[1] : null; } return 10; }
+    if(sd.stage === '중기'){ return base ? midMealsOfDay(sd.day).base - MID_TOP_G : MID_TOP_G; }
+    const st = LATE_PLAN.find(x=>sd.day>=x.d0 && sd.day<=x.d1); if(!st || st.rest) return null;
+    return base ? lateMealsOfDay(sd.day).base : st.top;
+  }catch(e){ return null; }
 }
+function mbTopGramLine(){ const a = mbTopGramNow('쌀미음'), b = mbTopGramNow('당근'); return (a && b) ? '쌀미음 ' + a + 'g · 토핑 ' + b + 'g씩 · ' : ''; }
 function mbTopPerNow(t){
-  if(t.ml > 0 && t.perAuto !== false){ const g = mbTopGramNow(); if(g) return Math.max(1, Math.min(4, Math.round(g / t.ml))); }
+  if(t.ml > 0 && t.perAuto !== false){ const g = mbTopGramNow(t.name); if(g) return Math.max(1, Math.min(4, Math.ceil(g / t.ml - 0.15))); }
   return t.per || 1;
 }
 function mbTopDefaultMl(name){
   const n = mbNorm(name); if(!n) return 20;
   let lb = ''; try{ lb = mbStageLabelNow(); }catch(e){}
   const late = /^(후기)/.test(lb) || mbTopLifeDays() > 14;
-  if(n === '쌀미음' || n === '오트밀미음') return /^초기/.test(lb) || !lb && !late ? 20 : 50;
+  if(n === '쌀미음' || n === '오트밀미음'){ const g = mbTopGramNow('쌀미음'); return g ? (g <= 25 ? 20 : (g <= 35 ? 30 : 50)) : 30; }
   if(/소스/.test(name) || n.indexOf('라구') === 0) return 50;
   if(MENUS.some(m=>mbNorm(m.name) === n)) return 0;
   if(mbTopImgUrl(name) && dgFind(name)) return late ? 30 : 20;
@@ -10053,7 +10064,7 @@ function mbTodayChipsHtml(stage, day){
       const used = (t.used||[]).indexOf(today) >= 0, i = mbTopInfo(t);
       return `<button type="button" class="tc ${used?'on':''} ${i.warn||i.late?'warn':''}" onclick="mbTopUse('${e}')">${used?'✓ ':''}${mbTopEsc(n)}<small>🧊${i.left}</small></button>`;
     }).join('');
-    return `<div class="tp-today" data-stage="${stage}" data-day="${day}"><div class="tp-tt">오늘 쓸 토핑 <small>${mbTopGramNow() ? '토핑 ' + mbTopGramNow() + 'g씩 · ' : ''}눌러서 차감 · 없으면 만들기</small></div><div class="tc-row">${chips}</div></div>`;
+    return `<div class="tp-today" data-stage="${stage}" data-day="${day}"><div class="tp-tt">오늘 쓸 토핑 <small>${mbTopGramLine()}눌러서 차감 · 없으면 만들기</small></div><div class="tc-row">${chips}</div></div>`;
   }catch(e){ return ''; }
 }
 function mbActionRowHtml(){
@@ -10113,7 +10124,7 @@ function mbTopRender(){
   const t = mbTopLoad().find(x=>x.id === mbTopSel), dt = document.getElementById('topDetail');
   if(!t){ dt.hidden = true; dt.innerHTML = ''; return; }
   const i = mbTopInfo(t); dt.hidden = false;
-  dt.innerHTML = `<div class="tp-dt">${mbTopIcon(t.name)}<div><b>${mbTopEsc(t.name)}</b><div class="tp-ds">남은 ${i.left}개 / ${t.made}개 · ${t.ml ? t.ml + 'ml 큐브' : '개·팩 단위'} · 한 번에 ${mbTopPerNow(t)}개${t.ml > 0 && t.perAuto !== false && mbTopGramNow() ? '(오늘 토핑 ' + mbTopGramNow() + 'g 기준)' : ''} · ${t.date.slice(5).replace('-','/')} 만듦 · ${i.exp.slice(5).replace('-','/')}까지</div></div></div>
+  dt.innerHTML = `<div class="tp-dt">${mbTopIcon(t.name)}<div><b>${mbTopEsc(t.name)}</b><div class="tp-ds">남은 ${i.left}개 / ${t.made}개 · ${t.ml ? t.ml + 'ml 큐브' : '개·팩 단위'} · 한 번에 ${mbTopPerNow(t)}개${t.ml > 0 && t.perAuto !== false && mbTopGramNow(t.name) ? '(오늘 ' + mbTopGramNow(t.name) + 'g 기준)' : ''} · ${t.date.slice(5).replace('-','/')} 만듦 · ${i.exp.slice(5).replace('-','/')}까지</div></div></div>
     <div class="tp-b"><button type="button" class="tp-eat" onclick="mbTopEat('${t.id}')">🍽 오늘 썼어요 (차감 · 도감 기록)</button><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><button type="button" onclick="mbTopMl('${t.id}')">크기 ${t.ml ? t.ml + 'ml' : '개·팩'} ↻</button><button type="button" onclick="mbTopPer('${t.id}')">한 번에 ${t.ml > 0 && t.perAuto !== false ? '자동' : (t.per||1) + '개'} ↻</button><button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div>`;
 }
 function mbTopOpen(){
