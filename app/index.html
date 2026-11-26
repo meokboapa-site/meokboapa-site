@@ -25,6 +25,8 @@
 <meta name="naver-site-verification" content="43eb0301a98399be72bc66500ee2fd30b84ef289" />
 <link rel="canonical" href="https://meokboapa.com/app/">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"먹보 아빠의 이유식노트","url":"https://meokboapa.com/","applicationCategory":"HealthApplication","operatingSystem":"Any","inLanguage":"ko","description":"대한소아과학회·AAP·ESPGHAN 기준으로 정리한 이유식 재료·레시피 가이드. 초기부터 완료기·일반식까지 시기별 재료와 자동 계량을 제공합니다.","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},"author":{"@type":"Person","name":"먹보 아빠"}}</script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
@@ -76,9 +78,9 @@
   }
   body{
     margin:0; background:var(--bg); color:var(--ink);
-    font-family:'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family:'Pretendard Variable','Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     line-height:1.65; word-break:keep-all; overflow-wrap:break-word;
-    -webkit-font-smoothing:antialiased;
+    -webkit-font-smoothing:antialiased; letter-spacing:-.01em;
   }
   h1,h2,h3,h4{word-break:keep-all;}
 
@@ -598,7 +600,7 @@
 .carepage .p li{font-size:13.5px;line-height:1.75;color:var(--ink-soft);padding-left:15px;position:relative;margin-bottom:3px;}
 .carepage .p li:before{content:'·';position:absolute;left:4px;color:var(--apricot);font-weight:900;}
 .carepage .p li b{color:var(--ink);font-weight:700;}
-.carepage .sect{font-family:'Gowun Dodum',serif;font-size:18px;color:var(--moss-deep);margin:20px 0 9px;}
+.carepage .sect{font-family:'Pretendard Variable','Pretendard',sans-serif;font-weight:700;letter-spacing:-.025em;font-size:18px;color:var(--moss-deep);margin:20px 0 9px;}
 .carepage .no{background:#FDF4F0;border-color:#EBC9BA;}
 .carepage .no .n{background:var(--warn);}
 .carepage .no h3{color:var(--warn);}
@@ -662,7 +664,7 @@
 .menupage .cp-lead{font-size:13.5px;line-height:1.7;color:var(--ink-soft);
   padding-bottom:13px;border-bottom:1px dashed var(--line);}
 .menupage .cp-lead b{color:var(--moss-deep);font-weight:700;}
-.menupage .sect{font-family:'Gowun Dodum',serif;font-size:16px;color:var(--moss-deep);margin:16px 0 6px;}
+.menupage .sect{font-family:'Pretendard Variable','Pretendard',sans-serif;font-weight:700;letter-spacing:-.025em;font-size:16px;color:var(--moss-deep);margin:16px 0 6px;}
 .menupage .mini-tbl td{padding:7px 2px;}
 .menupage .mini-tbl td:first-child{white-space:normal;color:var(--ink);}
 .menupage .mn-steps{margin:4px 0 0;padding-left:20px;}
@@ -693,7 +695,7 @@
 .startpage .sp-today{background:var(--moss);color:#fff;border-radius:16px;padding:16px 18px;margin-bottom:16px;}
 .startpage .sp-today.wait,.startpage .sp-today.done{background:var(--apricot-soft);color:var(--warn);}
 .startpage .sp-today .sp-k{font-size:11.5px;font-weight:800;opacity:.85;letter-spacing:.02em;margin-bottom:5px;}
-.startpage .sp-today .sp-t{font-family:'Gowun Dodum',serif;font-size:20px;line-height:1.4;margin-bottom:6px;}
+.startpage .sp-today .sp-t{font-family:'Pretendard Variable','Pretendard',sans-serif;font-weight:700;letter-spacing:-.025em;font-size:20px;line-height:1.4;margin-bottom:6px;}
 .startpage .sp-today .sp-d{font-size:12.5px;line-height:1.6;opacity:.92;}
 .startpage .sp-list{display:grid;grid-template-columns:1fr;gap:9px;}
 .startpage .sp-row{display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 15px;}
@@ -866,7 +868,7 @@
 @media(min-width:680px){ .startpage .sp-list{grid-template-columns:1fr 1fr;} }
 /* 냉장고 재료로 찾기 */
 .fridge{background:#F2F6F1;border:1px solid #DCE6DD;border-radius:16px;padding:15px 16px;margin:2px 0 18px;}
-.fridge .fr-t{font-family:'Gowun Dodum',serif;font-size:17px;color:var(--moss-deep);margin-bottom:4px;}
+.fridge .fr-t{font-family:'Pretendard Variable','Pretendard',sans-serif;font-weight:700;letter-spacing:-.025em;font-size:17px;color:var(--moss-deep);margin-bottom:4px;}
 .fridge .fr-d{font-size:12.5px;line-height:1.6;color:var(--ink-soft);margin-bottom:10px;}
 .fridge .fr-row{display:flex;gap:7px;}
 .fridge .fr-row input{flex:1;min-width:0;border:1.5px solid var(--line);border-radius:11px;padding:11px 13px;
