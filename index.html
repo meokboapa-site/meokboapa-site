@@ -1056,6 +1056,12 @@
 .startpage .sp-ml small.sp-meal{font-size:12.5px;font-weight:800;margin:0 2px 0 0;color:var(--ink-soft)}
 .startpage .sp-ratio,.startpage .sp-upchip,.startpage .mp-kind,.startpage .nbx,.startpage .sp-testtag,.startpage .sp-resttag{font-size:11.5px!important;font-weight:800!important;line-height:1.3!important;padding:3px 10px!important;border-radius:99px!important;vertical-align:middle!important}
 .startpage .sp-name .mp-kind{margin-left:4px}
+.sp-row .sp-name .sp-badge{display:none}
+.sp-nowtag{display:block;font-size:11px;font-weight:900;color:var(--moss);letter-spacing:.02em;margin-bottom:2px}
+.startpage .sp-ratio,.startpage .sp-ratio.up{background:none!important;color:var(--moss-deep,#34493B)!important;padding:0!important;font-size:14px!important;font-weight:800!important}
+.startpage .sp-ratio::before{content:"· ";font-weight:400;opacity:.6}
+.nbx.ing,.tc i.nb.ing{background:#EAF0E7;color:#34493B}.tc i.nb.ing{background:#E4ECE0}
+.tp-prev{display:inline-flex;flex:0 0 auto}.tp-prev:empty{display:none}.tp-prev .tp-ic{width:34px;height:34px}.tp-prev img{width:100%;height:100%;object-fit:contain}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -4650,10 +4656,10 @@ function buildStartPage(container){
     const isNow = (cur === i);
     const past = (cur !== null && i < cur) || (cur === null && day !== null && day > START_LAST_DAY);
     return `<div class="sp-row${isNow?' now':''}${past?' past':''}${st.test?' test':''}${st.rest?' rest':''}">
-      <div class="sp-day"><b>${d0===d1?d0:`${d0}~${d1}`}</b><i>일차</i><i class="sp-wd">${startWeekdays(st)}</i>${weaningStart?`<em>${startStepDates(i)}</em>`:''}</div>
+      <div class="sp-day">${isNow?'<span class="sp-nowtag">오늘</span>':''}<b>${d0===d1?d0:`${d0}~${d1}`}</b><i>일차</i><i class="sp-wd">${startWeekdays(st)}</i>${weaningStart?`<em>${startStepDates(i)}</em>`:''}</div>
       <div class="sp-body">
         <div class="sp-name">${st.title}${isNow?'<span class="sp-badge">오늘</span>':''}</div>
-        <div class="sp-new">${st.rest?`<span class="sp-resttag">쉬는 날</span> 새 재료 없음`:st.test?`<span class="sp-testtag">알레르기 테스트</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b> · 새 채소는 쉬어요`:`${mbNewBadge(st)}새 재료 <b>${st.add}</b>${st.keep?` · ${st.keep}와 같이`:''}`}</div>
+        <div class="sp-new">${st.rest?`<span class="sp-resttag">쉬는 날</span> 새 재료 없음`:st.test?`<span class="sp-testtag">알레르기 테스트</span> ${mbNewBadge(st, isNow ? day : null)}새 재료 <b>${st.add}</b> · 새 채소는 쉬어요`:`${mbNewBadge(st, isNow ? day : null)}새 재료 <b>${st.add}</b>${st.keep?` · ${st.keep}와 같이`:''}`}</div>
         ${startAmountHtml(st)}
         ${st.parts.length>1?`<div class="sp-meal">${startMealOf(i)}</div>`:''}
         <div class="sp-why">${st.why}</div>
@@ -5072,15 +5078,15 @@ function midRowHtml(st, i, cur, day){
   const wd = st.d0===st.d1 ? midWeekdayOf(st.d0) : `${midWeekdayOf(st.d0)}~${midWeekdayOf(st.d1)}`;
   const m = midMealsOf(st);
   let tag = st.rest ? `<span class="sp-resttag">쉬는 날</span> 새 재료 없음 — 먹어본 재료로만`
-    : st.test ? `<span class="sp-testtag">알레르기 테스트</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b> · 3일 동안 다른 새 재료 X`
-    : `<span class="mp-kind k-${st.kind}">${MID_KIND[st.kind]}</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b>`;
+    : st.test ? `<span class="sp-testtag">알레르기 테스트</span> ${mbNewBadge(st, isNow ? day : null)}새 재료 <b>${st.add}</b> · 3일 동안 다른 새 재료 X`
+    : `<span class="mp-kind k-${st.kind}">${MID_KIND[st.kind]}</span> ${mbNewBadge(st, isNow ? day : null)}새 재료 <b>${st.add}</b>`;
   let kindChip = ''; { const km = /<span class="mp-kind[^>]*>.*?<\/span> ?/.exec(tag); if(km){ kindChip = km[0].trim(); tag = tag.replace(km[0], ''); } }
   const flags = [
     st.gas ? `<span class="mp-flag">🌙 가스 유발 — 저녁 끼니엔 빼기</span>` : '',
     st.cap ? `<span class="mp-flag">10~15g 유지</span>` : ''
   ].join('');
   return `<div class="sp-row${isNow?' now':''}${past?' past':''}${st.test?' test':''}${st.rest?' rest':''}">
-    <div class="sp-day"><b>${st.d0===st.d1?st.d0:`${st.d0}~${st.d1}`}</b><i>일차</i><i class="sp-wd">${wd}</i>${midStart?`<em>${midStepDates(st)}</em>`:''}</div>
+    <div class="sp-day">${isNow?'<span class="sp-nowtag">오늘</span>':''}<b>${st.d0===st.d1?st.d0:`${st.d0}~${st.d1}`}</b><i>일차</i><i class="sp-wd">${wd}</i>${midStart?`<em>${midStepDates(st)}</em>`:''}</div>
     <div class="sp-body">
       <div class="sp-name">${st.title}${kindChip?' '+kindChip:''}${isNow?'<span class="sp-badge">오늘</span>':''}</div>
       <div class="sp-new">${tag}</div>
@@ -5371,13 +5377,13 @@ function lateRowHtml(st, i, cur, day){
   const wd = st.d0===st.d1 ? lateWeekdayOf(st.d0) : `${lateWeekdayOf(st.d0)}~${lateWeekdayOf(st.d1)}`;
   const m = lateMealsOf(st);
   let tag = st.rest ? `<span class="sp-resttag">쉬는 날</span> 새 재료 없음 — 먹어본 재료로만`
-    : st.test ? `<span class="sp-testtag">알레르기 테스트</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b> · 3일 동안 다른 새 재료 X`
+    : st.test ? `<span class="sp-testtag">알레르기 테스트</span> ${mbNewBadge(st, isNow ? day : null)}새 재료 <b>${st.add}</b> · 3일 동안 다른 새 재료 X`
     : st.kind==='finger' ? `<span class="mp-kind k-fruit">자기주도</span> 새 재료 없음 · <b>새 질감</b>`
     : st.kind==='base' ? `<span class="mp-kind k-energy">밥 단계</span> <b>${st.add}</b> — 새 재료 없이 질감만 바꿔요`
-    : `<span class="mp-kind k-${st.kind}">${LATE_KIND[st.kind]}</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b>`;
+    : `<span class="mp-kind k-${st.kind}">${LATE_KIND[st.kind]}</span> ${mbNewBadge(st, isNow ? day : null)}새 재료 <b>${st.add}</b>`;
   let kindChip = ''; { const km = /<span class="mp-kind[^>]*>.*?<\/span> ?/.exec(tag); if(km){ kindChip = km[0].trim(); tag = tag.replace(km[0], ''); } }
   return `<div class="sp-row${isNow?' now':''}${past?' past':''}${st.test?' test':''}${st.rest?' rest':''}">
-    <div class="sp-day"><b>${st.d0===st.d1?st.d0:`${st.d0}~${st.d1}`}</b><i>일차</i><i class="sp-wd">${wd}</i>${lateStart?`<em>${lateStepDates(st)}</em>`:''}</div>
+    <div class="sp-day">${isNow?'<span class="sp-nowtag">오늘</span>':''}<b>${st.d0===st.d1?st.d0:`${st.d0}~${st.d1}`}</b><i>일차</i><i class="sp-wd">${wd}</i>${lateStart?`<em>${lateStepDates(st)}</em>`:''}</div>
     <div class="sp-body">
       <div class="sp-name">${st.title}${kindChip?' '+kindChip:''}${isNow?'<span class="sp-badge">오늘</span>':''}</div>
       <div class="sp-new">${tag}</div>
@@ -9927,8 +9933,13 @@ function mbTopMake(enc){
   const i = document.getElementById('tpName'); if(i){ i.value = n; mbTopChk(); mbTopMlPick(mbTopDefaultMl(n)); }
 }
 function mbTopEat(id){ const t = mbTopLoad().find(x=>x.id===id); if(t) mbTopUse(encodeURIComponent(t.name)); }
-function mbNewLabel(st){ return st && st.add && !st.rest ? (st.test ? 'TEST' : 'NEW') : ''; }
-function mbNewBadge(st){ const l = mbNewLabel(st); return l ? `<span class="nbx ${l==='TEST'?'t':''}">${l}</span> ` : ''; }
+function mbNewLabel(st, day){
+  if(!st || !st.add || st.rest) return '';
+  if(day != null && day > st.d0 && st.d1 > st.d0) return '관찰 ' + (day - st.d0 + 1) + '/' + (st.d1 - st.d0 + 1);
+  return st.test ? 'TEST' : 'NEW';
+}
+function mbNewCls(l){ return l==='TEST' ? 't' : (l==='NEW' ? '' : 'ing'); }
+function mbNewBadge(st, day){ const l = mbNewLabel(st, day); return l ? `<span class="nbx ${mbNewCls(l)}">${l}</span> ` : ''; }
 function mbTodayChipsHtml(stage, day){
   try{
     const st = mbPlanOf(stage).find(x=>day>=x.d0 && day<=x.d1); if(!st || st.rest) return '';
@@ -9939,10 +9950,10 @@ function mbTodayChipsHtml(stage, day){
     const today = mbIsoToday();
     const chips = names.map(n=>{
       const e = encodeURIComponent(n), nf = MB_NOFREEZE_RE.test(n) || (n===st.add && !mbTopFreezable(st));
-      const bd = n===st.add && mbNewLabel(st) ? `<i class="nb ${st.test?'t':''}">${mbNewLabel(st)}</i>` : '';
+      const nl = mbNewLabel(st, day), bd = n===st.add && nl ? `<i class="nb ${mbNewCls(nl)}">${nl}</i>` : '';
       if(nf) return `<button type="button" class="tc nf" onclick="mbTopFeedOnly('${e}')">${mbTopEsc(n)}${bd}</button>`;
       const t = mbTopFindLive(n);
-      if(!t) return `<button type="button" class="tc new" onclick="mbTopMake('${e}')">${mbTopEsc(n)}<i class="nb ${n===st.add&&st.test?'t':''}">${n===st.add?mbNewLabel(st):'없음'}</i></button>`;
+      if(!t) return `<button type="button" class="tc new" onclick="mbTopMake('${e}')">${mbTopEsc(n)}<i class="nb ${n===st.add?mbNewCls(nl):''}">${n===st.add?nl:'없음'}</i></button>`;
       const used = (t.used||[]).indexOf(today) >= 0, i = mbTopInfo(t);
       return `<button type="button" class="tc ${used?'on':''} ${i.warn||i.late?'warn':''}" onclick="mbTopUse('${e}')">${used?'✓ ':''}${mbTopEsc(n)}${bd}<small>🧊${i.left}</small></button>`;
     }).join('');
@@ -9977,6 +9988,7 @@ function mbTopPick(id){ mbTopSel = mbTopSel === id ? null : id; mbTopRender(); }
 function mbTopFilterSet(k){ mbTopFilter = k; mbTopSel = null; mbTopRender(); }
 function mbTopChk(){
   const n = document.getElementById('tpName'), s = document.getElementById('tpSave'), u = document.getElementById('tpUnsaved'), d = document.getElementById('tpSaved'); if(!n) return;
+  try{ const pv = document.getElementById('tpPrev'); if(pv) pv.innerHTML = mbTopIcon(n.value.trim()); }catch(e){}
   const has = n.value.trim().length > 0; s.disabled = !has; u.classList.toggle('show', has); if(has) d.classList.remove('show');
 }
 function mbTopForm(){
@@ -10028,7 +10040,7 @@ function mbTopOpen(){
       <div class="tp-form" id="tpForm" hidden>
         <div class="tp-saved" id="tpSaved"></div>
         <div class="tp-unsaved" id="tpUnsaved">⚠️ 아직 저장 전! <u>‘만들었어요’</u>를 눌러야 담겨요</div>
-        <div class="tp-nr"><input id="tpName" placeholder="재료·소스 검색 (예: 쌀미음, 라구)" maxlength="20" autocomplete="off" oninput="mbTopChk();mbTopSuggest()"><button type="button" class="tp-cancel" id="tpCancel">접기</button></div><div class="tp-sugs" id="tpSugs"></div>
+        <div class="tp-nr"><span class="tp-prev" id="tpPrev"></span><input id="tpName" placeholder="재료·소스 검색 (예: 쌀미음, 라구)" maxlength="20" autocomplete="off" oninput="mbTopChk();mbTopSuggest()"><button type="button" class="tp-cancel" id="tpCancel">접기</button></div><div class="tp-sugs" id="tpSugs"></div>
         <details class="tp-more"><summary>자세히 설정 (크기)</summary><div class="tp-ml" id="tpMl"><span>크기</span><button type="button" data-ml="20" onclick="mbTopMlPick(20)">20ml</button><button type="button" data-ml="30" onclick="mbTopMlPick(30)">30ml</button><button type="button" data-ml="50" onclick="mbTopMlPick(50)">50ml</button><button type="button" data-ml="0" onclick="mbTopMlPick(0)">개·팩</button></div></details>
         <div class="tp-fr"><label>개수<input id="tpCnt" type="number" inputmode="numeric" min="1" max="60" value="12"></label><label>만든 날<input id="tpDate" type="date" value="${mbIsoToday()}"></label></div>
         <div class="tp-fr"><label>1회 사용량 (g·ml)<input id="tpUse" type="number" inputmode="numeric" min="5" max="300" placeholder="비우면 식단표 기준"></label></div>
