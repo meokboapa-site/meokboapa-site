@@ -4471,7 +4471,7 @@ function buildStartPage(container){
         <div class="sp-d">${weaningStart}부터 1일차로 세어드릴게요.</div></div>`;
     } else if(cur === null){
       today = `<div class="sp-today done"><div class="sp-t">${day}일차 — 5주 코스를 마쳤어요</div>
-        <div class="sp-d">아래 <b>그다음은</b>을 보시고, 중기로 넘어갈 준비를 하시면 됩니다.</div></div>`;
+        <div class="sp-d">아래 <b>그다음은</b> 항목을 보시고, 중기로 넘어갈 준비를 하시면 됩니다.</div></div>`;
     } else {
       const st = START_PLAN[cur];
       today = `<div class="sp-today"><div class="sp-k">이유식 ${day}일차 · ${cur+1}단계</div>
@@ -4525,10 +4525,6 @@ function buildStartPage(container){
       <a class="sp-blog" style="margin:8px 0 0;" href="${BLOG_POSTS.start.url}" target="_blank" rel="noopener">📝 언제 시작했는지, 숟가락 거부 없이 시작한 방법 — 블로그 글 <span>›</span></a></div>
 
     <div class="sp-set">
-      <label for="spStart">이유식 시작한 날</label>
-      <input type="date" id="spStart" value="${weaningStart||''}">
-      ${weaningStart?'<button type="button" id="spClear">지우기</button>':''}
-      <span class="sp-hint">넣어두시면 오늘이 며칠째인지, 오늘 뭘 먹일지 바로 보여드려요.</span>
       ${weaningStart && startWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${startWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루고 평일 오전에 시작하세요.</span>`:''}
       ${noRestHtml('spNoRest')}
     </div>
@@ -4944,7 +4940,7 @@ function buildMidPage(container){
     if(day < 1){
       today = `<div class="sp-today wait"><div class="sp-t">아직 중기 시작 전이에요</div><div class="sp-d">${midStart}부터 1일차로 세어드릴게요.</div></div>`;
     } else if(cur === null){
-      today = `<div class="sp-today done"><div class="sp-t">${day}일차 — 중기 8주를 마쳤어요</div><div class="sp-d">하루 3끼 후기로 넘어갈 준비를 해요. 아래 <b>그다음은</b>을 보세요.</div></div>`;
+      today = `<div class="sp-today done"><div class="sp-t">${day}일차 — 중기 8주를 마쳤어요</div><div class="sp-d">하루 3끼 후기로 넘어갈 준비를 해요. 아래 <b>그다음은</b> 항목을 보세요.</div></div>`;
     } else {
       const st = MID_PLAN[cur], m = midMealsOf(st);
       today = `<div class="sp-today"><div class="sp-k">중기 ${day}일차 · ${st.week}주차</div>
