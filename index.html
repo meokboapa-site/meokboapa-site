@@ -1053,6 +1053,9 @@
 .nbx{display:inline-block;font-size:10.5px;font-weight:900;border-radius:99px;padding:2px 8px;margin-right:4px;background:#B5542F;color:#fff;vertical-align:1px}.nbx.t{background:#C98A1B}
 .tc i.nb{font-style:normal;font-size:9.5px;font-weight:800;background:#B5542F;color:#fff;border-radius:999px;padding:1px 6px;margin-left:4px}.tc i.nb.t{background:#C98A1B}
 .fam-sh input,.fam-sh select,.fam-sh textarea,.tp-form input{font-size:16px!important}
+.startpage .sp-ml small.sp-meal{font-size:12.5px;font-weight:800;margin:0 2px 0 0;color:var(--ink-soft)}
+.startpage .sp-ratio,.startpage .sp-upchip,.startpage .mp-kind,.startpage .nbx,.startpage .sp-testtag,.startpage .sp-resttag{font-size:11.5px!important;font-weight:800!important;line-height:1.3!important;padding:3px 10px!important;border-radius:99px!important;vertical-align:middle!important}
+.startpage .sp-name .mp-kind{margin-left:4px}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -4362,7 +4365,7 @@ function mbStableRebuild(container, id, build){
   if(el2 && top!==null){ const d = el2.getBoundingClientRect().top - top; if(Math.abs(d)>1) window.scrollBy(0, d); }
 }
 function startAmountHtml(st){                // 목표량 + 배죽을 크게
-  return `<div class="sp-amt"><span class="sp-ml">${st.g}<small>g</small></span><span class="sp-ratio${st.ratioUp?' up':''}">${st.ratio}배죽${st.ratioUp?' 시작':''}</span></div>${startBaseHtml(st)}`;
+  return `<div class="sp-amt"><span class="sp-ml"><small class="sp-meal">한 끼</small> ${st.g}<small>g</small></span><span class="sp-ratio${st.ratioUp?' up':''}">${st.ratio}배죽${st.ratioUp?' 시작':''}</span></div>${startBaseHtml(st)}`;
 }
 /* 쌀미음 베이스 — 쌀가루 1포(보통 18g)를 배죽만큼의 물로 끓여 큐브로 얼려 두고, 끼니마다 필요한 양만 꺼내 씁니다. */
 const START_PACK_G = 18;
@@ -5068,9 +5071,10 @@ function midRowHtml(st, i, cur, day){
   const past = (cur !== null && i < cur) || (cur === null && day !== null && day > MID_LAST_DAY);
   const wd = st.d0===st.d1 ? midWeekdayOf(st.d0) : `${midWeekdayOf(st.d0)}~${midWeekdayOf(st.d1)}`;
   const m = midMealsOf(st);
-  const tag = st.rest ? `<span class="sp-resttag">쉬는 날</span> 새 재료 없음 — 먹어본 재료로만`
+  let tag = st.rest ? `<span class="sp-resttag">쉬는 날</span> 새 재료 없음 — 먹어본 재료로만`
     : st.test ? `<span class="sp-testtag">알레르기 테스트</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b> · 3일 동안 다른 새 재료 X`
     : `<span class="mp-kind k-${st.kind}">${MID_KIND[st.kind]}</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b>`;
+  let kindChip = ''; { const km = /<span class="mp-kind[^>]*>.*?<\/span> ?/.exec(tag); if(km){ kindChip = km[0].trim(); tag = tag.replace(km[0], ''); } }
   const flags = [
     st.gas ? `<span class="mp-flag">🌙 가스 유발 — 저녁 끼니엔 빼기</span>` : '',
     st.cap ? `<span class="mp-flag">10~15g 유지</span>` : ''
@@ -5078,9 +5082,9 @@ function midRowHtml(st, i, cur, day){
   return `<div class="sp-row${isNow?' now':''}${past?' past':''}${st.test?' test':''}${st.rest?' rest':''}">
     <div class="sp-day"><b>${st.d0===st.d1?st.d0:`${st.d0}~${st.d1}`}</b><i>일차</i><i class="sp-wd">${wd}</i>${midStart?`<em>${midStepDates(st)}</em>`:''}</div>
     <div class="sp-body">
-      <div class="sp-name">${st.title}${isNow?'<span class="sp-badge">오늘</span>':''}</div>
+      <div class="sp-name">${st.title}${kindChip?' '+kindChip:''}${isNow?'<span class="sp-badge">오늘</span>':''}</div>
       <div class="sp-new">${tag}</div>
-      <div class="sp-amt"><span class="sp-ml">${st.g}<small>g</small></span><span class="sp-ratio${st.ratioUp?' up':''}">${st.ratio}배죽${st.ratioUp?' ▲UP':''}</span>${st.gUp?'<span class="sp-upchip">▲UP 양 늘어요</span>':''}</div>
+      <div class="sp-amt"><span class="sp-ml"><small class="sp-meal">한 끼</small> ${st.g}<small>g</small></span><span class="sp-ratio${st.ratioUp?' up':''}">${st.ratio}배죽${st.ratioUp?' ▲UP':''}</span>${st.gUp?'<span class="sp-upchip">▲UP 양 늘어요</span>':''}</div>
       <div class="mp-meals"><div><b>오전</b>${midMealsOfDay(st.d0,true).am}</div><div><b>오후</b>${midMealsOfDay(st.d0,true).pm}</div></div>
       ${midMealsOfDay(st.d0).why?`<div class="mp-why">👍 ${midMealsOfDay(st.d0).why}</div>`:''}
       ${st.why?`<div class="sp-why">${st.why}</div>`:''}
@@ -5366,17 +5370,18 @@ function lateRowHtml(st, i, cur, day){
   const past = (cur !== null && i < cur) || (cur === null && day !== null && day > LATE_LAST_DAY);
   const wd = st.d0===st.d1 ? lateWeekdayOf(st.d0) : `${lateWeekdayOf(st.d0)}~${lateWeekdayOf(st.d1)}`;
   const m = lateMealsOf(st);
-  const tag = st.rest ? `<span class="sp-resttag">쉬는 날</span> 새 재료 없음 — 먹어본 재료로만`
+  let tag = st.rest ? `<span class="sp-resttag">쉬는 날</span> 새 재료 없음 — 먹어본 재료로만`
     : st.test ? `<span class="sp-testtag">알레르기 테스트</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b> · 3일 동안 다른 새 재료 X`
     : st.kind==='finger' ? `<span class="mp-kind k-fruit">자기주도</span> 새 재료 없음 · <b>새 질감</b>`
     : st.kind==='base' ? `<span class="mp-kind k-energy">밥 단계</span> <b>${st.add}</b> — 새 재료 없이 질감만 바꿔요`
     : `<span class="mp-kind k-${st.kind}">${LATE_KIND[st.kind]}</span> ${mbNewBadge(st)}새 재료 <b>${st.add}</b>`;
+  let kindChip = ''; { const km = /<span class="mp-kind[^>]*>.*?<\/span> ?/.exec(tag); if(km){ kindChip = km[0].trim(); tag = tag.replace(km[0], ''); } }
   return `<div class="sp-row${isNow?' now':''}${past?' past':''}${st.test?' test':''}${st.rest?' rest':''}">
     <div class="sp-day"><b>${st.d0===st.d1?st.d0:`${st.d0}~${st.d1}`}</b><i>일차</i><i class="sp-wd">${wd}</i>${lateStart?`<em>${lateStepDates(st)}</em>`:''}</div>
     <div class="sp-body">
-      <div class="sp-name">${st.title}${isNow?'<span class="sp-badge">오늘</span>':''}</div>
+      <div class="sp-name">${st.title}${kindChip?' '+kindChip:''}${isNow?'<span class="sp-badge">오늘</span>':''}</div>
       <div class="sp-new">${tag}</div>
-      <div class="sp-amt"><span class="sp-ml">${st.g}<small>g</small></span><span class="sp-ratio${st.ratioUp?' up':''}">${lateRatioLabel(st.ratio)}${st.ratioUp?' ▲UP':''}</span>${st.gUp?'<span class="sp-upchip">▲UP 양 늘어요</span>':''}</div>
+      <div class="sp-amt"><span class="sp-ml"><small class="sp-meal">한 끼</small> ${st.g}<small>g</small></span><span class="sp-ratio${st.ratioUp?' up':''}">${lateRatioLabel(st.ratio)}${st.ratioUp?' ▲UP':''}</span>${st.gUp?'<span class="sp-upchip">▲UP 양 늘어요</span>':''}</div>
       <div class="mp-meals"><div><b>아침</b>${lateMealsOfDay(st.d0,true).am}</div><div><b>점심</b>${lateMealsOfDay(st.d0,true).noon}</div><div><b>저녁</b>${lateMealsOfDay(st.d0,true).pm}</div>${st.d0>=4?'<div><b>반찬칸</b>원물스틱(애호박·브로콜리·당근)</div>':''}</div>
       ${lateMealsOfDay(st.d0).why?`<div class="mp-why">👍 ${lateMealsOfDay(st.d0).why}</div>`:''}
       ${st.why?`<div class="sp-why">${st.why}</div>`:''}
