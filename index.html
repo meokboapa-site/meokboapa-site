@@ -4960,9 +4960,9 @@ function curatedPlan(plan, o){
 function midDay(day){ return curatedPlan(MID_PLAN, {meals:2, tops:st=>st.tops})[day-1]; }
 function lateDay(day){ return curatedPlan(LATE_PLAN, {meals:3, tops:()=>3, before:MID_PLAN.filter(x=>x.add).map(x=>x.add)})[day-1]; }
 /* 끼니 한 줄 — '소고기미음 70 · 단호박 15 · 청경채 15 · 닭고기 15' (새 재료는 ★) */
-function mealLine(meal, baseName, base, top, html){
+function mealLine(meal, baseName, base, top, html, beef){
   const nb = (key, n) => meal.nw===key ? (html ? `<b class="mp-new">${n}★</b>` : `${n}★`) : n;
-  const parts = [`${baseName} ${base}`, `${nb('e', meal.e)} ${top}`, `${nb('v', meal.v)} ${top}`];
+  const parts = beef ? [`쌀미음 ${base-beef}`, `소고기 ${beef}`] : [`${baseName} ${base}`]; parts.push(`${nb('e', meal.e)} ${top}`, `${nb('v', meal.v)} ${top}`);
   if(meal.p) parts.push(`${nb('p', meal.p)} ${top}`);
   if(meal.extra) parts.push(html ? `<b class="mp-new">${meal.extra}★</b> 10~15` : `${meal.extra}★ 10~15`);
   return parts.join(' · ');
@@ -4973,7 +4973,7 @@ function midMealsOfDay(day, html){
   const st = MID_PLAN.find(x=>day>=x.d0 && day<=x.d1);
   const D = midDay(day), extraP = D.meals[0].p ? 1 : 0;
   const base = st.g - st.tops*MID_TOP_G;
-  const ln = (m) => mealLine(m, '소고기미음', base, MID_TOP_G, html);
+  const ln = (m) => mealLine(m, '소고기미음', base, MID_TOP_G, html, MID_TOP_G);
   return {base, am:ln(D.meals[0]), pm:ln(D.meals[1]), why:D.meals[0].why};
 }
 function midMealsOf(st){ return midMealsOfDay(st.d0); }
@@ -5083,23 +5083,23 @@ function buildMidPage(container){
     <div class="dbox tip"><span class="dbox-label">먹보 아빠네 1일 2식 모듈</span>
       매 끼니를 <b>칸 채우기</b>로 짜요. 메뉴를 고민할 필요가 없어져요.
       <div class="mp-module">
-        <div><b>BASE (고정)</b><span>소고기미음 — 쌀가루 + 소고기</span></div>
+        <div><b>BASE (고정)</b><span>쌀미음 + 소고기 토핑 15g — 토핑식이 아니면 같이 끓여 소고기미음으로 줘도 돼요</span></div>
         <div><b>에너지 15g</b><span>든든한 탄수화물 채소 — 감자 · 단호박 · 고구마 중 1</span></div>
         <div><b>채소 15g · 격일</b><span><em style="font-style:normal;font-weight:700;color:#B5542F">소화(VEG1)</em> 부드럽고 속 편한 — 애호박 · 청경채 · 양배추 · 무<br><em style="font-style:normal;font-weight:700;color:#B5542F">비타민(VEG2)</em> 색 진하고 영양 많은 — 브로콜리 · 오이 · 당근 · 시금치 · 비타민채소 · 표고버섯 · 양파</span></div>
         <div><b>고기·생선 15g</b><span>2주차부터 — 닭고기 · 가자미 · 두부</span></div>
         <div style="font-size:12px;color:#6B6558">★ 표의 새 재료는 3일 통과한 뒤부터 칸에 넣어요</div>
       </div>
       <ul class="sp-notes" style="margin-top:6px;">
-        <li>소고기미음 외 <b>토핑은 최소 2개</b>, 2주차부터 3개(에너지 · 채소 · 고기·생선)예요.</li>
+        <li>쌀미음·소고기 외 <b>토핑은 최소 2개</b>, 2주차부터 3개(에너지 · 채소 · 고기·생선)예요.</li>
         <li>아래 표에 <b>날마다 오전·오후 메뉴를 다 정해 뒀어요.</b> 새 재료(★)는 오전에만, 한 가지씩 3일.</li>
-        <li>소고기는 매 끼니 들어가니까 <b>쌀미음을 소고기미음으로</b> 바꿨어요. 끓이는 비율은 초기와 같아요.</li>
+        <li>소고기는 매 끼니 들어가니까 <b>쌀미음에 소고기 토핑 15g</b>을 기본으로 더해요. 토핑식이 아니라면 소고기를 같이 끓여 소고기미음으로 만들어도 돼요. 끓이는 비율은 초기와 같아요.</li>
         <li><b>쌀가루는 고운입자 → 중간입자</b>. 입자가 굵어진 만큼 7배죽부터 시작해요(권장 범위 8~6배죽, 아기가 잘 먹는 농도가 우선).</li>
       </ul></div>
 
     <div class="dbox"><span class="dbox-label">소고기미음 만들기</span>
       <b>쌀가루(중간입자) 1포 ${MID_PACK_G}g + 물 ${MID_PACK_G*7}ml(7배죽) + 소고기 ${b1.beef}g</b>으로 끓여요.
       6배죽은 물 <b>${MID_PACK_G*6}ml</b>, 5배죽은 <b>${MID_PACK_G*5}ml</b> — 물 = 쌀가루 × 배죽.
-      표에 적힌 <b>미음 g만큼 한 끼분씩</b> 나눠 얼리고, 토핑은 재료마다 15g씩 소분해요. 녹인 건 24시간 안에, 데우는 건 한 번만.
+      표에 적힌 <b>쌀미음 g만큼 한 끼분씩</b> 나눠 얼리고(소고기를 같이 끓였다면 쌀미음+소고기 합계만큼), 토핑은 재료마다 15g씩 소분해요. 녹인 건 24시간 안에, 데우는 건 한 번만.
       물 대신 <b>채수</b>도 괜찮아요 — 먹보 아빠네는 채수로 끓였어요.
       <span class="source-note" style="display:block;margin-top:4px;">소고기 양은 앱 계산 기준(한 끼 15g)이에요.</span>
       ${startBuyHtml({buy:[{key:"쌀",only:"중기용"},{key:"실사용템_식재료",only:"유기농 채수"},{key:"큐브_50ml"},{key:"큐브이동용 유리용기", fold:"큐브 옮겨 담는 유리용기"}]})}</div>
@@ -9802,6 +9802,7 @@ function mbTodayChipsHtml(stage, day){
   try{
     const st = mbPlanOf(stage).find(x=>day>=x.d0 && day<=x.d1); if(!st || st.rest) return '';
     const names = []; (st.parts||[]).forEach(p=>names.push(p[0]));
+    if(stage==='mid'){ names.push('쌀미음','소고기'); midDay(day).meals.forEach(m=>[m.e,m.v,m.p].forEach(n=>{ if(n && names.indexOf(n)<0) names.push(n); })); }
     if(st.add && !/^(쌀|쌀미음|미음|쌀가루)/.test(st.add) && names.indexOf(st.add) < 0) names.push(st.add);
     if(!names.length) return '';
     const today = mbIsoToday();
