@@ -1048,6 +1048,7 @@
 .tp-ml{display:flex;align-items:center;gap:6px;margin:4px 0 6px}.tp-ml span{font-size:12px;color:var(--ink-soft);margin-right:2px}.tp-ml button{font:inherit;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}.tp-ml button.on{background:#EEF3EF;border:1.5px solid #4B6B54;color:#34493B}
 .fam-sh.adding .tp-detail,.fam-sh.adding .tp-lifenote{display:none!important}
 .tp-use{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:#fff}.tp-use input{width:54px;font:inherit;font-size:13px;border:0;border-bottom:1px solid var(--line);text-align:center;background:transparent;padding:2px 0}
+.tp-auto{font-size:11.5px;color:var(--ink-soft);margin-top:8px}.tp-auto.on{color:#34493B;font-weight:800}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -9852,7 +9853,12 @@ function mbTopQuick(btn, enc){
   btn.parentNode.innerHTML = '✓ 보관실에 담았어요'; showShareToast(name + ' 을(를) 보관실에 담았어요');
 }
 function mbTopClose(){ const s = document.getElementById('topSheet'); if(s) s.remove(); try{ mbTopChipsRefresh(); }catch(e){} }
-function mbTopSet(id, fn){ const a = mbTopLoad(), t = a.find(x=>x.id === id); if(!t) return; fn(t, a); mbTopSave(a); mbTopRender(); }
+let mbTopJustSaved = false, mbTopSavedTimer = null;
+function mbTopSet(id, fn){
+  const a = mbTopLoad(), t = a.find(x=>x.id === id); if(!t) return; fn(t, a); mbTopSave(a);
+  mbTopJustSaved = true; mbTopRender(); try{ mbTopChipsRefresh(); }catch(e){}
+  clearTimeout(mbTopSavedTimer); mbTopSavedTimer = setTimeout(()=>{ mbTopJustSaved = false; if(document.getElementById('topSheet')) mbTopRender(); }, 2200);
+}
 function mbDogamName(nm){
   if(dgFind(nm)) return nm;
   const all = DOGAM_SECTIONS.flatMap(x=>x.items).map(x=>x[0]);
@@ -9953,8 +9959,10 @@ function mbTopForm(){
   if(!mbTopAdd(name, cnt, d.value, 1, mbTopMlSel, parseInt((document.getElementById('tpUse')||{}).value, 10) || 0)){ showShareToast('재료 이름과 개수를 적어주세요'); return; }
   const a = mbTopLoad(); mbTopFresh = a[a.length-1].id; mbTopFilter = 'all'; mbTopSel = null;
   n.value = ''; mbTopChk();
-  const sv = document.getElementById('tpSaved'); sv.textContent = '✓ ' + name + ' ' + Math.min(60, cnt) + '개 저장됐어요! 위 목록에 NEW로 표시돼요'; sv.classList.add('show');
-  mbTopRender(); const b = document.getElementById('topBody'); if(b) b.scrollTop = 0;
+  const sh = document.querySelector('#topSheet .fam-sh'); if(sh) sh.classList.remove('adding');
+  const fm = document.getElementById('tpForm'), ab = document.getElementById('tpAddBtn'); if(fm) fm.hidden = true; if(ab) ab.hidden = false;
+  showShareToast('✓ ' + name + ' ' + Math.min(60, cnt) + '개 보관실에 담았어요');
+  mbTopRender(); const b = document.getElementById('topBody'); if(b) b.scrollTop = 0; try{ mbTopChipsRefresh(); }catch(e){}
   setTimeout(()=>{ mbTopFresh = null; }, 2000);
 }
 function mbTopRender(){
@@ -9977,7 +9985,8 @@ function mbTopRender(){
   if(!t){ dt.hidden = true; dt.innerHTML = ''; return; }
   const i = mbTopInfo(t); dt.hidden = false;
   dt.innerHTML = `<div class="tp-dt">${mbTopIcon(t.name)}<div><b>${mbTopEsc(t.name)}</b><div class="tp-ds">남은 ${i.left}개 / ${t.made}개 · ${t.ml ? t.ml + 'ml 큐브' : '개·팩 단위'} · 한 번에 ${mbTopPerNow(t)}개${t.ml > 0 ? (t.useG ? '(내가 정한 ' + t.useG + 'g 기준)' : (mbTopGramNow(t.name) ? '(오늘 식단표 ' + mbTopGramNow(t.name) + 'g 기준)' : '')) : ''} · ${t.date.slice(5).replace('-','/')} 만듦 · ${i.exp.slice(5).replace('-','/')}까지</div></div></div>
-    <div class="tp-b"><button type="button" class="tp-eat" onclick="mbTopEat('${t.id}')">🍽 오늘 썼어요 (차감 · 도감 기록)</button><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><button type="button" onclick="mbTopMl('${t.id}')">크기 ${t.ml ? t.ml + 'ml' : '개·팩'} ↻</button>${t.ml > 0 ? `<label class="tp-use">1회 <input type="number" inputmode="numeric" min="5" max="300" value="${t.useG||''}" placeholder="${mbTopGramNow(t.name)||'자동'}" onchange="mbTopUseG('${t.id}',this.value)">g</label>` : `<button type="button" onclick="mbTopPer('${t.id}')">한 번에 ${t.per||1}개 ↻</button>`}<button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div>`;
+    <div class="tp-b"><button type="button" class="tp-eat" onclick="mbTopEat('${t.id}')">🍽 오늘 썼어요 (차감 · 도감 기록)</button><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><button type="button" onclick="mbTopMl('${t.id}')">크기 ${t.ml ? t.ml + 'ml' : '개·팩'} ↻</button>${t.ml > 0 ? `<label class="tp-use">1회 <input type="number" inputmode="numeric" min="5" max="300" value="${t.useG||''}" placeholder="${mbTopGramNow(t.name)||'자동'}" onchange="mbTopUseG('${t.id}',this.value)">g</label>` : `<button type="button" onclick="mbTopPer('${t.id}')">한 번에 ${t.per||1}개 ↻</button>`}<button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div>
+    <div class="tp-auto ${mbTopJustSaved ? 'on' : ''}">${mbTopJustSaved ? '✓ 저장됐어요' : '바뀐 내용은 바로 자동 저장돼요'}</div>`;
 }
 function mbTopOpen(){
   mbTopClose(); mbTopSel = null; mbTopFilter = 'all'; try{ gtag('event','topping_open'); }catch(e){}
