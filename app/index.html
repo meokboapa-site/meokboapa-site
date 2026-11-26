@@ -1043,6 +1043,14 @@
 .home-grid .ts-main small,.home-grid .ts-shop small,.home-grid .fam-btn small{font-size:11.5px;font-weight:700;opacity:.8;display:block}
 .home-grid .ts-main b,.home-grid .ts-shop b,.home-grid .fam-btn b{font-size:15px;font-weight:800;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .home-grid .ts-sub{font-size:11.5px;font-weight:600;color:var(--ink-soft)}.home-grid .ts-sub.warn{color:#B5542F;font-weight:700}
+
+.tp-grid{grid-template-columns:repeat(4,1fr)!important;gap:6px!important}
+.tp-tile{padding:6px 2px 7px!important;border-width:1px!important}
+.tp-tile .tp-ic,.tp-tile .tp-ic .ing-thumb{width:30px!important;height:30px!important}
+.tp-tn{font-size:11.5px!important}.tp-tc{font-size:16px!important;margin:1px 0 3px!important}.tp-tc small{font-size:10px!important}
+.tp-tile .tp-bar{height:3px!important;width:64%;margin:0 auto}.tp-td{font-size:10px!important;margin-top:3px!important}
+.tp-sugs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}.tp-sugs button{font:inherit;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:5px;padding:4px 10px 4px 5px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.tp-sugs img{width:22px;height:22px;object-fit:contain}.tp-sugs i{font-style:normal;width:22px;text-align:center}.tp-nohit{color:var(--ink-soft);font-size:11.5px}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -3515,7 +3523,6 @@ function renderProfileBar(editing){
 function saveProfile(draft){
   const birthday = document.getElementById('pfBirthday').value;
   const start = document.getElementById('pfStart').value;
-  if(!birthday && !start){ alert('생일이나 이유식 시작한 날 중 하나는 넣어주세요.'); return; }
   babyProfile = birthday ? { birthday } : null;
   try {
     if(babyProfile){ localStorage.setItem('babyProfile', JSON.stringify(babyProfile)); sessionStorage.setItem('babyProfile', JSON.stringify(babyProfile)); }
@@ -4123,7 +4130,7 @@ function renderStageBody(){
   body.innerHTML=`
     <div class="subnav"><div class="subtabs" id="subtabs"></div></div>
     <div class="stagebody">
-      ${(feedRhythmHtml(currentStage)+ironDailyHtml(currentStage)) ? `<details class="sp-guide"><summary>🕙 ${currentStage} 하루 일정 · 철분 기준</summary>${feedRhythmHtml(currentStage)}${ironDailyHtml(currentStage)}</details>` : ''}
+      ${feedRhythmHtml(currentStage)}${ironDailyHtml(currentStage) ? `<details class="sp-guide"><summary>🩸 ${currentStage} 철분 기준</summary>${ironDailyHtml(currentStage)}</details>` : ''}
       <div class="subpage" id="sub-재료"></div>
       <div class="subpage" id="sub-레시피"></div>
       <div class="subpage" id="sub-시작"></div>
@@ -9855,7 +9862,7 @@ function famOpenSheet(){
 }
 
 
-/* ===== 토핑 보관실 — 큐브를 몇 개 만들었고, 하루 몇 개 쓰고, 몇 개 남았는지, 소비기한(2주) 임박까지 ===== */
+/* ===== 보관실 — 큐브를 몇 개 만들었고, 하루 몇 개 쓰고, 몇 개 남았는지, 소비기한(2주) 임박까지 ===== */
 const MB_TOP_LIFE = 14, MB_TOP_WARN = 3;
 function mbTopLoad(){ try{ const a = JSON.parse(localStorage.getItem('mb_tops')||'[]'); return Array.isArray(a) ? a : []; }catch(e){ return []; } }
 function mbTopSave(a){ try{ localStorage.setItem('mb_tops', JSON.stringify(a)); }catch(e){} }
@@ -9876,7 +9883,32 @@ function mbTopAdd(name, made, date, per){
 /* 얼려 쓰는 토핑인지 — 밀가루·땅콩버터·두부·달걀 같은 알레르기 테스트 재료와 물이 빠지는 재료는 그날 소량만 */
 const MB_NOFREEZE_RE = /밀가루|땅콩|두부|대두|콩|달걀|계란|우유|치즈|요거트|요구르트|오트밀|새우|생선|메밀|견과|참깨|들깨|빵|국수|파스타|면$|바나나|오이/;
 function mbTopFreezable(st){ return !!(st && st.add && !st.rest && !(st.noFreeze || (st.make && (st.make.noFreeze || st.make.cube === 0))) && !MB_NOFREEZE_RE.test(st.add) && !/^(쌀|쌀미음|미음|쌀가루)/.test(st.add)); }
-function mbTopIcon(name){ try{ const h = dgThumb(name); return h ? '<span class="tp-ic">' + h + '</span>' : ''; }catch(e){ return ''; } }
+function mbNorm(x){ return String(x||'').replace(/\s*\(.*?\)/g,'').replace(/[\s·\/]+/g,'').toLowerCase(); }
+let _mbCat = null;
+function mbTopCatalog(){
+  if(_mbCat) return _mbCat;
+  const out = [], seen = new Set(), add = (name, img)=>{ const k = mbNorm(name); if(!k || seen.has(k)) return; seen.add(k); out.push({name, img}); };
+  add('쌀미음','/dogam/i/041.webp'); add('오트밀미음','/dogam/i/042.webp');
+  try{ DOGAM_SECTIONS.forEach(sec=>sec.items.forEach(it=>add(it[0], '/dogam/i/'+it[2]+'.webp'))); }catch(e){}
+  try{ MENUS.forEach(m=>add(m.name.replace(/\s*\(.*?\)/g,'').trim(), MENU_IMG[m.id] ? '/dogam/m/'+MENU_IMG[m.id]+'.webp' : '')); }catch(e){}
+  _mbCat = out; return out;
+}
+function mbTopImgUrl(name){
+  const it = dgFind(name); if(it) return '/dogam/i/'+it[2]+'.webp';
+  const n = mbNorm(name); if(!n) return '';
+  const cat = mbTopCatalog();
+  const c = cat.find(x=>mbNorm(x.name)===n) || cat.find(x=>n.length>=2 && (mbNorm(x.name).indexOf(n)===0 || n.indexOf(mbNorm(x.name))===0));
+  return c ? c.img : '';
+}
+function mbTopIcon(name){ try{ const u = mbTopImgUrl(name); return u ? '<span class="tp-ic"><img class="ing-thumb" src="'+u+'" alt="" loading="lazy" decoding="async" draggable="false"></span>' : ''; }catch(e){ return ''; } }
+function mbTopSuggest(){
+  const inp = document.getElementById('tpName'), box = document.getElementById('tpSugs'); if(!inp || !box) return;
+  const q = mbNorm(inp.value); if(!q){ box.innerHTML = ''; return; }
+  const sc = x=>{ const n = mbNorm(x.name); if(n.indexOf(q)===0) return 0; if(n.indexOf(q)>0) return 1; let p = 0; for(const ch of q){ const k = n.indexOf(ch, p); if(k<0){ p = -1; break; } p = k + 1; } if(p>=0 && q.length>=2) return 2; if(q.length>=3){ const hit = [...q].filter(ch=>n.indexOf(ch)>=0).length; if(hit/q.length >= .6) return 3; } return 9; };
+  const list = mbTopCatalog().map(x=>({x, s: sc(x)})).filter(o=>o.s<9).sort((a,b)=>a.s-b.s).slice(0,6);
+  box.innerHTML = list.map(o=>`<button type="button" onclick="mbTopSugPick('${encodeURIComponent(o.x.name)}')">${o.x.img ? '<img src="'+o.x.img+'" alt="" draggable="false">' : '<i>🧊</i>'}${mbTopEsc(o.x.name)}</button>`).join('') + (list.length ? '' : '<small class="tp-nohit">목록에 없어도 적은 이름 그대로 담겨요</small>');
+}
+function mbTopSugPick(enc){ const inp = document.getElementById('tpName'); if(!inp) return; inp.value = decodeURIComponent(enc); document.getElementById('tpSugs').innerHTML = ''; mbTopChk(); }
 function mbTopCount(name){
   try{
     const live = mbTopLoad().map(t=>({t, i: mbTopInfo(t)})).filter(x=>!x.i.done && x.t.name && (name === x.t.name || (x.t.name.length >= 2 && name.indexOf(x.t.name) === 0)));
@@ -9888,7 +9920,7 @@ function mbTopCardBadge(name){ const c = mbTopCount(name); return c ? `<span cla
 function mbTopBtnHtml(){
   const a = mbTopLoad().map(t=>({t, i: mbTopInfo(t)})).filter(x=>!x.i.done);
   const w = a.filter(x=>x.i.warn || x.i.late).length;
-  return `<button type="button" class="fam-btn tp-open" onclick="mbTopOpen()"><small>토핑 보관실</small><b>🧊 ${a.length ? a.length + '종' : '기록하기'} ›</b>${w ? `<span class="ts-sub warn">⏰ 기한 임박 ${w}</span>` : (a.length ? '<span class="ts-sub">재고·소비기한</span>' : '<span class="ts-sub">만든 큐브 담기</span>')}</button>`;
+  return `<button type="button" class="fam-btn tp-open" onclick="mbTopOpen()"><small>보관실</small><b>🧊 ${a.length ? a.length + '종' : '기록하기'} ›</b>${w ? `<span class="ts-sub warn">⏰ 기한 임박 ${w}</span>` : (a.length ? '<span class="ts-sub">토핑·반찬·소스</span>' : '<span class="ts-sub">만든 큐브 담기</span>')}</button>`;
 }
 function mbTopShopHtml(stage, day){
   const plan = mbPlanOf(stage), names = [];
@@ -9910,14 +9942,14 @@ function mbTopShopHtml(stage, day){
     ${warn.map(x=>`<div class="mk-note">⏰ <b>${mbTopEsc(x.t.name)}</b> ${x.i.late ? '소비기한이 지났어요' : '소비기한 D-' + x.i.dleft} · 남은 ${x.i.left}개</div>`).join('')}
     ${owned.map(o=>`<div class="mk-row"><span class="tp-nm">${mbTopIcon(o.n.name)}<span>${mbTopEsc(o.n.name)} <small>${o.n.d0}일차 새 재료</small></span></span><b>🧊 ${o.left}개 보유 · 새로 안 만들어도 돼요</b></div>`).join('')}
     ${todo.map(n=>`<div class="mk-row tp-new"><span class="tp-nm">${mbTopIcon(n.name)}<span>${mbTopEsc(n.name)} <small>${n.d0}일차 새 재료</small></span></span><span class="tp-q"><input type="number" inputmode="numeric" min="1" max="60" value="12" aria-label="만든 큐브 개수">개 <button type="button" onclick="mbTopQuick(this,'${encodeURIComponent(n.name)}')">만들었어요</button></span></div>`).join('')}
-    ${liveAll.length ? '<div class="mk-row" style="display:block"><span>지금 보관실에 있는 토핑 ' + liveAll.length + '종</span><div class="tp-have">' + liveAll.map(x=>`<span class="${x.i.warn || x.i.late ? 'warn' : ''}">${mbTopIcon(x.t.name)}${mbTopEsc(x.t.name)} 🧊${x.i.left}</span>`).join('') + '</div></div>' : ''}
+    ${liveAll.length ? '<div class="mk-row" style="display:block"><span>지금 보관실에 있는 것 ' + liveAll.length + '종</span><div class="tp-have">' + liveAll.map(x=>`<span class="${x.i.warn || x.i.late ? 'warn' : ''}">${mbTopIcon(x.t.name)}${mbTopEsc(x.t.name)} 🧊${x.i.left}</span>`).join('') + '</div></div>' : ''}
     ${skip.length ? '<div class="mk-note">🥄 <b>' + skip.map(mbTopEsc).join('·') + '</b>은 얼리지 않아요 — 테스트하는 날 그날 먹을 만큼만 준비해요.</div>' : ''}
     ${todo.length ? '<small>새 재료는 미리 토핑으로 만들어 큐브로 얼려두면 2주 정도 쓸 수 있어요. 만든 개수를 적어두면 보관실에서 남은 개수와 소비기한을 챙겨드려요. ' + cube + '</small>' : ''}</div>`;
 }
 function mbTopQuick(btn, enc){
   const inp = btn.parentNode.querySelector('input'), name = decodeURIComponent(enc);
   if(!mbTopAdd(name, inp.value)){ showShareToast('개수를 확인해 주세요'); return; }
-  btn.parentNode.innerHTML = '✓ 보관실에 담았어요'; showShareToast(name + ' 토핑을 보관실에 담았어요');
+  btn.parentNode.innerHTML = '✓ 보관실에 담았어요'; showShareToast(name + ' 을(를) 보관실에 담았어요');
 }
 function mbTopClose(){ const s = document.getElementById('topSheet'); if(s) s.remove(); try{ mbTopChipsRefresh(); }catch(e){} }
 function mbTopSet(id, fn){ const a = mbTopLoad(), t = a.find(x=>x.id === id); if(!t) return; fn(t, a); mbTopSave(a); mbTopRender(); }
@@ -10027,7 +10059,7 @@ function mbTopRender(){
   const all = mbTopLoad().map(t=>({t, i: mbTopInfo(t)}));
   const live = all.filter(x=>!x.i.done), done = all.length - live.length;
   const warn = live.filter(x=>x.i.warn || x.i.late).length, low = live.filter(x=>x.i.left <= 2).length;
-  document.getElementById('topSum').innerHTML = all.length ? `보유 <b>${live.length}종</b> · 큐브 <b>${live.reduce((s,x)=>s + x.i.left, 0)}개</b> 남음` : '아직 담아둔 토핑이 없어요. 아래에서 만든 개수를 적어보세요.';
+  document.getElementById('topSum').innerHTML = all.length ? `보유 <b>${live.length}종</b> · 큐브 <b>${live.reduce((s,x)=>s + x.i.left, 0)}개</b> 남음` : '아직 담아둔 게 없어요. 토핑·반찬·소스를 만든 개수와 함께 담아보세요.';
   const cs = [['all','전체 ' + live.length], ['warn','⏰ 기한 임박 ' + warn], ['low','🔻 거의 소진 ' + low]]; if(done) cs.push(['done','✔ 다 씀 ' + done]);
   if(!cs.some(c=>c[0] === mbTopFilter)) mbTopFilter = 'all';
   document.getElementById('topChips').innerHTML = all.length ? cs.map(([k,v])=>`<button type="button" class="${mbTopFilter === k ? 'on' : ''}" onclick="mbTopFilterSet('${k}')">${v}</button>`).join('') : '';
@@ -10048,16 +10080,16 @@ function mbTopOpen(){
   mbTopClose(); mbTopSel = null; mbTopFilter = 'all'; try{ gtag('event','topping_open'); }catch(e){}
   const names = []; [START_PLAN, MID_PLAN, LATE_PLAN].forEach(p=>p.forEach(st=>{ if(mbTopFreezable(st) && names.indexOf(st.add) < 0) names.push(st.add); }));
   const bg = document.createElement('div'); bg.id = 'topSheet'; bg.className = 'fam-bg';
-  bg.innerHTML = `<div class="fam-sh" role="dialog" aria-label="토핑 보관실">
-    <div class="tp-hd"><b>🧊 토핑 보관실</b><button type="button" id="tpX" aria-label="닫기">✕</button></div>
+  bg.innerHTML = `<div class="fam-sh" role="dialog" aria-label="보관실">
+    <div class="tp-hd"><b>🧊 보관실</b><button type="button" id="tpX" aria-label="닫기">✕</button></div>
     <div class="tp-sumln" id="topSum"></div><div class="tp-chips" id="topChips"></div>
     <div class="tp-body" id="topBody"></div><div class="tp-detail" id="topDetail" hidden></div>
     <div class="tp-foot">
-      <button type="button" class="tp-addbtn" id="tpAddBtn">＋ 새 토핑 담기</button>
+      <button type="button" class="tp-addbtn" id="tpAddBtn">＋ 새로 담기</button>
       <div class="tp-form" id="tpForm" hidden>
         <div class="tp-saved" id="tpSaved"></div>
         <div class="tp-unsaved" id="tpUnsaved">⚠️ 아직 저장 전! <u>‘만들었어요’</u>를 눌러야 담겨요</div>
-        <div class="tp-nr"><input id="tpName" list="tpList" placeholder="재료 (예: 애호박)" maxlength="20" autocomplete="off" oninput="mbTopChk()"><button type="button" class="tp-cancel" id="tpCancel">접기</button></div><datalist id="tpList">${names.map(n=>`<option value="${mbTopEsc(n)}">`).join('')}</datalist>
+        <div class="tp-nr"><input id="tpName" placeholder="재료·소스 검색 (예: 쌀미음, 라구)" maxlength="20" autocomplete="off" oninput="mbTopChk();mbTopSuggest()"><button type="button" class="tp-cancel" id="tpCancel">접기</button></div><div class="tp-sugs" id="tpSugs"></div>
         <div class="tp-fr"><label>개수<input id="tpCnt" type="number" inputmode="numeric" min="1" max="60" value="12"></label><label>만든 날<input id="tpDate" type="date" value="${mbIsoToday()}"></label></div>
         <button type="button" class="tp-save" id="tpSave" disabled onclick="mbTopForm()">🧊 만들었어요 (눌러야 저장돼요)</button>
       </div></div></div>`;
