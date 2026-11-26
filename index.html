@@ -169,6 +169,39 @@
   .mo-g b{display:block;font-size:13.5px;margin-bottom:3px}.mo-g span{font-size:15px;line-height:1.55}
 
   .tp-nm{display:flex;align-items:center;gap:8px;min-width:0}.tp-ic{flex:none;width:36px;height:36px;display:block}.tp-ic .ing-thumb{width:36px;height:36px}
+
+  #topSheet .fam-sh{padding:0;display:flex;flex-direction:column;height:min(88vh,720px);max-height:88vh;overflow:hidden}
+  .tp-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 6px}.tp-hd b{font-size:18px}
+  .tp-hd button{font:inherit;font-size:20px;background:none;border:0;color:var(--ink-soft);cursor:pointer;padding:4px 8px}
+  .tp-sumln{padding:0 18px 8px;font-size:13px;color:var(--ink-soft)}.tp-sumln b{color:var(--ink)}
+  .tp-chips{display:flex;gap:6px;padding:0 18px 10px;overflow-x:auto;flex:none}.tp-chips:empty{display:none}
+  .tp-chips button{font:inherit;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);white-space:nowrap;cursor:pointer}
+  .tp-chips button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .tp-body{flex:1;min-height:0;overflow-y:auto;padding:0 14px 12px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .tp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .tp-tile{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:8px 6px;text-align:center;cursor:pointer;position:relative;font:inherit;color:inherit;min-width:0}
+  .tp-tile .tp-ic{display:block;width:40px;height:40px;margin:0 auto 2px}.tp-tile .tp-ic .ing-thumb{width:40px;height:40px}
+  .tp-tn{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tp-tc{font-size:20px;font-weight:800;line-height:1.1;margin:2px 0 4px}.tp-tc small{font-size:11px;font-weight:600;color:var(--ink-soft)}
+  .tp-bar{height:5px;border-radius:3px;background:var(--line);overflow:hidden}.tp-bar i{display:block;height:100%;background:#4B6B54}
+  .tp-td{font-size:11px;color:var(--ink-soft);margin-top:4px}
+  .tp-tile.warn{border-color:#B5542F;background:#FBEFE8}.tp-tile.warn .tp-bar i{background:#B5542F}.tp-tile.warn .tp-td{color:#B5542F;font-weight:700}
+  .tp-tile.low .tp-tc{color:#B5542F}.tp-tile.sel{outline:3px solid #4B6B54;outline-offset:-1px}
+  .tp-tile.flash{animation:tpfl 1.8s ease 1}@keyframes tpfl{0%,60%{box-shadow:0 0 0 4px rgba(75,107,84,.45)}100%{box-shadow:none}}
+  .tp-nbadge{position:absolute;top:-6px;right:-4px;background:#4B6B54;color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:999px;z-index:1}
+  .tp-detail{border-top:1px solid var(--line);background:var(--panel);padding:10px 16px}
+  .tp-dt{display:flex;align-items:center;gap:10px;margin-bottom:6px}.tp-dt .tp-ic{width:34px;height:34px}.tp-dt .tp-ic .ing-thumb{width:34px;height:34px}.tp-dt b{font-size:15px}.tp-ds{font-size:12.5px;color:var(--ink-soft)}
+  .tp-foot{border-top:1px solid var(--line);background:var(--bg);padding:10px 14px calc(12px + env(safe-area-inset-bottom));flex:none}
+  .tp-addbtn{width:100%;font:inherit;font-weight:800;font-size:15px;padding:12px;border-radius:14px;border:1.5px dashed #4B6B54;background:transparent;color:#4B6B54;cursor:pointer}
+  .tp-unsaved{display:none;background:#FFF3C9;border:1.5px solid #E0B83A;color:#5a4500;border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;margin-bottom:8px;animation:tppl 1.2s ease infinite}.tp-unsaved.show{display:block}
+  @keyframes tppl{50%{opacity:.65}}
+  .tp-saved{display:none;background:#E3F1E6;border:1.5px solid #4B6B54;color:#244a2e;border-radius:10px;padding:8px 10px;font-size:13px;font-weight:800;margin-bottom:8px}.tp-saved.show{display:block}
+  .tp-fr{display:flex;gap:8px;margin:8px 0}.tp-fr label{flex:1;min-width:0;font-size:12px;color:var(--ink-soft)}.tp-fr input{margin-top:3px}
+  .tp-save{width:100%;font:inherit;font-weight:800;font-size:16px;padding:13px;border-radius:14px;border:0;background:#4B6B54;color:#fff;cursor:pointer}.tp-save:disabled{background:var(--line);color:var(--ink-soft);cursor:default}
+  .tp-cancel{background:none;border:0;font:inherit;color:var(--ink-soft);font-size:13px;white-space:nowrap;cursor:pointer;padding:0 6px}
+  .tp-nr{display:flex;gap:4px;align-items:center}.tp-nr input{flex:1;min-width:0}
+  .tp-foot input{font:inherit;font-size:15px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);width:100%;box-sizing:border-box}
+  .tp-fr{margin:6px 0}.tp-unsaved,.tp-saved{padding:6px 10px!important;margin-bottom:6px!important}.tp-save{padding:11px!important}
   .tp-sum{font-size:14px;margin:0 0 8px}
   .tp-empty{font-size:14px;color:var(--ink-soft);margin:6px 0 10px}
   .tp-i{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:8px}
@@ -9666,11 +9699,13 @@ function mbTopShopHtml(stage, day){
   });
   const have = mbTopLoad().filter(t=>!mbTopInfo(t).done).map(t=>t.name);
   const todo = names.filter(n=>!have.some(h=>h.indexOf(n.name) >= 0 || n.name.indexOf(h) >= 0));
+  const owned = names.filter(n=>!todo.includes(n)).map(n=>{ const t = mbTopLoad().map(x=>({x, i: mbTopInfo(x)})).find(o=>!o.i.done && (o.x.name.indexOf(n.name) >= 0 || n.name.indexOf(o.x.name) >= 0)); return t ? {n, left: t.i.left} : null; }).filter(Boolean);
   const warn = mbTopLoad().map(t=>({t, i: mbTopInfo(t)})).filter(x=>!x.i.done && (x.i.warn || x.i.late));
   let cube = ''; try{ const l = getCoupangLinks('큐브_20ml').find(x=>x.url); if(l) cube = `<a class="tp-cube" href="${l.url}" target="_blank" rel="noopener sponsored">20ml 12구 큐브 보러가기 ›</a>`; }catch(e){}
-  if(!todo.length && !warn.length && !skip.length) return '';
+  if(!todo.length && !warn.length && !skip.length && !owned.length) return '';
   return `<div class="shop-make tp-shop"><b>🧊 이번 주 토핑</b>
     ${warn.map(x=>`<div class="mk-note">⏰ <b>${mbTopEsc(x.t.name)}</b> ${x.i.late ? '소비기한이 지났어요' : '소비기한 D-' + x.i.dleft} · 남은 ${x.i.left}개</div>`).join('')}
+    ${owned.map(o=>`<div class="mk-row"><span class="tp-nm">${mbTopIcon(o.n.name)}<span>${mbTopEsc(o.n.name)} <small>${o.n.d0}일차 새 재료</small></span></span><b>🧊 ${o.left}개 보유 · 새로 안 만들어도 돼요</b></div>`).join('')}
     ${todo.map(n=>`<div class="mk-row tp-new"><span class="tp-nm">${mbTopIcon(n.name)}<span>${mbTopEsc(n.name)} <small>${n.d0}일차 새 재료</small></span></span><span class="tp-q"><input type="number" inputmode="numeric" min="1" max="60" value="12" aria-label="만든 큐브 개수">개 <button type="button" onclick="mbTopQuick(this,'${encodeURIComponent(n.name)}')">냉동했어요</button></span></div>`).join('')}
     ${skip.length ? '<div class="mk-note">🥄 <b>' + skip.map(mbTopEsc).join('·') + '</b>은 얼리지 않아요 — 테스트하는 날 그날 먹을 만큼만 준비해요.</div>' : ''}
     ${todo.length ? '<small>새 재료는 미리 토핑으로 만들어 큐브로 얼려두면 2주 정도 쓸 수 있어요. 만든 개수를 적어두면 냉동실에서 남은 개수와 소비기한을 챙겨드려요. ' + cube + '</small>' : ''}</div>`;
@@ -9685,40 +9720,67 @@ function mbTopSet(id, fn){ const a = mbTopLoad(), t = a.find(x=>x.id === id); if
 function mbTopAdj(id, d){ mbTopSet(id, t=>{ t.adj = (t.adj||0) + d; }); }
 function mbTopPer(id){ mbTopSet(id, t=>{ t.per = ((t.per||1) % 3) + 1; }); }
 function mbTopDel(id){ mbTopSet(id, (t,a)=>{ a.splice(a.indexOf(t), 1); }); }
+let mbTopFilter = 'all', mbTopSel = null, mbTopFresh = null;
+function mbTopPick(id){ mbTopSel = mbTopSel === id ? null : id; mbTopRender(); }
+function mbTopFilterSet(k){ mbTopFilter = k; mbTopSel = null; mbTopRender(); }
+function mbTopChk(){
+  const n = document.getElementById('tpName'), s = document.getElementById('tpSave'), u = document.getElementById('tpUnsaved'), d = document.getElementById('tpSaved'); if(!n) return;
+  const has = n.value.trim().length > 0; s.disabled = !has; u.classList.toggle('show', has); if(has) d.classList.remove('show');
+}
 function mbTopForm(){
   const n = document.getElementById('tpName'), c = document.getElementById('tpCnt'), d = document.getElementById('tpDate');
-  if(!mbTopAdd(n.value, c.value, d.value)){ showShareToast('재료 이름과 개수를 적어주세요'); return; }
-  n.value = ''; mbTopRender();
+  const name = n.value.trim(), cnt = parseInt(c.value,10) || 0;
+  if(!mbTopAdd(name, cnt, d.value)){ showShareToast('재료 이름과 개수를 적어주세요'); return; }
+  const a = mbTopLoad(); mbTopFresh = a[a.length-1].id; mbTopFilter = 'all'; mbTopSel = null;
+  n.value = ''; mbTopChk();
+  const sv = document.getElementById('tpSaved'); sv.textContent = '✓ ' + name + ' ' + Math.min(60, cnt) + '개 저장됐어요! 위 목록에 NEW로 표시돼요'; sv.classList.add('show');
+  mbTopRender(); const b = document.getElementById('topBody'); if(b) b.scrollTop = 0;
+  setTimeout(()=>{ mbTopFresh = null; }, 2000);
 }
 function mbTopRender(){
-  const box = document.getElementById('topBody'); if(!box) return;
-  const a = mbTopLoad().map(t=>({t, i: mbTopInfo(t)})).sort((x,y)=>(x.i.done - y.i.done) || (x.i.dleft - y.i.dleft));
-  const live = a.filter(x=>!x.i.done), total = live.reduce((s,x)=>s + x.i.left, 0);
-  const card = ({t, i})=>{
-    const pct = Math.round(100 * i.left / Math.max(1, t.made));
-    const badge = i.done ? '<span class="tp-d ok">다 썼어요</span>' : (i.late ? '<span class="tp-d bad">기한 지남</span>' : `<span class="tp-d ${i.warn ? 'bad' : ''}">${i.warn ? '⏰ ' : ''}D-${i.dleft} · ${i.exp.slice(5).replace('-','/')}까지</span>`);
-    return `<div class="tp-i ${i.warn || i.late ? 'warn' : ''} ${i.done ? 'done' : ''}"><div class="tp-h"><span class="tp-nm">${mbTopIcon(t.name)}<b>${mbTopEsc(t.name)}</b></span>${badge}</div>
-      <div class="tp-bar"><i style="width:${pct}%"></i></div>
-      <div class="tp-r"><span>남은 <b>${i.left}개</b> / ${t.made}개 · 하루 ${t.per||1}개씩 · ${t.date.slice(5).replace('-','/')} 냉동</span></div>
-      <div class="tp-b"><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><button type="button" onclick="mbTopPer('${t.id}')">하루 ${t.per||1}개 ↻</button><button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div></div>`;
-  };
-  box.innerHTML = (a.length ? `<p class="tp-sum">보유 토핑 <b>${live.length}종</b> · 큐브 <b>${total}개</b> 남음</p>` + a.map(card).join('') : '<p class="tp-empty">아직 담아둔 토핑이 없어요. 아래에서 만든 개수를 적어보세요.</p>');
+  const body = document.getElementById('topBody'); if(!body) return;
+  const all = mbTopLoad().map(t=>({t, i: mbTopInfo(t)}));
+  const live = all.filter(x=>!x.i.done), done = all.length - live.length;
+  const warn = live.filter(x=>x.i.warn || x.i.late).length, low = live.filter(x=>x.i.left <= 2).length;
+  document.getElementById('topSum').innerHTML = all.length ? `보유 <b>${live.length}종</b> · 큐브 <b>${live.reduce((s,x)=>s + x.i.left, 0)}개</b> 남음` : '아직 담아둔 토핑이 없어요. 아래에서 만든 개수를 적어보세요.';
+  const cs = [['all','전체 ' + live.length], ['warn','⏰ 기한 임박 ' + warn], ['low','🔻 거의 소진 ' + low]]; if(done) cs.push(['done','✔ 다 씀 ' + done]);
+  if(!cs.some(c=>c[0] === mbTopFilter)) mbTopFilter = 'all';
+  document.getElementById('topChips').innerHTML = all.length ? cs.map(([k,v])=>`<button type="button" class="${mbTopFilter === k ? 'on' : ''}" onclick="mbTopFilterSet('${k}')">${v}</button>`).join('') : '';
+  let arr = mbTopFilter === 'done' ? all.filter(x=>x.i.done) : live;
+  if(mbTopFilter === 'warn') arr = arr.filter(x=>x.i.warn || x.i.late); if(mbTopFilter === 'low') arr = arr.filter(x=>x.i.left <= 2);
+  arr = arr.slice().sort((a,b)=>((b.i.warn||b.i.late) - (a.i.warn||a.i.late)) || (a.i.dleft - b.i.dleft));
+  body.innerHTML = arr.length ? '<div class="tp-grid">' + arr.map(({t,i})=>{
+    const pct = Math.round(100 * i.left / Math.max(1, t.made)), w = i.warn || i.late;
+    return `<button type="button" class="tp-tile ${w ? 'warn' : ''} ${i.left <= 2 && !i.done ? 'low' : ''} ${mbTopSel === t.id ? 'sel' : ''} ${mbTopFresh === t.id ? 'flash' : ''}" onclick="mbTopPick('${t.id}')">${mbTopFresh === t.id ? '<span class="tp-nbadge">NEW</span>' : ''}${mbTopIcon(t.name)}<div class="tp-tn">${mbTopEsc(t.name)}</div><div class="tp-tc">${i.left}<small> / ${t.made}</small></div><div class="tp-bar"><i style="width:${pct}%"></i></div><div class="tp-td">${i.done ? '다 썼어요' : (i.late ? '기한 지남' : (w ? '⏰ ' : '') + 'D-' + i.dleft)}</div></button>`;
+  }).join('') + '</div>' : (all.length ? '<p class="tp-empty">해당하는 토핑이 없어요</p>' : '');
+  const t = mbTopLoad().find(x=>x.id === mbTopSel), dt = document.getElementById('topDetail');
+  if(!t){ dt.hidden = true; dt.innerHTML = ''; return; }
+  const i = mbTopInfo(t); dt.hidden = false;
+  dt.innerHTML = `<div class="tp-dt">${mbTopIcon(t.name)}<div><b>${mbTopEsc(t.name)}</b><div class="tp-ds">남은 ${i.left}개 / ${t.made}개 · 하루 ${t.per||1}개씩 · ${t.date.slice(5).replace('-','/')} 냉동 · ${i.exp.slice(5).replace('-','/')}까지</div></div></div>
+    <div class="tp-b"><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><button type="button" onclick="mbTopPer('${t.id}')">하루 ${t.per||1}개 ↻</button><button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div>`;
 }
 function mbTopOpen(){
-  mbTopClose(); try{ gtag('event','topping_open'); }catch(e){}
+  mbTopClose(); mbTopSel = null; mbTopFilter = 'all'; try{ gtag('event','topping_open'); }catch(e){}
   const names = []; [START_PLAN, MID_PLAN, LATE_PLAN].forEach(p=>p.forEach(st=>{ if(mbTopFreezable(st) && names.indexOf(st.add) < 0) names.push(st.add); }));
   const bg = document.createElement('div'); bg.id = 'topSheet'; bg.className = 'fam-bg';
-  bg.innerHTML = `<div class="fam-sh" role="dialog" aria-label="토핑 냉동실"><h2>🧊 토핑 냉동실</h2>
-    <p>만든 큐브 개수를 적어두면 다음 날부터 하루 쓰는 만큼 줄어들고, 소비기한(만든 날부터 2주) 3일 전부터 알려드려요. 이 기록은 이 기기에만 저장돼요.</p>
-    <div id="topBody"></div>
-    <div class="tp-form"><b>새 토핑 담기</b>
-      <input id="tpName" list="tpList" placeholder="재료 (예: 애호박)" maxlength="20" autocomplete="off"><datalist id="tpList">${names.map(n=>`<option value="${mbTopEsc(n)}">`).join('')}</datalist>
-      <div class="tp-fr"><label>개수<input id="tpCnt" type="number" inputmode="numeric" min="1" max="60" value="12"></label><label>만든 날<input id="tpDate" type="date" value="${mbIsoToday()}"></label></div>
-      <button type="button" class="fam-o tp-add" onclick="mbTopForm()"><span><b>냉동했어요</b><small>10ml 큐브 기준, 한 번에 쓰는 만큼이 한 개예요</small></span></button></div>
-    <button type="button" class="fam-x" id="tpClose">닫기</button></div>`;
+  bg.innerHTML = `<div class="fam-sh" role="dialog" aria-label="토핑 냉동실">
+    <div class="tp-hd"><b>🧊 토핑 냉동실</b><button type="button" id="tpX" aria-label="닫기">✕</button></div>
+    <div class="tp-sumln" id="topSum"></div><div class="tp-chips" id="topChips"></div>
+    <div class="tp-body" id="topBody"></div><div class="tp-detail" id="topDetail" hidden></div>
+    <div class="tp-foot">
+      <button type="button" class="tp-addbtn" id="tpAddBtn">＋ 새 토핑 담기</button>
+      <div class="tp-form" id="tpForm" hidden>
+        <div class="tp-saved" id="tpSaved"></div>
+        <div class="tp-unsaved" id="tpUnsaved">⚠️ 아직 저장 전! <u>‘냉동했어요’</u>를 눌러야 담겨요</div>
+        <div class="tp-nr"><input id="tpName" list="tpList" placeholder="재료 (예: 애호박)" maxlength="20" autocomplete="off" oninput="mbTopChk()"><button type="button" class="tp-cancel" id="tpCancel">접기</button></div><datalist id="tpList">${names.map(n=>`<option value="${mbTopEsc(n)}">`).join('')}</datalist>
+        <div class="tp-fr"><label>개수<input id="tpCnt" type="number" inputmode="numeric" min="1" max="60" value="12"></label><label>만든 날<input id="tpDate" type="date" value="${mbIsoToday()}"></label></div>
+        <button type="button" class="tp-save" id="tpSave" disabled onclick="mbTopForm()">🧊 냉동했어요 (눌러야 저장돼요)</button>
+      </div></div></div>`;
   document.body.appendChild(bg);
   bg.addEventListener('click', e=>{ if(e.target === bg) mbTopClose(); });
-  bg.querySelector('#tpClose').onclick = mbTopClose;
+  bg.querySelector('#tpX').onclick = mbTopClose;
+  bg.querySelector('#tpAddBtn').onclick = ()=>{ bg.querySelector('#tpAddBtn').hidden = true; bg.querySelector('#tpForm').hidden = false; bg.querySelector('#tpName').focus(); };
+  bg.querySelector('#tpCancel').onclick = ()=>{ bg.querySelector('#tpForm').hidden = true; bg.querySelector('#tpAddBtn').hidden = false; bg.querySelector('#tpName').value = ''; mbTopChk(); };
   mbTopRender();
 }
 /* ===== 이번 달 먹어본 재료 요약 (반응 기록 → 카드) ===== */
