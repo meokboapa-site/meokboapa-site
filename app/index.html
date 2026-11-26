@@ -1052,6 +1052,8 @@
 .tp-sugs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}.tp-sugs button{font:inherit;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:5px;padding:4px 10px 4px 5px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
 .tp-sugs img{width:22px;height:22px;object-fit:contain}.tp-sugs i{font-style:normal;width:22px;text-align:center}.tp-nohit{color:var(--ink-soft);font-size:11.5px}
 .tp-lifenote{padding:0 18px 8px;font-size:12px;color:var(--ink-soft)}.tp-lifenote small{font-size:11px;opacity:.85}
+.tp-ml{display:flex;align-items:center;gap:6px;margin:4px 0 6px}.tp-ml span{font-size:12px;color:var(--ink-soft);margin-right:2px}.tp-ml button{font:inherit;font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}.tp-ml button.on{background:#EEF3EF;border:1.5px solid #4B6B54;color:#34493B}
+.fam-sh.adding .tp-detail,.fam-sh.adding .tp-lifenote{display:none!important}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -9881,14 +9883,39 @@ function mbTopEsc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':
 function mbTopDiff(a, b){ return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00')) / 86400000); }
 function mbTopInfo(t){
   const el = Math.max(0, mbTopDiff(t.date, mbIsoToday()));          /* 소비기한은 날짜로, 개수는 '눌러서 쓴 만큼'만 차감 */
-  const left = Math.max(0, t.made - (t.per||1) * ((t.used||[]).length) + (t.adj||0));
+  const usedN = (t.used||[]).reduce((n,d)=>n + ((t.amt && t.amt[d]) || t.per || 1), 0), left = Math.max(0, t.made - usedN + (t.adj||0));
   const life = t.life || mbTopLifeDays(), dleft = life - el;
   return {left, dleft, exp: mbAddDays(t.date, life), done: left <= 0, late: dleft < 0, warn: left > 0 && dleft >= 0 && dleft <= MB_TOP_WARN};
 }
-function mbTopAdd(name, made, date, per){
+function mbTopGramNow(){
+  try{ const lb = mbStageLabelNow(); if(lb.indexOf('중기')===0) return MID_TOP_G;
+    if(lb.indexOf('후기')===0){ const d = lateDayNo(), st = LATE_PLAN.find(x=>d>=x.d0 && d<=x.d1); return st && st.top ? st.top : null; } }catch(e){} return null;
+}
+function mbTopPerNow(t){
+  if(t.ml > 0 && t.perAuto !== false){ const g = mbTopGramNow(); if(g) return Math.max(1, Math.min(4, Math.round(g / t.ml))); }
+  return t.per || 1;
+}
+function mbTopDefaultMl(name){
+  const n = mbNorm(name); if(!n) return 20;
+  let lb = ''; try{ lb = mbStageLabelNow(); }catch(e){}
+  const late = /^(후기)/.test(lb) || mbTopLifeDays() > 14;
+  if(n === '쌀미음' || n === '오트밀미음') return /^초기/.test(lb) || !lb && !late ? 20 : 50;
+  if(/소스/.test(name) || n.indexOf('라구') === 0) return 50;
+  if(MENUS.some(m=>mbNorm(m.name) === n)) return 0;
+  if(mbTopImgUrl(name) && dgFind(name)) return late ? 30 : 20;
+  return 0;
+}
+function mbTopMlDefCnt(ml){ return ml === 20 ? 12 : (ml === 30 || ml === 50 ? 6 : 4); }
+let mbTopMlSel = 20;
+function mbTopMlPick(ml, keepCnt){
+  mbTopMlSel = ml;
+  document.querySelectorAll('#tpMl button').forEach(b=>b.classList.toggle('on', +b.dataset.ml === ml));
+  const c = document.getElementById('tpCnt'); if(c && !keepCnt) c.value = mbTopMlDefCnt(ml);
+}
+function mbTopAdd(name, made, date, per, ml){
   name = String(name||'').trim().slice(0, 20); made = Math.max(1, Math.min(60, parseInt(made,10) || 0));
   if(!name || !made) return false;
-  const a = mbTopLoad(); a.push({id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), name, made, date: date || mbIsoToday(), per: per || 1, adj: 0, life: mbTopLifeDays()});
+  const a = mbTopLoad(); a.push({id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), name, made, date: date || mbIsoToday(), per: per || 1, adj: 0, life: mbTopLifeDays(), ml: ml == null ? 0 : ml, perAuto: true});
   mbTopSave(a); try{ gtag('event','topping_add',{n:made}); }catch(e){} return true;
 }
 /* 얼려 쓰는 토핑인지 — 밀가루·땅콩버터·두부·달걀 같은 알레르기 테스트 재료와 물이 빠지는 재료는 그날 소량만 */
@@ -9919,7 +9946,7 @@ function mbTopSuggest(){
   const list = mbTopCatalog().map(x=>({x, s: sc(x)})).filter(o=>o.s<9).sort((a,b)=>a.s-b.s).slice(0,6);
   box.innerHTML = list.map(o=>`<button type="button" onclick="mbTopSugPick('${encodeURIComponent(o.x.name)}')">${o.x.img ? '<img src="'+o.x.img+'" alt="" draggable="false">' : '<i>🧊</i>'}${mbTopEsc(o.x.name)}</button>`).join('') + (list.length ? '' : '<small class="tp-nohit">목록에 없어도 적은 이름 그대로 담겨요</small>');
 }
-function mbTopSugPick(enc){ const inp = document.getElementById('tpName'); if(!inp) return; inp.value = decodeURIComponent(enc); document.getElementById('tpSugs').innerHTML = ''; mbTopChk(); }
+function mbTopSugPick(enc){ const inp = document.getElementById('tpName'); if(!inp) return; inp.value = decodeURIComponent(enc); document.getElementById('tpSugs').innerHTML = ''; mbTopChk(); mbTopMlPick(mbTopDefaultMl(inp.value)); }
 function mbTopCount(name){
   try{
     const live = mbTopLoad().map(t=>({t, i: mbTopInfo(t)})).filter(x=>!x.i.done && x.t.name && (name === x.t.name || (x.t.name.length >= 2 && name.indexOf(x.t.name) === 0)));
@@ -9990,11 +10017,12 @@ function mbTopUse(enc){
   if(!t0){ mbTopMake(enc); return; }
   const t = a.find(x=>x.id===t0.id), today = mbIsoToday(); t.used = t.used || [];
   const k = t.used.indexOf(today);
-  if(k >= 0){ t.used.splice(k,1); mbTopSave(a); showShareToast(t.name+' 오늘 차감을 취소했어요'); }
+  t.amt = t.amt || {};
+  if(k >= 0){ t.used.splice(k,1); delete t.amt[today]; mbTopSave(a); showShareToast(t.name+' 오늘 차감을 취소했어요'); }
   else {
     if(mbTopInfo(t).left <= 0){ showShareToast(t.name+' 남은 게 없어요. 새로 만들어 담아주세요'); mbTopMake(enc); return; }
-    t.used.push(today); mbTopSave(a);
-    showShareToast(t.name+' −'+(t.per||1)+'개 · 남은 '+mbTopInfo(t).left+'개'+mbDogamFeed(t.name));
+    const amt = mbTopPerNow(t); t.used.push(today); t.amt[today] = amt; mbTopSave(a);
+    showShareToast(t.name+' −'+amt+'개 · 남은 '+mbTopInfo(t).left+'개'+mbDogamFeed(t.name));
   }
   mbTopChipsRefresh(); if(document.getElementById('topSheet')) mbTopRender();
 }
@@ -10006,7 +10034,7 @@ function mbTopFeedOnly(enc){
 function mbTopMake(enc){
   const n = decodeURIComponent(enc); mbTopOpen();
   const b = document.getElementById('tpAddBtn'); if(b) b.click();
-  const i = document.getElementById('tpName'); if(i){ i.value = n; mbTopChk(); }
+  const i = document.getElementById('tpName'); if(i){ i.value = n; mbTopChk(); mbTopMlPick(mbTopDefaultMl(n)); }
 }
 function mbTopEat(id){ const t = mbTopLoad().find(x=>x.id===id); if(t) mbTopUse(encodeURIComponent(t.name)); }
 function mbTodayChipsHtml(stage, day){
@@ -10025,7 +10053,7 @@ function mbTodayChipsHtml(stage, day){
       const used = (t.used||[]).indexOf(today) >= 0, i = mbTopInfo(t);
       return `<button type="button" class="tc ${used?'on':''} ${i.warn||i.late?'warn':''}" onclick="mbTopUse('${e}')">${used?'✓ ':''}${mbTopEsc(n)}<small>🧊${i.left}</small></button>`;
     }).join('');
-    return `<div class="tp-today" data-stage="${stage}" data-day="${day}"><div class="tp-tt">오늘 쓸 토핑 <small>눌러서 큐브 차감 · 없으면 만들기</small></div><div class="tc-row">${chips}</div></div>`;
+    return `<div class="tp-today" data-stage="${stage}" data-day="${day}"><div class="tp-tt">오늘 쓸 토핑 <small>${mbTopGramNow() ? '토핑 ' + mbTopGramNow() + 'g씩 · ' : ''}눌러서 차감 · 없으면 만들기</small></div><div class="tc-row">${chips}</div></div>`;
   }catch(e){ return ''; }
 }
 function mbActionRowHtml(){
@@ -10046,7 +10074,8 @@ function mbTopTodoCount(stage, day){
   }catch(e){ return 0; }
 }
 function mbTopAdj(id, d){ mbTopSet(id, t=>{ t.adj = (t.adj||0) + d; }); }
-function mbTopPer(id){ mbTopSet(id, t=>{ t.per = ((t.per||1) % 3) + 1; }); }
+function mbTopPer(id){ mbTopSet(id, t=>{ if(t.ml > 0 && t.perAuto !== false){ t.perAuto = false; t.per = 1; } else if((t.per||1) >= 3 || !(t.ml > 0)){ if(t.ml > 0){ t.perAuto = true; } else { t.per = ((t.per||1) % 3) + 1; } } else { t.per = (t.per||1) + 1; } }); }
+function mbTopMl(id){ mbTopSet(id, t=>{ const o = [20,30,50,0], k = o.indexOf(t.ml||0); t.ml = o[(k+1) % o.length]; if(t.ml === 0) t.perAuto = false; else if(t.perAuto === undefined) t.perAuto = true; }); }
 function mbTopDel(id){ mbTopSet(id, (t,a)=>{ a.splice(a.indexOf(t), 1); }); }
 let mbTopFilter = 'all', mbTopSel = null, mbTopFresh = null;
 function mbTopPick(id){ mbTopSel = mbTopSel === id ? null : id; mbTopRender(); }
@@ -10058,7 +10087,7 @@ function mbTopChk(){
 function mbTopForm(){
   const n = document.getElementById('tpName'), c = document.getElementById('tpCnt'), d = document.getElementById('tpDate');
   const name = n.value.trim(), cnt = parseInt(c.value,10) || 0;
-  if(!mbTopAdd(name, cnt, d.value)){ showShareToast('재료 이름과 개수를 적어주세요'); return; }
+  if(!mbTopAdd(name, cnt, d.value, 1, mbTopMlSel)){ showShareToast('재료 이름과 개수를 적어주세요'); return; }
   const a = mbTopLoad(); mbTopFresh = a[a.length-1].id; mbTopFilter = 'all'; mbTopSel = null;
   n.value = ''; mbTopChk();
   const sv = document.getElementById('tpSaved'); sv.textContent = '✓ ' + name + ' ' + Math.min(60, cnt) + '개 저장됐어요! 위 목록에 NEW로 표시돼요'; sv.classList.add('show');
@@ -10079,13 +10108,13 @@ function mbTopRender(){
   arr = arr.slice().sort((a,b)=>((b.i.warn||b.i.late) - (a.i.warn||a.i.late)) || (a.i.dleft - b.i.dleft));
   body.innerHTML = arr.length ? '<div class="tp-grid">' + arr.map(({t,i})=>{
     const pct = Math.round(100 * i.left / Math.max(1, t.made)), w = i.warn || i.late;
-    return `<button type="button" class="tp-tile ${w ? 'warn' : ''} ${i.left <= 2 && !i.done ? 'low' : ''} ${mbTopSel === t.id ? 'sel' : ''} ${mbTopFresh === t.id ? 'flash' : ''}" onclick="mbTopPick('${t.id}')">${mbTopFresh === t.id ? '<span class="tp-nbadge">NEW</span>' : ''}${mbTopIcon(t.name)}<div class="tp-tn">${mbTopEsc(t.name)}</div><div class="tp-tc">${i.left}<small> / ${t.made}</small></div><div class="tp-bar"><i style="width:${pct}%"></i></div><div class="tp-td">${i.done ? '다 썼어요' : (i.late ? '기한 지남' : (w ? '⏰ ' : '') + 'D-' + i.dleft)}</div></button>`;
+    return `<button type="button" class="tp-tile ${w ? 'warn' : ''} ${i.left <= 2 && !i.done ? 'low' : ''} ${mbTopSel === t.id ? 'sel' : ''} ${mbTopFresh === t.id ? 'flash' : ''}" onclick="mbTopPick('${t.id}')">${mbTopFresh === t.id ? '<span class="tp-nbadge">NEW</span>' : ''}${mbTopIcon(t.name)}<div class="tp-tn">${mbTopEsc(t.name)}</div><div class="tp-tc">${i.left}<small> / ${t.made}</small></div><div class="tp-bar"><i style="width:${pct}%"></i></div><div class="tp-td">${i.done ? '다 썼어요' : (t.ml ? t.ml + 'ml · ' : '') + (i.late ? '기한 지남' : (w ? '⏰ ' : '') + 'D-' + i.dleft)}</div></button>`;
   }).join('') + '</div>' : (all.length ? '<p class="tp-empty">해당하는 토핑이 없어요</p>' : '');
   const t = mbTopLoad().find(x=>x.id === mbTopSel), dt = document.getElementById('topDetail');
   if(!t){ dt.hidden = true; dt.innerHTML = ''; return; }
   const i = mbTopInfo(t); dt.hidden = false;
-  dt.innerHTML = `<div class="tp-dt">${mbTopIcon(t.name)}<div><b>${mbTopEsc(t.name)}</b><div class="tp-ds">남은 ${i.left}개 / ${t.made}개 · 한 번에 ${t.per||1}개 · ${t.date.slice(5).replace('-','/')} 만듦 · ${i.exp.slice(5).replace('-','/')}까지</div></div></div>
-    <div class="tp-b"><button type="button" class="tp-eat" onclick="mbTopEat('${t.id}')">🍽 오늘 썼어요 (차감 · 도감 기록)</button><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><button type="button" onclick="mbTopPer('${t.id}')">한 번에 ${t.per||1}개 ↻</button><button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div>`;
+  dt.innerHTML = `<div class="tp-dt">${mbTopIcon(t.name)}<div><b>${mbTopEsc(t.name)}</b><div class="tp-ds">남은 ${i.left}개 / ${t.made}개 · ${t.ml ? t.ml + 'ml 큐브' : '개·팩 단위'} · 한 번에 ${mbTopPerNow(t)}개${t.ml > 0 && t.perAuto !== false && mbTopGramNow() ? '(오늘 토핑 ' + mbTopGramNow() + 'g 기준)' : ''} · ${t.date.slice(5).replace('-','/')} 만듦 · ${i.exp.slice(5).replace('-','/')}까지</div></div></div>
+    <div class="tp-b"><button type="button" class="tp-eat" onclick="mbTopEat('${t.id}')">🍽 오늘 썼어요 (차감 · 도감 기록)</button><button type="button" onclick="mbTopAdj('${t.id}',-1)">−1개</button><button type="button" onclick="mbTopAdj('${t.id}',1)">+1개</button><button type="button" onclick="mbTopMl('${t.id}')">크기 ${t.ml ? t.ml + 'ml' : '개·팩'} ↻</button><button type="button" onclick="mbTopPer('${t.id}')">한 번에 ${t.ml > 0 && t.perAuto !== false ? '자동' : (t.per||1) + '개'} ↻</button><button type="button" class="del" onclick="mbTopDel('${t.id}')">${i.done ? '정리' : '삭제'}</button></div>`;
 }
 function mbTopOpen(){
   mbTopClose(); mbTopSel = null; mbTopFilter = 'all'; try{ gtag('event','topping_open'); }catch(e){}
@@ -10101,15 +10130,16 @@ function mbTopOpen(){
         <div class="tp-saved" id="tpSaved"></div>
         <div class="tp-unsaved" id="tpUnsaved">⚠️ 아직 저장 전! <u>‘만들었어요’</u>를 눌러야 담겨요</div>
         <div class="tp-nr"><input id="tpName" placeholder="재료·소스 검색 (예: 쌀미음, 라구)" maxlength="20" autocomplete="off" oninput="mbTopChk();mbTopSuggest()"><button type="button" class="tp-cancel" id="tpCancel">접기</button></div><div class="tp-sugs" id="tpSugs"></div>
+        <div class="tp-ml" id="tpMl"><span>크기</span><button type="button" data-ml="20" onclick="mbTopMlPick(20)">20ml</button><button type="button" data-ml="30" onclick="mbTopMlPick(30)">30ml</button><button type="button" data-ml="50" onclick="mbTopMlPick(50)">50ml</button><button type="button" data-ml="0" onclick="mbTopMlPick(0)">개·팩</button></div>
         <div class="tp-fr"><label>개수<input id="tpCnt" type="number" inputmode="numeric" min="1" max="60" value="12"></label><label>만든 날<input id="tpDate" type="date" value="${mbIsoToday()}"></label></div>
         <button type="button" class="tp-save" id="tpSave" disabled onclick="mbTopForm()">🧊 만들었어요 (눌러야 저장돼요)</button>
       </div></div></div>`;
   document.body.appendChild(bg);
   bg.addEventListener('click', e=>{ if(e.target === bg) mbTopClose(); });
   bg.querySelector('#tpX').onclick = mbTopClose;
-  bg.querySelector('#tpAddBtn').onclick = ()=>{ bg.querySelector('#tpAddBtn').hidden = true; bg.querySelector('#tpForm').hidden = false; bg.querySelector('#tpName').focus(); };
-  bg.querySelector('#tpCancel').onclick = ()=>{ bg.querySelector('#tpForm').hidden = true; bg.querySelector('#tpAddBtn').hidden = false; bg.querySelector('#tpName').value = ''; mbTopChk(); };
-  mbTopRender();
+  bg.querySelector('#tpAddBtn').onclick = ()=>{ bg.querySelector('.fam-sh').classList.add('adding'); bg.querySelector('#tpAddBtn').hidden = true; bg.querySelector('#tpForm').hidden = false; bg.querySelector('#tpName').focus(); };
+  bg.querySelector('#tpCancel').onclick = ()=>{ bg.querySelector('.fam-sh').classList.remove('adding'); bg.querySelector('#tpForm').hidden = true; bg.querySelector('#tpAddBtn').hidden = false; bg.querySelector('#tpName').value = ''; mbTopChk(); };
+  mbTopMlPick(20); mbTopRender();
 }
 /* ===== 이번 달 먹어본 재료 요약 (반응 기록 → 카드) ===== */
 function mbIsoToday(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
