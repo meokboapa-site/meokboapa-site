@@ -3389,6 +3389,11 @@ function computeAgeMonths(birthday){
   if(now.getDate() < bd.getDate()) months -= 1;
   return Math.max(0, months);
 }
+/* 지금 진행 중인 시기 — 이유식 시작일이 있으면 그 진행일 기준, 없으면 생후 개월 수 기준 */
+function mbCurrentStage(){
+  try{ const lb = mbStageLabelNow(); if(lb) return lb.split(' ')[0]; }catch(e){}
+  return (babyProfile && babyProfile.birthday) ? getStageForAge(computeAgeMonths(babyProfile.birthday)) : '';
+}
 function getStageForAge(ageMonths){
   if(ageMonths < 7) return "초기";
   if(ageMonths < 9) return "중기";
@@ -3546,8 +3551,8 @@ function clearProfile(){
 }
 /* 생일이 있으면 그 개월 수에 맞는 시기 탭을 바로 엽니다 */
 function goToProfileStage(){
-  if(!babyProfile || !babyProfile.birthday) return false;
-  const st = getStageForAge(computeAgeMonths(babyProfile.birthday));
+  if(!mbCurrentStage()) return false;
+  const st = mbCurrentStage();
   const btn = [...document.querySelectorAll('.stab')].find(b=>b.textContent===st);
   if(!btn) return false;
   selectStage(st, btn);
@@ -3555,8 +3560,8 @@ function goToProfileStage(){
 }
 function applyProfileHighlight(){
   document.querySelectorAll('.stab').forEach(b=>b.classList.remove('profile-match'));
-  if(!babyProfile || !babyProfile.birthday) return;
-  const matchStage = getStageForAge(computeAgeMonths(babyProfile.birthday));
+  if(!mbCurrentStage()) return;
+  const matchStage = mbCurrentStage();
   document.querySelectorAll('.stab').forEach(b=>{ if(b.textContent===matchStage) b.classList.add('profile-match'); });
 }
 
