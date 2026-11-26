@@ -143,6 +143,9 @@
   .profile-form .pf-row input[type=date]{flex:1; min-width:0;}
   .pf-x{flex:none; background:none; border:0; color:var(--ink-soft); font-size:12px; font-weight:700; padding:6px 4px; cursor:pointer; text-decoration:underline;}
   .pf-hint{font-size:12px; color:var(--ink-soft); margin:-2px 0 10px 104px; line-height:1.5;}
+  .profile-form .pf-norest{display:flex !important; width:100%; box-sizing:border-box; flex:none !important; margin:6px 0 14px !important; align-items:flex-start; gap:10px;}
+  .profile-form .pf-norest span{flex:1; min-width:0;}
+  .profile-form .pf-norest small{display:block; font-weight:400; font-size:12px; line-height:1.5; margin-top:2px;}
   .profile-form .ratio-btns{display:flex; gap:6px; flex-wrap:wrap;}
   .er-strip{display:flex; align-items:center; gap:10px; width:100%; margin:10px 0 2px; padding:12px 16px; border-radius:12px; background:#FDECEA; border:1.5px solid #F2B8B0; color:#9B2C1F; font-size:13.5px; font-family:inherit; text-align:left; cursor:pointer;}
   .er-strip b{font-weight:800; white-space:nowrap;} .er-strip span{flex:1; color:#7a3a30; font-size:12.5px;} .er-strip i{font-style:normal; font-weight:800;}
@@ -3373,7 +3376,7 @@ function renderProfileBar(editing){
     const parts=[];
     if(babyProfile && babyProfile.birthday) parts.push(`<strong>생후 ${computeAgeMonths(babyProfile.birthday)}개월</strong>`);
     const day=mbStageLabelNow(); if(day) parts.push(`<strong>${day}</strong>`);
-    parts.push(`${appSettings.saltPref} · ${appSettings.prepPref}`);
+    parts.push(`${appSettings.saltPref} · ${appSettings.prepPref}${MB_NOREST?' · 일요일 포함':''}`);
     wrap.innerHTML = `<div class="profile-wrap"><div class="profile-card">
       <div class="p-info">${parts.join(' · ')}</div>
       <button class="profile-edit-btn" id="profileEditBtn">수정</button>
@@ -3388,6 +3391,7 @@ function renderProfileBar(editing){
       <div class="pf-hint">시작 전이면 비워두세요. 넣으면 오늘 며칠째인지, 오늘 뭘 먹일지 바로 보여드려요.</div>
       <div class="pf-row"><label>기본 간</label><div class="ratio-btns" id="pfSalt"></div></div>
       <div class="pf-row"><label>손질 방식</label><div class="ratio-btns" id="pfPrep"></div></div>
+      <label class="sp-norest pf-norest"><input type="checkbox" id="pfNoRest" ${MB_NOREST?'checked':''}><span><b>일요일에도 새 재료 넣기</b><small>일요일에 여는 소아과가 가까우면 켜세요. 쉬는 날이 빠지고 뒤 일정이 당겨져요. 초기·중기·후기에 모두 적용돼요.</small></span></label>
       <button class="profile-save-btn" id="pfSaveBtn">저장</button>
     </div>${hasAny?'':er}</div>`;
     const draft = {saltPref:appSettings.saltPref, prepPref:appSettings.prepPref};
@@ -3409,6 +3413,7 @@ function saveProfile(draft){
   } catch(e){}
   if((start||null) !== (weaningStart||null)) saveWeaningStart(start);
   if(draft){ appSettings.saltPref = draft.saltPref; appSettings.prepPref = draft.prepPref; saveAppSettings(); try{ renderSettingsRow(); }catch(e){} }
+  const pnr = document.getElementById('pfNoRest'); if(pnr && pnr.checked !== !!MB_NOREST){ try{ mbSetNoRest(pnr.checked); }catch(e){} }
   try { famPushRoom(); } catch(e){}
   renderProfileBar(false);
   applyProfileHighlight();
@@ -4526,7 +4531,6 @@ function buildStartPage(container){
 
     <div class="sp-set">
       ${weaningStart && startWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${startWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루고 평일 오전에 시작하세요.</span>`:''}
-      ${noRestHtml('spNoRest')}
     </div>
     ${today}
 
@@ -4995,7 +4999,6 @@ function buildMidPage(container){
       ${midStart && !midStartUser?'<span class="sp-hint">초기 시작일로 자동 계산했어요(초기 끝난 다음 날). 실제와 다르면 바꿔주세요.</span>':''}
       <span class="sp-hint">넣어두시면 오늘 오전·오후에 뭘 줄지 바로 보여드려요.</span>
       ${midStart && midWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${midWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
-      ${noRestHtml('mpNoRest')}
     </div>
     ${today}
     ${mbListHtml(MID_PLAN, cur, rowArr)}
@@ -5284,7 +5287,6 @@ function buildLatePage(container){
       ${lateStart && !lateStartUser?'<span class="sp-hint">중기 시작일로 자동 계산했어요(중기 끝난 다음 날). 실제와 다르면 바꿔주세요.</span>':''}
       <span class="sp-hint">넣어두시면 오늘 아침·점심·저녁에 뭘 줄지 바로 보여드려요.</span>
       ${lateStart && lateWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${lateWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
-      ${noRestHtml('lpNoRest')}
     </div>
     ${today}
     ${mbListHtml(LATE_PLAN, cur, rowArr)}
