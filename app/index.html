@@ -1074,6 +1074,7 @@
 .ql{flex:1 1 auto;text-align:center;font-size:12.5px;font-weight:800;padding:8px 8px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--moss-deep,#34493B);text-decoration:none;white-space:nowrap}.ql.kk{background:#FFEE9A;border-color:#EBD155;color:#3A3000}.ql.pr{background:var(--apricot-soft);border-color:#F2C6A4;color:#7A3F1C}.ql.se{background:#EEF3EC;border-color:#CFDCCB;color:#34493B}
 .sp-guide .sp-kakao:not(.sp-abroad),.sp-guide .sp-prep,.sp-guide .sp-blog{display:none!important}
 @media(max-width:370px){.ql{font-size:11.5px;padding:8px 5px}.ql-row{gap:5px}}
+.mbi{width:1.2em;height:1.2em;vertical-align:-.22em;flex:none;display:inline-block}.fam-btn b .mbi{width:22px;height:22px;vertical-align:-5px;margin-right:2px;color:var(--moss-deep,#34493B)}.er-strip b .mbi{color:#B5542F;width:20px;height:20px}
 </style>
 <style id="layout-polish">
 /* v102 레이아웃 정리: 상품 링크는 한 줄짜리 목록 행, 일정 칩은 같은 크기 칸 */
@@ -1218,7 +1219,7 @@ document.addEventListener('DOMContentLoaded',function(){fix(document);new Mutati
   <div class="eyebrow">먹보 아빠의 이유식노트</div>
   <h1>오늘, 뭐 먹이지 고민 끝</h1>
   <p>대한소아과학회·AAP·ESPGHAN 기준으로 정리한 재료·레시피, 시기별 탭에서 바로 확인하세요.</p>
-  <button class="share-btn" id="shareAppBtn" type="button">🔗 친구에게 공유하기</button>
+  <button class="share-btn" id="shareAppBtn" type="button"><svg class="mbi" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1" fill="none"/></svg> 친구에게 공유하기</button>
 </header>
 
 
@@ -3494,7 +3495,7 @@ function todayStripHtml(){
       const st = plan.find(x=>day>=x.d0 && day<=x.d1); if(!st) continue;
       const n = shopItemsForWeek(stage, day).length;
       return `<div class="today-strip"><button type="button" class="ts-main" onclick="mbGoStage('${label}')"><small>오늘 · ${label} ${day}일차</small><b>${st.rest?'쉬는 날 — 먹어본 재료로':st.title}</b></button>
-        ${n?`<button type="button" class="ts-shop" onclick="openShop('${stage}',${day})"><small>이번 주 장보기</small><b>🛒 ${n}개 ›</b>${(()=>{ const k = mbTopTodoCount(stage, day); return k ? `<span class="ts-sub">새로 만들 토핑 ${k}종</span>` : ''; })()}</button>`:''}</div>`;
+        ${n?`<button type="button" class="ts-shop" onclick="openShop('${stage}',${day})"><small>이번 주 장보기</small><b>${mbIc('cart')} ${n}개 ›</b>${(()=>{ const k = mbTopTodoCount(stage, day); return k ? `<span class="ts-sub">새로 만들 토핑 ${k}종</span>` : ''; })()}</button>`:''}</div>`;
     }
     return `<button type="button" class="today-strip ts-hint" onclick="mbGoStage(getStageForAge(computeAgeMonths(babyProfile.birthday)))"><small>이유식 시작한 날을 넣으면</small><b>오늘 며칠째인지 · 이번 주 장보기가 여기 떠요 ›</b></button>`;
   }catch(e){ return ''; }
@@ -3517,7 +3518,7 @@ function mbGoCare(){
 function renderProfileBar(editing){
   const wrap = document.getElementById('profileBar');
   const hasAny = !!((babyProfile && babyProfile.birthday) || weaningStart);
-  const er = `<button type="button" class="er-strip" onclick="mbGoCare()"><b>🚨 급할 때</b><span>목에 걸렸을 때 · 열날 때 병원 신호</span><i>›</i></button>`;
+  const er = `<button type="button" class="er-strip" onclick="mbGoCare()"><b>${mbIc('siren')} 급할 때</b><span>목에 걸렸을 때 · 열날 때 병원 신호</span><i>›</i></button>`;
   if(hasAny && !editing){
     const parts=[];
     if(babyProfile && babyProfile.birthday) parts.push(`<strong>생후 ${computeAgeMonths(babyProfile.birthday)}개월</strong>`);
@@ -4629,7 +4630,7 @@ function shopMakeHtml(stage, day){
   const unit = m.gmin===m.gmax ? m.gmin+'g' : m.gmin+'~'+m.gmax+'g';
   const partsTxt = Object.keys(m.parts).length ? `<div class="mk-row"><span>재료별 총량</span><b>${Object.keys(m.parts).map(k=>k+' '+m.parts[k]+'g').join(' · ')}</b></div>` : '';
   const nf = false && m.noFreeze.length ? `<div class="mk-note">❄️ <b>${m.noFreeze.join('·')}</b>은 큐브로 얼리지 않아요 — 그날 먹을 만큼만 따로 준비해요.</div>` : '';
-  return `<div class="shop-make"><b>🧊 이번 주 만들 양</b>
+  return `<div class="shop-make"><b>${mbIc('cube')} 이번 주 만들 양</b>
     <div class="mk-row"><span>하루 ${m.meals}끼 × ${m.days}일</span><b>한 끼 분량 소분 ${m.portions}개</b></div>
     <div class="mk-row"><span>한 끼 ${unit} 기준</span><b>총 약 ${m.total}g</b></div>${partsTxt}${nf}
     <small>식단표 기준이에요. 아이가 먹는 양은 다 달라서 남기거나 더 먹으면 맞춰서 조금씩 조절하세요.</small></div>`;
@@ -4638,7 +4639,7 @@ function shopHave(){ try{ return JSON.parse(localStorage.getItem('mb_shop_have')
 function shopBtnHtml(stage, day){
   if(day==null) return '';
   const n = shopItemsForWeek(stage, day).length; if(!n) return '';
-  return `<button type="button" class="shop-open" onclick="openShop('${stage}',${day})">🛒 이번 주 장보기 <b>${n}개</b> <span>한 번에 보기 ›</span></button>`;
+  return `<button type="button" class="shop-open" onclick="openShop('${stage}',${day})">${mbIc('cart')} 이번 주 장보기 <b>${n}개</b> <span>한 번에 보기 ›</span></button>`;
 }
 /* 하루 세 번 쿠팡 가격을 기록한 결과(/data/prices.json). 평소보다 싸진 품목에 배지, 골드박스 육아 특가 한 줄 */
 let MB_PRICES = null, MB_PRICES_LOADING = false;
@@ -4678,7 +4679,7 @@ function openShop(stage, day){
   let el = document.getElementById('shopSheet');
   if(!el){ el = document.createElement('div'); el.id = 'shopSheet'; document.body.appendChild(el); }
   el.innerHTML = `<div class="shop-bg" onclick="closeShop()"></div><div class="shop-box">
-    <div class="shop-hd"><div><b>🛒 이번 주 장보기</b><small>${stName} ${day}~${day+6}일차 · 먹보 아빠네가 실제로 쓴 것</small></div><button type="button" onclick="closeShop()" aria-label="닫기">✕</button></div>
+    <div class="shop-hd"><div><b>${mbIc('cart')} 이번 주 장보기</b><small>${stName} ${day}~${day+6}일차 · 먹보 아빠네가 실제로 쓴 것</small></div><button type="button" onclick="closeShop()" aria-label="닫기">✕</button></div>
     ${shopMakeHtml(stage, day)}
     ${mbTopShopHtml(stage, day)}
     <p class="shop-tip">장보러 가기를 누르면 먹보 아빠네가 고른 상품으로 바로 가요. 다녀오면 ✓ 표시되고, 집에 있는 건 체크해서 빼두세요.</p>
@@ -10007,7 +10008,7 @@ function mbTopCardBadge(name){ const c = mbTopCount(name); return c ? `<span cla
 function mbTopBtnHtml(){
   const a = mbTopLoad().map(t=>({t, i: mbTopInfo(t)})).filter(x=>!x.i.done);
   const w = a.filter(x=>x.i.warn || x.i.late).length;
-  return `<button type="button" class="fam-btn tp-open" onclick="mbTopOpen()"><small>보관실</small><b>🧊 ${a.length ? a.length + '종' : '기록하기'} ›</b>${w ? `<span class="ts-sub warn">⏰ 기한 임박 ${w}</span>` : (a.length ? '<span class="ts-sub">토핑·반찬·소스</span>' : '<span class="ts-sub">만든 큐브 담기</span>')}</button>`;
+  return `<button type="button" class="fam-btn tp-open" onclick="mbTopOpen()"><small>보관실</small><b>${mbIc('cube')} ${a.length ? a.length + '종' : '기록하기'} ›</b>${w ? `<span class="ts-sub warn">⏰ 기한 임박 ${w}</span>` : (a.length ? '<span class="ts-sub">토핑·반찬·소스</span>' : '<span class="ts-sub">만든 큐브 담기</span>')}</button>`;
 }
 function mbTopShopHtml(stage, day){
   const plan = mbPlanOf(stage), names = [];
@@ -10025,7 +10026,7 @@ function mbTopShopHtml(stage, day){
   let cube = ''; try{ const l = getCoupangLinks('큐브_20ml').find(x=>x.url); if(l) cube = `<a class="tp-cube" href="${l.url}" target="_blank" rel="noopener sponsored">20ml 12구 큐브 보러가기 ›</a>`; }catch(e){}
   const liveAll = mbTopLoad().map(t=>({t, i: mbTopInfo(t)})).filter(x=>!x.i.done).sort((a,b)=>a.i.dleft - b.i.dleft);
   if(!todo.length && !warn.length && !skip.length && !owned.length && !liveAll.length) return '';
-  return `<div class="shop-make tp-shop"><b>🧊 이번 주 토핑</b>
+  return `<div class="shop-make tp-shop"><b>${mbIc('cube')} 이번 주 토핑</b>
     ${warn.map(x=>`<div class="mk-note">⏰ <b>${mbTopEsc(x.t.name)}</b> ${x.i.late ? '소비기한이 지났어요' : '소비기한 D-' + x.i.dleft} · 남은 ${x.i.left}개</div>`).join('')}
     ${owned.map(o=>`<div class="mk-row"><span class="tp-nm">${mbTopIcon(o.n.name)}<span>${mbTopEsc(o.n.name)} <small>${o.n.d0}일차 새 재료</small></span></span><b>🧊 ${o.left}개 보유 · 새로 안 만들어도 돼요</b></div>`).join('')}
     ${todo.map(n=>`<div class="mk-row tp-new"><span class="tp-nm">${mbTopIcon(n.name)}<span>${mbTopEsc(n.name)} <small>${n.d0}일차 새 재료</small></span></span><span class="tp-q"><input type="number" inputmode="numeric" min="1" max="60" value="12" aria-label="만든 큐브 개수">개 <button type="button" onclick="mbTopQuick(this,'${encodeURIComponent(n.name)}')">만들었어요</button></span></div>`).join('')}
@@ -10101,6 +10102,8 @@ function mbQuickLinksHtml(stage){
   if(bp) L.push(`<a class="ql" href="${bp.url}" target="_blank" rel="noopener">📝 블로그</a>`);
   return `<div class="ql-row">${L.join('')}</div>`;
 }
+const MB_IC = {"family": "<svg class=\"mbi\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"7.5\" r=\"2.7\" fill=\"#F6D9C3\"/><circle cx=\"16.5\" cy=\"9\" r=\"2.2\" fill=\"#F6D9C3\"/><path d=\"M3.2 19.5c0-3.3 2.2-5.5 4.8-5.5s4.8 2.2 4.8 5.5z\" fill=\"#DCE8DA\"/><path d=\"M13.6 19.5c0-2.6 1.3-4.4 2.9-4.4s3.3 1.8 3.3 4.4z\" fill=\"#DCE8DA\"/></svg>", "cube": "<svg class=\"mbi\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3l8 4.2v9.6L12 21l-8-4.2V7.2z\" fill=\"#E1EEF3\"/><path d=\"M4 7.2l8 4.8 8-4.8M12 12v9\" fill=\"none\"/></svg>", "cal": "<svg class=\"mbi\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"4\" y=\"5.5\" width=\"16\" height=\"14.5\" rx=\"3\" fill=\"#fff\"/><path d=\"M4 9.5h16V8.5a3 3 0 00-3-3H7a3 3 0 00-3 3z\" fill=\"#F6D9C3\"/><path d=\"M8.5 3.5v4M15.5 3.5v4M8 13.5h2M14 13.5h2M8 16.5h2\" fill=\"none\"/></svg>", "siren": "<svg class=\"mbi\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7 17v-5a5 5 0 0110 0v5z\" fill=\"#F6C9C0\"/><rect x=\"5\" y=\"17\" width=\"14\" height=\"3.2\" rx=\"1.2\" fill=\"#fff\"/><path d=\"M12 3v1.8M4.6 6.2l1.3 1.2M19.4 6.2l-1.3 1.2\" fill=\"none\"/></svg>", "link": "<svg class=\"mbi\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1\" fill=\"none\"/></svg>", "cart": "<svg class=\"mbi\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 4h2.6l2 10h9.4l2-7.5H6.4\" fill=\"#F6D9C3\"/><circle cx=\"9.2\" cy=\"19\" r=\"1.4\" fill=\"#fff\"/><circle cx=\"16.4\" cy=\"19\" r=\"1.4\" fill=\"#fff\"/></svg>"};
+function mbIc(n){ return MB_IC[n] || ''; }
 function mbNewLabel(st, day){
   if(!st || !st.add || st.rest) return '';
   if(day != null && day > st.d0 && st.d1 > st.d0) return '관찰 ' + (day - st.d0 + 1) + '/' + (st.d1 - st.d0 + 1);
@@ -10130,7 +10133,7 @@ function mbTodayChipsHtml(stage, day){
 }
 function mbActionRowHtml(){
   const f = famBarHtml(), t = mbTopBtnHtml();
-  if(f.indexOf('<button') === 0) return `<button type="button" class="fam-btn" onclick="famOpenSheet()"><small>가족</small><b>👨‍👩‍👧 식단 보내기 ›</b><span class="ts-sub">오늘 식단 공유</span></button>${t}`;
+  if(f.indexOf('<button') === 0) return `<button type="button" class="fam-btn" onclick="famOpenSheet()"><small>가족</small><b>${mbIc('family')} 식단 보내기 ›</b><span class="ts-sub">오늘 식단 공유</span></button>${t}`;
   return `<div class="hg-wide">${f}</div>${t}`;
 }
 function mbTopTodoCount(stage, day){
@@ -10200,7 +10203,7 @@ function mbTopOpen(){
   const names = []; [START_PLAN, MID_PLAN, LATE_PLAN].forEach(p=>p.forEach(st=>{ if(mbTopFreezable(st) && names.indexOf(st.add) < 0) names.push(st.add); }));
   const bg = document.createElement('div'); bg.id = 'topSheet'; bg.className = 'fam-bg';
   bg.innerHTML = `<div class="fam-sh" role="dialog" aria-label="보관실">
-    <div class="tp-hd"><b>🧊 보관실</b><button type="button" id="tpX" aria-label="닫기">✕</button></div>
+    <div class="tp-hd"><b>${mbIc('cube')} 보관실</b><button type="button" id="tpX" aria-label="닫기">✕</button></div>
     <div class="tp-sumln" id="topSum"></div><div class="tp-lifenote">보관 기간은 지금 시기 기준 <b>${mbTopLifeDays()/7}주</b>로 계산해요 <small>(먹보 아빠네 기준 · 초기·중기 2주, 후기 이후 3주)</small></div><div class="tp-chips" id="topChips"></div>
     <div class="tp-body" id="topBody"></div><div class="tp-detail" id="topDetail" hidden></div>
     <div class="tp-foot">
@@ -10212,7 +10215,7 @@ function mbTopOpen(){
         <details class="tp-more"><summary>자세히 설정 (크기)</summary><div class="tp-ml" id="tpMl"><span>크기</span><button type="button" data-ml="20" onclick="mbTopMlPick(20)">20ml</button><button type="button" data-ml="30" onclick="mbTopMlPick(30)">30ml</button><button type="button" data-ml="50" onclick="mbTopMlPick(50)">50ml</button><button type="button" data-ml="0" onclick="mbTopMlPick(0)">개·팩</button></div></details>
         <div class="tp-fr"><label>개수<input id="tpCnt" type="number" inputmode="numeric" min="1" max="60" value="12"></label><label>만든 날<input id="tpDate" type="date" value="${mbIsoToday()}"></label></div>
         <div class="tp-fr"><label>1회 사용량 (g·ml)<input id="tpUse" type="number" inputmode="numeric" min="5" max="300" placeholder="비우면 식단표 기준"></label></div>
-        <button type="button" class="tp-save" id="tpSave" disabled onclick="mbTopForm()">🧊 만들었어요 (눌러야 저장돼요)</button>
+        <button type="button" class="tp-save" id="tpSave" disabled onclick="mbTopForm()">${mbIc('cube')} 만들었어요 (눌러야 저장돼요)</button>
       </div></div></div>`;
   document.body.appendChild(bg);
   bg.addEventListener('click', e=>{ if(e.target === bg) mbTopClose(); });
@@ -10244,7 +10247,7 @@ function mbMonthSummary(){
 }
 function mbMonthBtnHtml(){
   const s = mbMonthSummary(); if(!s) return '';
-  return `<button type="button" class="fam-btn" onclick="mbOpenMonth()">🗓 이번 달 먹어본 재료 요약 <small style="font-weight:600;opacity:.8">${s.ings}개</small></button>`;
+  return `<button type="button" class="fam-btn" onclick="mbOpenMonth()">${mbIc('cal')} 이번 달 먹어본 재료 요약 <small style="font-weight:600;opacity:.8">${s.ings}개</small></button>`;
 }
 function mbMonthCardBlob(s){
   return new Promise((resolve)=>{
@@ -10278,7 +10281,7 @@ function mbOpenMonth(){
   mbCloseMonth(); try{ gtag('event','month_open',{n:s.ings}); }catch(e){}
   const row = (emo, label, arr)=> arr.length ? `<div class="mo-g"><b>${emo} ${label}</b><span>${arr.join(' · ')}</span></div>` : '';
   const bg = document.createElement('div'); bg.id = 'monthSheet'; bg.className = 'fam-bg';
-  bg.innerHTML = `<div class="fam-sh" role="dialog" aria-label="이번 달 먹어본 재료"><h2>🗓 이번 달 먹어본 재료</h2><p>최근 30일 동안 반응을 눌러둔 기록이에요. 새 재료 ${s.ings}개 · 기록 ${s.n}번 (잘 먹음 ${s.good}번)</p>
+  bg.innerHTML = `<div class="fam-sh" role="dialog" aria-label="이번 달 먹어본 재료"><h2>${mbIc('cal')} 이번 달 먹어본 재료</h2><p>최근 30일 동안 반응을 눌러둔 기록이에요. 새 재료 ${s.ings}개 · 기록 ${s.n}번 (잘 먹음 ${s.good}번)</p>
     ${row('😋','잘 먹었어요', s.g.good)}${row('😐','보통이었어요', s.g.ok)}${row('🙅','아직은 싫어해요', s.g.no)}${row('⚠️','알레르기 의심', s.g.allergy)}
     ${s.g.allergy.length ? '<div class="fam-n">알레르기 의심은 소아과에서 상담하고 판단해요. 이 기록은 참고용이에요.</div>' : ''}
     <button type="button" class="fam-o" id="moShare"><i>🖼️</i><span><b>카드로 공유하기</b><small>카톡·인스타에 사진처럼 보내요</small></span></button>
