@@ -5116,6 +5116,7 @@ function buildMidPage(container){
       <label for="mpStart">중기 시작한 날</label>
       <input type="date" id="mpStart" value="${midStart||''}">
       ${midStartUser?'<button type="button" id="mpClear">지우기</button>':''}
+      ${midStartUser && weaningStart && midStartUser < mbAddDays(weaningStart, START_LAST_DAY) ? '<span class="sp-hint" style="color:var(--warn);display:block;">⚠ 초기 시작일 기준으로는 초기가 '+mbAddDays(weaningStart, START_LAST_DAY-1).slice(5).replace('-','/')+'까지예요. 중기 시작일이 그 전이라 초기·중기가 같이 표시될 수 있어요. 맞는 날짜인지 확인해 주세요.</span>' : ''}
       ${midStart && !midStartUser?'<span class="sp-hint">초기 시작일로 자동 계산했어요(초기 끝난 다음 날). 실제와 다르면 바꿔주세요.</span>':''}
       <span class="sp-hint">넣어두시면 오늘 오전·오후에 뭘 줄지 바로 보여드려요.</span>
       ${midStart && midWeekdayOf(1)!=='월' ? `<span class="sp-hint sp-wdwarn" style="color:var(--warn);"${MB_NOREST?' hidden':''}>시작일이 ${midWeekdayOf(1)}요일이라 새 재료가 주말에 걸리는 날이 있어요. 그날은 하루 미루세요.</span>`:''}
